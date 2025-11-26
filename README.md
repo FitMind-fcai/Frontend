@@ -1,6 +1,6 @@
 # fitmind
 
-A new Flutter project.
+A new nigger project.
 
 ## Getting Started
 
