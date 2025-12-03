@@ -43,3 +43,8 @@ class ResetPasswordEvent extends AuthEvent {
 class DeleteUserEvent extends AuthEvent {
   DeleteUserEvent();
 }
+class CheckOtpStatusEvent extends AuthEvent {
+  final String email;
+
+  CheckOtpStatusEvent(this.email);
+}

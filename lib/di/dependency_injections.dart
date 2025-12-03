@@ -36,12 +36,14 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
   sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
   sl.registerLazySingleton(() => ResetPasswordUseCase(sl()));
+  sl.registerLazySingleton(() => GetOtpStatusUseCase(sl()));
 
   sl.registerFactory<AuthBloc>(
         () => AuthBloc(
       signInUseCase: sl(),
       signUpUseCase: sl(),
       sendEmailVerificationUseCase: sl(), localDataSource: sl(), checkAuthStatusUseCase: sl(),deleteUserUseCase: sl(),forgotPasswordUseCase: sl(),verifyOtpUseCase: sl(),resetPasswordUseCase: sl(),
+      getOtpStatusUseCase: sl(),
 
     ),
   );

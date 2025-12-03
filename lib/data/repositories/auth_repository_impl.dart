@@ -21,10 +21,8 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<UserEntity> signUp(UserEntity user) async {
     final userModel = UserModel(
       name: user.name,
-      age: user.age,
       email: user.email,
       password: user.password,
-      token: user.token,
     );
 
     final registeredModel = await remote.signUp(userModel);
@@ -36,6 +34,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> verifyEmail(String email) async {
     await remote.verifyEmail(email);
   }
+
   // ✅ Added methods for splash screen
   Future<String?> getToken() async {
     return local.getCachedToken();
@@ -52,9 +51,11 @@ class AuthRepositoryImpl implements AuthRepository {
       return null;
     }
   }
+
   Future<void> deleteUser() async {
     await local.deleteCachedData();
   }
+
   @override
   Future<void> forgotPassword(String email) {
     return remote.forgotPassword(email);
@@ -70,5 +71,7 @@ class AuthRepositoryImpl implements AuthRepository {
     return remote.resetPassword(email, otp, newPassword);
   }
 
-
+  Future<Map<String, dynamic>> getOtpStatus(String email) {
+    return remote.getOtpStatus(email);
+  }
 }

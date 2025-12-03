@@ -37,4 +37,9 @@ abstract class AuthApiService {
   /// Resets the password after OTP verification
   @POST("/auth/reset-password")
   Future<void> resetPassword(@Body() Map<String, dynamic> body);
+
+  @GET('/auth/otp-status/{email}')
+  Future<Map<String, dynamic>> getOtpStatus(
+      @Path("email") String email,
+      );
 }

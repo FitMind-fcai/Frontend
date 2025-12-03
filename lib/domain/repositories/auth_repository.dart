@@ -1,3 +1,4 @@
+
 import '../../data/models/auth_response_mode.dart';
 import '../entities/user_entity.dart';
 
@@ -23,4 +24,6 @@ abstract class AuthRepository {
   Future<void> forgotPassword(String email);
   Future<void> verifyOtp(String email, String otp);
   Future<void> resetPassword(String email, String otp, String newPassword);
+  Future<Map<String, dynamic>> getOtpStatus(String email);
+
 }

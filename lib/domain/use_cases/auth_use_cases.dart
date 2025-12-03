@@ -75,3 +75,12 @@ class ResetPasswordUseCase {
     return repository.resetPassword(email, otp, newPassword);
   }
 }
+class GetOtpStatusUseCase {
+  final AuthRepository repository;
+
+  GetOtpStatusUseCase(this.repository);
+
+  Future<Map<String, dynamic>> call(String email) {
+    return repository.getOtpStatus(email);
+  }
+}

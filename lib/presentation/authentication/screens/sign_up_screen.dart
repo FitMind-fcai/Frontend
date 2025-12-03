@@ -15,13 +15,11 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final nameController = TextEditingController();
-  final ageController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
   late FocusNode nameFocusNode;
-  late FocusNode ageFocusNode;
   late FocusNode emailFocusNode;
   late FocusNode passwordFocusNode;
   late FocusNode confirmFocusNode;
@@ -32,7 +30,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool showPasswordError = false;
 
   String? nameError;
-  String? ageError;
   String? emailError;
   String? passwordError;
   String? confirmPasswordError;
@@ -45,16 +42,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void initState() {
     super.initState();
     nameFocusNode = FocusNode()..addListener(() => validateName());
-    ageFocusNode = FocusNode()..addListener(() => validateAge());
     emailFocusNode = FocusNode()..addListener(() => validateEmail());
-    passwordFocusNode = FocusNode()..addListener(() {
-      validatePassword();
-      validatePasswordMismatchContainer();
-    });
-    confirmFocusNode = FocusNode()..addListener(() {
-      validateConfirmPassword();
-      validatePasswordMismatchContainer();
-    });
+    passwordFocusNode = FocusNode()
+      ..addListener(() {
+        validatePassword();
+        validatePasswordMismatchContainer();
+      });
+    confirmFocusNode = FocusNode()
+      ..addListener(() {
+        validateConfirmPassword();
+        validatePasswordMismatchContainer();
+      });
   }
 
   void validateName() {
@@ -66,20 +64,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         nameError = 'Only letters and spaces allowed';
       } else {
         nameError = null;
-      }
-      validateForm();
-    });
-  }
-
-  void validateAge() {
-    final age = ageController.text.trim();
-    setState(() {
-      if (age.isEmpty) {
-        ageError = 'Please enter your age';
-      } else if (int.tryParse(age) == null) {
-        ageError = 'Enter a valid age';
-      } else {
-        ageError = null;
       }
       validateForm();
     });
@@ -131,17 +115,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() {
       showPasswordError =
           confirmPasswordController.text.isNotEmpty &&
-              confirmPasswordController.text != passwordController.text;
+          confirmPasswordController.text != passwordController.text;
     });
   }
 
   void validateForm() {
     isFormValid = [
       nameError,
-      ageError,
       emailError,
       passwordError,
-      confirmPasswordError
+      confirmPasswordError,
     ].every((e) => e == null);
   }
 
@@ -218,34 +201,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: AppTextField(
-                            label: 'Name',
-                            controller: nameController,
-                            onChanged: (_) => validateName(),
-                            errorText: nameError,
-                            prefixIconPath: 'assets/images/user.png',
-                            focusNode: nameFocusNode,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          flex: 1,
-                          child: AppTextField(
-                            label: 'Age',
-                            controller: ageController,
-                            onChanged: (_) => validateAge(),
-                            errorText: ageError,
-                            prefixIconPath: 'assets/images/calendar.png',
-                            keyboardType: TextInputType.number,
-                            focusNode: ageFocusNode,
-                          ),
-                        ),
-                      ],
+                    AppTextField(
+                      label: 'Name',
+                      controller: nameController,
+                      onChanged: (_) => validateName(),
+                      errorText: nameError,
+                      prefixIconPath: 'assets/images/user.png',
+                      focusNode: nameFocusNode,
                     ),
+                    const SizedBox(width: 16),
+
                     AppConstants.verticalSpaceL,
 
                     AppTextField(
@@ -270,7 +235,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       obscureText: obscurePassword,
                       toggleObscureText: () =>
                           setState(() => obscurePassword = !obscurePassword),
-                      prefixIconPath: 'assets/images/Monotone lock password.png',
+                      prefixIconPath:
+                          'assets/images/Monotone lock password.png',
                       focusNode: passwordFocusNode,
                     ),
                     AppConstants.verticalSpaceL,
@@ -283,9 +249,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         validatePasswordMismatchContainer();
                       },
                       obscureText: obscureConfirmPassword,
-                      toggleObscureText: () =>
-                          setState(() => obscureConfirmPassword = !obscureConfirmPassword),
-                      prefixIconPath: 'assets/images/Monotone lock password.png',
+                      toggleObscureText: () => setState(
+                        () => obscureConfirmPassword = !obscureConfirmPassword,
+                      ),
+                      prefixIconPath:
+                          'assets/images/Monotone lock password.png',
                       focusNode: confirmFocusNode,
                     ),
 
@@ -336,19 +304,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: TextButton(
                         onPressed: isFormValid
                             ? () {
-                          if (_formKey.currentState!.validate()) {
-                            context.read<AuthBloc>().add(
-                              SignUpEvent(
-                                UserEntity(
-                                  name: nameController.text.trim(),
-                                  age: int.parse(ageController.text.trim()),
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim(),
-                                ),
-                              ),
-                            );
-                          }
-                        }
+                                if (_formKey.currentState!.validate()) {
+                                  context.read<AuthBloc>().add(
+                                    SignUpEvent(
+                                      UserEntity(
+                                        name: nameController.text.trim(),
+                                        email: emailController.text.trim(),
+                                        password: passwordController.text
+                                            .trim(),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
                             : null,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -408,7 +376,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 32),
           ],
         ),
       ),

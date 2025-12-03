@@ -96,7 +96,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                         ),
                         const SizedBox(height: 20),
                         isLoading
-                            ? const CircularProgressIndicator()
+                            ? const CircularProgressIndicator(color: AppConstants.primaryColor,)
                             : CommonButton(
                                 title: "Receive OTP",
                                 onPressed: () {

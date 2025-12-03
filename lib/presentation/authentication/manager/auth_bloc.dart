@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 
 import '../../../data/data_sources/local/auth_local_data_source.dart';
-import '../../../data/models/user_model.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/use_cases/auth_use_cases.dart';
 
@@ -19,6 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ForgotPasswordUseCase forgotPasswordUseCase;
   final VerifyOtpUseCase verifyOtpUseCase;
   final ResetPasswordUseCase resetPasswordUseCase;
+  final GetOtpStatusUseCase getOtpStatusUseCase;
 
 // ✅ add local storage
 
@@ -32,6 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.forgotPasswordUseCase,
     required this.verifyOtpUseCase,
     required this.resetPasswordUseCase,
+    required this.getOtpStatusUseCase,
   }) : super(AuthInitial()) {
     on<SignInEvent>(_onSignIn);
     on<SignUpEvent>(_onSignUp);
@@ -41,6 +41,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VerifyOtpEvent>(_onVerifyOtp);
     on<ResetPasswordEvent>(_onResetPassword);
     on<DeleteUserEvent>(_onDeleteUser);
+    on<CheckOtpStatusEvent>(_onCheckOtpStatus);
   }
 
   Future<void> _onSignIn(SignInEvent event, Emitter<AuthState> emit) async {
@@ -55,7 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       print("✅ SUCCESS RESPONSE RAW: $authResponse");
       print("✅ SUCCESS RESPONSE JSON: ${authResponse.toJson()}");
 
-      await localDataSource.cacheUser(authResponse.user as UserModel);
+      await localDataSource.cacheUser(authResponse.user);
       await localDataSource.cacheToken(authResponse.token);
 
       print("💾 Saved user & token locally");
@@ -67,6 +68,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthFailure(e.toString()));
     }
   }
+
   Future<void> _onSignUp(SignUpEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
@@ -94,21 +96,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthInitial());
     }
   }
+
 // ---------------------- FORGOT PASSWORD ----------------------
-  Future<void> _onForgotPassword(
-      ForgotPasswordEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onForgotPassword(ForgotPasswordEvent event,
+      Emitter<AuthState> emit) async {
+    print('📧 ForgotPasswordEvent triggered for: ${event.email}');
     emit(PasswordLoading());
     try {
+      print('🔄 Calling forgotPasswordUseCase...');
       await forgotPasswordUseCase(event.email);
+      print('✅ ForgotPassword successful, emitting PasswordSuccess');
       emit(PasswordSuccess("Forgot password email sent"));
     } catch (e) {
-      emit(PasswordFailure(e.toString()));
+      print('❌ ForgotPassword error: $e');
+
+      String errorMessage = e.toString();
+
+      // Extract message from error if it's a map
+      if (e is Map) {
+        errorMessage = e['message'] ?? e.toString();
+      }
+
+      emit(PasswordFailure(errorMessage));
     }
   }
 
 // ---------------------- VERIFY OTP ----------------------
-  Future<void> _onVerifyOtp(
-      VerifyOtpEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onVerifyOtp(VerifyOtpEvent event,
+      Emitter<AuthState> emit) async {
     emit(PasswordLoading());
     try {
       await verifyOtpUseCase(event.email, event.otp);
@@ -119,8 +134,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
 // ---------------------- RESET PASSWORD ----------------------
-  Future<void> _onResetPassword(
-      ResetPasswordEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onResetPassword(ResetPasswordEvent event,
+      Emitter<AuthState> emit) async {
     emit(PasswordLoading());
     try {
       await resetPasswordUseCase(event.email, event.otp, event.newPassword);
@@ -129,16 +144,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(PasswordFailure(e.toString()));
     }
   }
-  Future<void> _onDeleteUser(
-      DeleteUserEvent event, Emitter<AuthState> emit) async {
+
+  Future<void> _onDeleteUser(DeleteUserEvent event,
+      Emitter<AuthState> emit) async {
     emit(AuthLoading());
 
     try {
       await deleteUserUseCase();
-
-
     } catch (e) {
       emit(AuthFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onCheckOtpStatus(CheckOtpStatusEvent event,
+      Emitter<AuthState> emit) async {
+    try {
+      final status = await getOtpStatusUseCase(event.email);
+      emit(OtpStatusState(status));
+    } catch (e) {
+      print('❌ CheckOtpStatus error: $e');
+      emit(AuthFailure("Unable to check OTP status"));
     }
   }
 }

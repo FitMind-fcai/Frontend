@@ -22,6 +22,11 @@ class PasswordFailure extends AuthState {
   PasswordFailure(this.error);
 
 }
+class OtpStatusState extends AuthState {
+  final Map<String, dynamic> status;
+
+  OtpStatusState(this.status);
+}
 class PasswordLoading extends AuthState {}
 
 class AuthLoggedOut extends AuthState {}
