@@ -1,1 +1,0 @@
- C:\\Users\\user\\Desktop\\flutter_projects\\fitmind\\.dart_tool\\flutter_build\\73a2ac02594ea2cb8d5cd7147d7f5ff6\\native_assets.json: 

@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../assessment/screens/assessment_screen.dart';
 import '../manager/auth_bloc.dart';
 import '../widgets/common_button.dart';
 
@@ -39,7 +40,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (state is AuthSuccess) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => HomeScreen()),
+          MaterialPageRoute(builder: (_) => AssessmentScreen()),
         );
       }
 
