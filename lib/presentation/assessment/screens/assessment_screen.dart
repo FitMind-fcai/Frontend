@@ -25,7 +25,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   String? selectedGender;
   String _selectedUnit = 'kg';
   double? weight;
-  FixedExtentScrollController _ageController = FixedExtentScrollController();
+  FixedExtentScrollController   _ageController = FixedExtentScrollController();
+
   int selectedAge = 0;
   List<String> physicalLimitations = [];
   List<String> medicalConditions = [];
@@ -34,6 +35,10 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   List<String> medications = [];
   String _selectedHeightUnit = "cm";
   double? height;
+
+  double kgToLbs(double kg) => kg * 2.20462;
+
+  double lbsToKg(double lbs) => lbs * 0.45359237;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +84,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     const SizedBox(width: 10),
                     const Text(
                       'Assessment',
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                     const Spacer(),
                     Container(
@@ -132,24 +138,26 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       print("🔍 User ID: ${cachedUser?.id}");
       print("🔍 User toJson: ${cachedUser?.toJson()}");
 
-
       if (cachedUser?.id == null) {
         print("No cached user ID found");
         return;
       }
 
       final profile = ProfileBody(
-        userId: cachedUser!.id!, // replace with actual user ID
+        userId: cachedUser!.id!,
+        // replace with actual user ID
         age: selectedAge,
-        height: height??0, // replace with actual height input if available
+        height: height ?? 0,
+        // replace with actual height input if available
         weight: weight ?? 0,
         gender: selectedGender == 'male' ? Gender.Male : Gender.Female,
         fitnessGoal: selectedGoal == 'lose_weight'
             ? FitnessGoal.LoseWeight
             : selectedGoal == 'get_bulks'
-            ? FitnessGoal.BuildMuscle
-            : FitnessGoal.MaintainWeight,
-        activityLevel: ActivityLevel.Sedentary, // replace with actual selection
+                ? FitnessGoal.BuildMuscle
+                : FitnessGoal.MaintainWeight,
+        activityLevel: ActivityLevel.Sedentary,
+        // replace with actual selection
         dietaryPreferences: diets,
         medicalConditions: medicalConditions,
         allergies: allergies,
@@ -412,7 +420,6 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     required String gender,
     required String imagePath,
     required String value,
-
   }) {
     final isSelected = selectedGender == value;
 
@@ -606,7 +613,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
         ),
         const SizedBox(height: 48),
         WeightPicker(
-          initialValue: weight ,
+          unit: _selectedUnit,
+          initialValue: weight,
           onChanged: (value) {
             setState(() {
               weight = value;
@@ -616,6 +624,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       ],
     );
   }
+
   Widget _buildHeightPage() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -712,7 +721,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
         const SizedBox(height: 48),
         HeightPicker(
           unit: _selectedHeightUnit,
-          initialValue: height ,
+          initialValue: height,
           onChanged: (value) {
             setState(() {
               height = value;
@@ -723,14 +732,14 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     );
   }
 
+  final ValueNotifier<int> selectedAgeNotifier = ValueNotifier<int>(25);
+
   Widget _buildAgeScroll() {
-    // Jump to selected age when widget builds
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_ageController.hasClients && _ageController.positions.isNotEmpty) {
-        _ageController.jumpToItem(selectedAge);
+        _ageController.jumpToItem(selectedAgeNotifier.value);
       }
     });
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -750,15 +759,20 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             alignment: Alignment.center,
             children: [
               // Animated orange container
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                width: selectedAge % 2 == 0 ? 290 : 285,
-                height: selectedAge % 2 == 0 ? 165 : 160,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF6B35),
-                  borderRadius: BorderRadius.circular(32),
-                ),
+              ValueListenableBuilder<int>(
+                valueListenable: selectedAgeNotifier,
+                builder: (context, selectedAge, _) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    width: selectedAge % 2 == 0 ? 290 : 285,
+                    height: selectedAge % 2 == 0 ? 165 : 160,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF6B35),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                  );
+                },
               ),
 
               // Scrollable numbers
@@ -769,43 +783,47 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 diameterRatio: 3,
                 physics: const FixedExtentScrollPhysics(),
                 onSelectedItemChanged: (index) {
-                  setState(() {
-                    selectedAge = index;
-                  });
+                  selectedAgeNotifier.value =
+                      index; // <- updates without setState
                 },
                 childDelegate: ListWheelChildBuilderDelegate(
                   builder: (context, index) {
-                    int distance = (index - selectedAge).abs();
+                    return ValueListenableBuilder<int>(
+                      valueListenable: selectedAgeNotifier,
+                      builder: (context, selectedAge, _) {
+                        int distance = (index - selectedAge).abs();
 
-                    double fontSize;
-                    Color textColor;
+                        double fontSize;
+                        Color textColor;
 
-                    if (distance == 0) {
-                      fontSize = 140;
-                      textColor = Colors.white;
-                    } else if (distance == 1) {
-                      fontSize = 110;
-                      textColor = const Color(0xFF9EA0A5);
-                    } else if (distance == 2) {
-                      fontSize = 95;
-                      textColor = const Color(0xFFD7D8D9);
-                    } else {
-                      fontSize = 80;
-                      textColor = const Color(0xFFD1D5DB);
-                    }
+                        if (distance == 0) {
+                          fontSize = 140;
+                          textColor = Colors.white;
+                        } else if (distance == 1) {
+                          fontSize = 110;
+                          textColor = const Color(0xFF9EA0A5);
+                        } else if (distance == 2) {
+                          fontSize = 95;
+                          textColor = const Color(0xFFD7D8D9);
+                        } else {
+                          fontSize = 80;
+                          textColor = const Color(0xFFD1D5DB);
+                        }
 
-                    return Center(
-                      child: AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 200),
-                        style: TextStyle(
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.w900,
-                          fontFamily: AppConstants.fontRegular,
-                          color: textColor,
-                          height: 1,
-                        ),
-                        child: Text('${index + 1}'),
-                      ),
+                        return Center(
+                          child: AnimatedDefaultTextStyle(
+                            duration: const Duration(milliseconds: 200),
+                            style: TextStyle(
+                              fontSize: fontSize,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: AppConstants.fontRegular,
+                              color: textColor,
+                              height: 1,
+                            ),
+                            child: Text('${index + 1}'),
+                          ),
+                        );
+                      },
                     );
                   },
                   childCount: 100,
