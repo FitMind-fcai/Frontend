@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/constants/app_constants.dart';
 
 class HeightPicker extends StatefulWidget {
   final Function(double) onChanged;
-  final String unit; // 'cm' or 'ft'
+  final String unit;
   final double? initialValue;
 
   const HeightPicker({
@@ -18,96 +19,73 @@ class HeightPicker extends StatefulWidget {
 }
 
 class _HeightPickerState extends State<HeightPicker> {
-  // Internally ALWAYS store height in cm
   late double heightCm;
-  late ScrollController scrollController;
+  late FixedExtentScrollController _controller;
+
+  static const double minCm = 100;
+  static const double maxCm = 250;
+  static const double itemHeight = 40;
 
   @override
   void initState() {
     super.initState();
+    heightCm = widget.unit == 'ft' && widget.initialValue != null
+        ? widget.initialValue! * 30.48
+        : widget.initialValue ?? 170.0;
 
-    if (widget.unit == 'ft' && widget.initialValue != null) {
-      // user gives ft, convert to cm
-      heightCm = widget.initialValue! * 30.48;
-    } else {
-      heightCm = widget.initialValue ?? 170.0;
-    }
-
-    scrollController = ScrollController(
-      initialScrollOffset: (heightCm - 100) * 40,
-    );
+    _controller = FixedExtentScrollController(initialItem: (heightCm - minCm).toInt());
   }
 
   @override
-  void didUpdateWidget(covariant HeightPicker oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Do NOT change scroll offset on unit change.
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    const double minCm = 100;
-    const double maxCm = 250;
     int itemCount = (maxCm - minCm + 1).toInt();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // ---- RULER AREA ----
         SizedBox(
           width: 120,
           height: 400,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              NotificationListener<ScrollNotification>(
-                onNotification: (notification) {
-                  if (mounted) {
-                    setState(() {
-                      double offset = scrollController.offset + 400 / 2 - 20;
-                      double cmValue = minCm + (offset / 40);
-
-                      cmValue = cmValue.clamp(minCm, maxCm);
-                      heightCm = cmValue;
-                    });
-
-                    widget.onChanged(heightCm);
-                  }
-                  return true;
+              ListWheelScrollView.useDelegate(
+                controller: _controller,
+                itemExtent: itemHeight,
+                physics: const FixedExtentScrollPhysics(),
+                onSelectedItemChanged: (index) {
+                  setState(() {
+                    heightCm = minCm + index.toDouble();
+                  });
+                  widget.onChanged(heightCm);
                 },
-                child: ListView.builder(
-                  controller: scrollController,
-                  scrollDirection: Axis.vertical,
-                  itemCount: itemCount,
-                  physics: const ClampingScrollPhysics(),
-                  itemBuilder: (context, index) {
+                childDelegate: ListWheelChildBuilderDelegate(
+                  builder: (context, index) {
                     double cmValue = minCm + index.toDouble();
-                    bool isMajor;
-                    if (widget.unit == 'ft') {
-                      isMajor = cmValue % 5 == 0;
-                    } else {
-                      isMajor = cmValue % 5 == 0;
-                    }
+                    bool isMajor = cmValue % 5 == 0;
 
                     String label;
                     if (widget.unit == 'ft') {
                       double totalInches = cmValue / 2.54;
                       int ft = totalInches ~/ 12;
                       int inch = (totalInches % 12).round();
-
-                      // Fix 12-inch rounding bug
                       if (inch == 12) {
                         ft += 1;
                         inch = 0;
                       }
-
                       label = "$ft' $inch\"";
                     } else {
                       label = cmValue.toInt().toString();
                     }
 
                     return SizedBox(
-                      height: 40,
+                      height: itemHeight,
                       child: Row(
                         children: [
                           Container(
@@ -132,10 +110,11 @@ class _HeightPickerState extends State<HeightPicker> {
                       ),
                     );
                   },
+                  childCount: itemCount,
                 ),
               ),
 
-              // ---- CENTER INDICATOR ----
+              // Center indicator
               Positioned(
                 child: Container(
                   height: 16,
@@ -151,8 +130,6 @@ class _HeightPickerState extends State<HeightPicker> {
         ),
 
         const SizedBox(width: 24),
-
-        // ---- DISPLAY AREA ----
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,13 +141,10 @@ class _HeightPickerState extends State<HeightPicker> {
                 double totalInches = heightCm / 2.54;
                 int ft = totalInches ~/ 12;
                 int inch = (totalInches % 12).round();
-
-                // fix rounding overflow
                 if (inch == 12) {
                   ft += 1;
                   inch = 0;
                 }
-
                 return "$ft' $inch\"";
               })(),
               style: const TextStyle(
@@ -194,11 +168,5 @@ class _HeightPickerState extends State<HeightPicker> {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
   }
 }
