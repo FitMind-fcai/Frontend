@@ -2,6 +2,7 @@ import 'package:fitmind/core/constants/app_constants.dart';
 import 'package:fitmind/presentation/authentication/screens/forget_password_screen.dart';
 import 'package:fitmind/presentation/authentication/screens/sign_up_screen.dart';
 import 'package:fitmind/presentation/home/screens/home_screen.dart';
+import 'package:fitmind/presentation/plan/screens/plan_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,7 +41,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (state is AuthSuccess) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => AssessmentScreen()),
+          MaterialPageRoute(builder: (_) => PlanSelectionScreen()),
         );
       }
 

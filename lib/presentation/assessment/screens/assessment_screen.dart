@@ -1,5 +1,6 @@
 import 'package:fitmind/core/constants/app_constants.dart';
 import 'package:fitmind/presentation/authentication/widgets/common_button.dart';
+import 'package:fitmind/presentation/plan/screens/plan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_unit_ruler/flutter_unit_ruler.dart';
@@ -25,7 +26,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   String? selectedGender;
   String _selectedUnit = 'kg';
   double? weight;
-  FixedExtentScrollController   _ageController = FixedExtentScrollController();
+  FixedExtentScrollController _ageController = FixedExtentScrollController();
 
   int selectedAge = 0;
   List<String> physicalLimitations = [];
@@ -52,7 +53,10 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           );
         } else if (state is ProfileSuccess) {
           Navigator.pop(context); // remove loading
-          Navigator.pushReplacementNamed(context, '/home'); // navigate
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => PlanSelectionScreen()),
+          ); // navigate
         } else if (state is ProfileError) {
           Navigator.pop(context); // remove loading
           ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +120,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 // Continue Button
                 const SizedBox(height: 20),
                 CommonButton(
-                  title: currentPage < 9 ? 'Continue' : 'Submit',
+                  title: currentPage < 11 ? 'Continue' : 'Submit',
                   onPressed: _onContinuePressed,
                 ),
               ],
@@ -146,7 +150,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       final profile = ProfileBody(
         userId: cachedUser!.id!,
         // replace with actual user ID
-        age: selectedAge,
+        age: selectedAgeNotifier.value + 1,
         height: height ?? 0,
         // replace with actual height input if available
         weight: weight ?? 0,
@@ -367,50 +371,69 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           }
         });
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFF6B35) : const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? Colors.white54 : Colors.transparent,
-            width: 2,
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 150),
+        scale: isSelected ? 1.03 : 1.0,
+        curve: Curves.easeOut,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          decoration: BoxDecoration(
+            color:
+                isSelected ? const Color(0xFFFF6B35) : const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isSelected ? Colors.white54 : Colors.transparent,
+              width: 2,
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            ImageIcon(
-              icon,
-              color: isSelected ? Colors.white : Colors.grey[700],
-              size: 24,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected ? Colors.white : Colors.black87,
+          child: Row(
+            children: [
+              ImageIcon(
+                icon,
+                color: isSelected ? Colors.white : Colors.grey[700],
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: AppConstants.fontRegular,
+                    color: isSelected ? Colors.white : Colors.black87,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? Colors.white : Colors.transparent,
-                border: Border.all(
-                  color: isSelected ? Colors.white : Colors.grey[400]!,
-                  width: 2,
+
+              // --- Animated checkmark ---
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOut,
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  border: Border.all(
+                    color: isSelected ? Colors.white : Colors.grey[400]!,
+                    width: 2,
+                  ),
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  transitionBuilder: (child, anim) =>
+                      ScaleTransition(scale: anim, child: child),
+                  child: isSelected
+                      ? const Icon(Icons.check,
+                          size: 16, color: Color(0xFFFF6B35), key: ValueKey(1))
+                      : const SizedBox(key: ValueKey(2)),
                 ),
               ),
-              child: isSelected
-                  ? const Icon(Icons.check, size: 16, color: Color(0xFFFF6B35))
-                  : null,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -429,90 +452,111 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           selectedGender = value;
         });
       },
-      child: Container(
-        height: 180,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? const Color(0xFFFF6B35) : Colors.transparent,
-            width: 3,
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        scale: isSelected ? 1.03 : 1.0,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 260),
+          curve: Curves.easeOut,
+          height: 180,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isSelected ? const Color(0xFFFF6B35) : Colors.transparent,
+              width: 3,
+            ),
           ),
-        ),
-        child: Stack(
-          children: [
-            // Image
-            Positioned.fill(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                ),
-              ),
-            ),
-            // Gradient overlay
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
+          child: Stack(
+            children: [
+              // Image
+              Positioned.fill(
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(14),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.3)],
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
                   ),
                 ),
               ),
-            ),
-            // Gender label and icon
-            Positioned(
-              left: 16,
-              top: 16,
-              child: Row(
-                children: [
-                  Icon(
-                    gender == 'Male' ? Icons.male : Icons.female,
-                    color: Colors.black87,
-                    size: 28,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    gender,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: AppConstants.fontRegular,
-                      color: Colors.black87,
+
+              // Gradient overlay
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.3),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-            // Checkbox
-            Positioned(
-              left: 16,
-              bottom: 16,
-              child: Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(12),
-                  color: isSelected ? const Color(0xFFFF6B35) : Colors.white,
-                  border: Border.all(
-                    color: isSelected
-                        ? const Color(0xFFFF6B35)
-                        : Colors.grey[400]!,
-                    width: 2,
+
+              // Gender label + icon
+              Positioned(
+                left: 16,
+                top: 16,
+                child: Row(
+                  children: [
+                    Icon(
+                      gender == 'Male' ? Icons.male : Icons.female,
+                      color: Colors.black87,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      gender,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppConstants.fontRegular,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Animated Checkbox
+              Positioned(
+                left: 16,
+                bottom: 16,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOut,
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(12),
+                    color: isSelected ? const Color(0xFFFF6B35) : Colors.white,
+                    border: Border.all(
+                      color: isSelected
+                          ? const Color(0xFFFF6B35)
+                          : Colors.grey[400]!,
+                      width: 2,
+                    ),
+                  ),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 180),
+                    transitionBuilder: (child, anim) =>
+                        ScaleTransition(scale: anim, child: child),
+                    child: isSelected
+                        ? const Icon(Icons.check,
+                            size: 18, color: Colors.white, key: ValueKey(1))
+                        : const SizedBox(key: ValueKey(2)),
                   ),
                 ),
-                child: isSelected
-                    ? const Icon(Icons.check, size: 18, color: Colors.white)
-                    : null,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -629,14 +673,16 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "What is your height?",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 32,
-            fontFamily: AppConstants.fontRegular,
-            fontWeight: FontWeight.bold,
-            height: 1.2,
+        Center(
+          child: const Text(
+            "What is your height?",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 32,
+              fontFamily: AppConstants.fontRegular,
+              fontWeight: FontWeight.bold,
+              height: 1.2,
+            ),
           ),
         ),
         const SizedBox(height: 32),

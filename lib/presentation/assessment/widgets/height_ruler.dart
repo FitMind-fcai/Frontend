@@ -55,6 +55,16 @@ class _HeightPickerState extends State<HeightPicker> {
           child: Stack(
             alignment: Alignment.center,
             children: [
+              Positioned(
+                child: Container(
+                  height: 16,
+                  width: 116,
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
               ListWheelScrollView.useDelegate(
                 controller: _controller,
                 itemExtent: itemHeight,
@@ -115,16 +125,7 @@ class _HeightPickerState extends State<HeightPicker> {
               ),
 
               // Center indicator
-              Positioned(
-                child: Container(
-                  height: 16,
-                  width: 116,
-                  decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
+
             ],
           ),
         ),
@@ -149,8 +150,9 @@ class _HeightPickerState extends State<HeightPicker> {
               })(),
               style: const TextStyle(
                 fontSize: 80,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w800,
                 color: Colors.black,
+                fontFamily: AppConstants.fontRegular,
                 height: 1,
               ),
             ),
