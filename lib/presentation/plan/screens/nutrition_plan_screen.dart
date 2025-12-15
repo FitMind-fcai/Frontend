@@ -1,11 +1,18 @@
 import 'package:fitmind/presentation/authentication/widgets/common_button.dart';
+import 'package:fitmind/presentation/plan/screens/workout_plan_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../data/models/plan/nutrition_plan_generation_request.dart';
+import '../../../data/models/plan/nutrition_plan_model.dart';
 import '../../assessment/widgets/tag_input_widget.dart';
+import '../manager/plan_bloc.dart';
 
 class NutritionPlanScreen extends StatefulWidget {
-  const NutritionPlanScreen({Key? key}) : super(key: key);
+  const NutritionPlanScreen({Key? key,required this.navigationStatus}) : super(key: key);
+
+  final String navigationStatus;
 
   @override
   State<NutritionPlanScreen> createState() => _NutritionPlanScreenState();
@@ -17,7 +24,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   // Nutrition plan data
   int? customCalorieTarget;
   String _selectedUnit = "";
-  String _selectedDays = "";
+  String _selectedDays = "3";
   String _selectedComplexity = '';
   List<String> diets = [];
   String _selectedCuisine = '';
@@ -25,10 +32,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   int _calorieTarget = 1550;
   bool _isIncrementing = true;
 
-  int? mealsPerDay;
-  String? mealComplexity;
-  String? cuisinePreference;
-  List<String> excludeIngredients = [];
+  int _durationWeeks = 12;
+  int _customWeeks = 12;
+  bool _isCustomWeeks = false;
 
   // Input controllers
   final TextEditingController calorieController = TextEditingController();
@@ -57,67 +63,108 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     );
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (currentPage > 0) {
-                        setState(() {
-                          currentPage--;
-                        });
-                      }
-                    },
-                    child: const Icon(Icons.arrow_back_ios, size: 20),
-                  ),
-                  const SizedBox(width: 10),
-                  const Text(
-                    'Nutrition Plan',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+      body: BlocListener<PlanBloc, PlanState>(
+        listener: (context, state) {
+          if (state is NutritionPreferencesSuccess) {
+            // Show success message
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Nutrition preferences saved successfully!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+
+            // Navigate to workout plan if needed
+            if (widget.navigationStatus == "both") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WorkoutPlanScreen(),
+                ),
+              );
+            } else {
+              // Navigate back or to home
+              Navigator.pop(context);
+            }
+          } else if (state is PlanError) {
+            // Show error message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (currentPage > 0) {
+                          setState(() {
+                            currentPage--;
+                          });
+                        } else {
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Icon(Icons.arrow_back_ios, size: 20),
                     ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE3F2FD),
-                      borderRadius: BorderRadius.circular(12),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'Nutrition Plan',
+                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
-                    child: Text(
-                      '${currentPage + 1} of 5',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF2563EB),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE3F2FD),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${currentPage + 1} of 6',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF2563EB),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
+                  ],
+                ),
+                const SizedBox(height: 40),
 
-              // Content based on current page
-              Expanded(child: _getCurrentPage()),
+                // Content based on current page
+                Expanded(child: _getCurrentPage()),
 
-              // Continue Button
-              const SizedBox(height: 20),
-              CommonButton(
-                title: currentPage < 11 ? 'Continue' : 'Submit',
-                onPressed: _onContinuePressed,
-              ),
-            ],
+                // Continue Button
+                const SizedBox(height: 20),
+                BlocBuilder<PlanBloc, PlanState>(
+                  builder: (context, state) {
+                    final isLoading = state is PlanLoading;
+
+                    return CommonButton(
+                      title: currentPage < 5 ? 'Continue' : 'Submit',
+                      onPressed: isLoading ? null : _onContinuePressed,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -125,49 +172,48 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   }
 
   void _onContinuePressed() {
-    if (currentPage < 4) {
+    if (currentPage < 5) {
       setState(() => currentPage++);
     } else {
-      // Submit nutrition plan
-      print('Nutrition Plan Data:');
-      print('Calorie Target: $customCalorieTarget');
-      print('Meals Per Day: $mealsPerDay');
-      print('Meal Complexity: $mealComplexity');
-      print('Cuisine Preference: $cuisinePreference');
-      print('Exclude Ingredients: $excludeIngredients');
-
-      // TODO: Send to backend or BLoC
+      // Submit to BLoC
+      _submitNutritionPreferences();
     }
   }
 
-  bool _canContinue() {
-    switch (currentPage) {
-      case 0:
-        return _calorieTarget != null;
-      case 1:
-        return mealsPerDay != null;
-      case 2:
-        return mealComplexity != null;
-      case 3:
-        return cuisinePreference != null;
-      case 4:
-        return true; // Exclude ingredients is optional
-      default:
-        return false;
-    }
+  void _submitNutritionPreferences() {
+    // Create the request
+    final request = NutritionPlanGenerationRequest(
+      durationWeeks: _durationWeeks,
+      nutritionPreferences: NutritionPreferences(
+        caloriePreference: CaloriePreference.fromString(prefferedCalorieMethod),
+        customCalorieTarget: prefferedCalorieMethod == 'Custom'
+            ? _calorieTarget
+            : null,
+        mealsPerDay: int.parse(_selectedDays),
+        mealComplexity: MealComplexity.fromString(_selectedComplexity),
+        cuisinePreference: CuisinePreference.fromString(_selectedCuisine),
+        excludeIngredients: diets.isEmpty ? null : diets,
+      ),
+    );
+
+    // Dispatch event to BLoC
+    context.read<PlanBloc>().add(SubmitNutritionPreferencesEvent(request));
   }
+
 
   Widget _getCurrentPage() {
     switch (currentPage) {
       case 0:
-        return _buildCalorieTargetPage();
+        return _buildDurationWeeksPage();
       case 1:
-        return _buildMealsPerDayPage();
+        return _buildCalorieTargetPage();
       case 2:
-        return _buildMealComplexityPage();
+        return _buildMealsPerDayPage();
       case 3:
-        return _buildCuisinePreferencePage();
+        return _buildMealComplexityPage();
       case 4:
+        return _buildCuisinePreferencePage();
+      case 5:
         return _buildExcludeIngredientsPage();
       default:
         return const SizedBox.shrink();
@@ -582,36 +628,6 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     }
   }
 
-  Widget _buildMealCountChip(int count) {
-    final isSelected = mealsPerDay == count;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          mealsPerDay = count;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFF6B35) : const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? Colors.white54 : Colors.transparent,
-            width: 2,
-          ),
-        ),
-        child: Text(
-          '$count meals',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: isSelected ? Colors.white : Colors.black87,
-          ),
-        ),
-      ),
-    );
-  }
 
   // Page 3: Meal Complexity
   Widget _buildMealComplexityPage() {
@@ -930,110 +946,232 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     ],
     );
   }
-
-  Widget _buildOptionTile({
-    required IconData icon,
-    required String label,
-    required String value,
-    required String? selectedValue,
-    required Function(String) onTap,
-  }) {
-    final isSelected = selectedValue == value;
-    return GestureDetector(
-      onTap: () => onTap(value),
-      child: AnimatedScale(
-        duration: const Duration(milliseconds: 150),
-        scale: isSelected ? 1.03 : 1.0,
-        curve: Curves.easeOut,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeOut,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+  Widget _buildDurationWeeksPage() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'How many weeks do you want your plan to be?',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            fontFamily: AppConstants.fontRegular,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 32),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 0.85,
+          children: [
+            _buildWeekCard(4, '1 Month'),
+            _buildWeekCard(8, '2 Months'),
+            _buildWeekCard(12, '3 Months'),
+            _buildWeekCard(16, '4 Months'),
+            _buildWeekCard(24, '6 Months'),
+            _buildWeekCard(52, '1 Year'),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color:
-            isSelected ? const Color(0xFFFF6B35) : const Color(0xFFF5F5F5),
+            color: Colors.grey[100],
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? Colors.white54 : Colors.transparent,
-              width: 2,
+              color: Colors.grey[300]!,
+              width: 1,
             ),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                icon,
-                color: isSelected ? Colors.white : Colors.grey[700],
-                size: 24,
+              Row(
+                children: [
+                  const Text(
+                    '✏️',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'Custom Duration',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppConstants.fontRegular,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: _isCustomWeeks ? AppConstants.primaryColor : Colors.grey[300]!,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              if (_customWeeks > 1) {
+                                setState(() {
+                                  _customWeeks--;
+                                  _durationWeeks = _customWeeks;
+                                  _isCustomWeeks = true;
+                                });
+                              }
+                            },
+                            icon: const Icon(Icons.remove_circle_outline, size: 28),
+                            color: AppConstants.primaryColor,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                          const SizedBox(width: 20),
+                          Text(
+                            '$_customWeeks',
+                            style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: AppConstants.fontRegular,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          IconButton(
+                            onPressed: () {
+                              if (_customWeeks < 52) {
+                                setState(() {
+                                  _customWeeks++;
+                                  _durationWeeks = _customWeeks;
+                                  _isCustomWeeks = true;
+                                });
+                              }
+                            },
+                            icon: const Icon(Icons.add_circle_outline, size: 28),
+                            color: AppConstants.primaryColor,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Center(
                 child: Text(
-                  label,
+                  _customWeeks == 1 ? 'week' : 'weeks',
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: isSelected ? Colors.white : Colors.black87,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: AppConstants.fontRegular,
+                    color: Colors.grey[600],
                   ),
-                ),
-              ),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeOut,
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isSelected ? Colors.white : Colors.transparent,
-                  border: Border.all(
-                    color: isSelected ? Colors.white : Colors.grey[400]!,
-                    width: 2,
-                  ),
-                ),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
-                  transitionBuilder: (child, anim) =>
-                      ScaleTransition(scale: anim, child: child),
-                  child: isSelected
-                      ? const Icon(
-                    Icons.check,
-                    size: 16,
-                    color: Color(0xFFFF6B35),
-                    key: ValueKey(1),
-                  )
-                      : const SizedBox(key: ValueKey(2)),
                 ),
               ),
             ],
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildWeekCard(int weeks, String label) {
+    final isSelected = _durationWeeks == weeks && !_isCustomWeeks;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _durationWeeks = weeks;
+          _customWeeks = weeks;
+          _isCustomWeeks = false;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          color: isSelected ? AppConstants.primaryColor : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? Colors.white54 : Colors.grey[300]!,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ]
+              : [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                fontFamily: AppConstants.fontRegular,
+                color: isSelected ? Colors.white : Colors.black,
+              ),
+              child: Text('$weeks'),
+            ),
+            const SizedBox(height: 4),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                fontFamily: AppConstants.fontRegular,
+                color: isSelected ? Colors.white70 : Colors.grey[600],
+              ),
+              child: Text(weeks == 1 ? 'week' : 'weeks'),
+            ),
+            const SizedBox(height: 8),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                fontFamily: AppConstants.fontRegular,
+                color: isSelected ? Colors.white : AppConstants.primaryColor,
+              ),
+              child: Text(label),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildContinueButton() {
-    final canContinue = _canContinue();
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: canContinue ? _onContinuePressed : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFF6B35),
-          disabledBackgroundColor: Colors.grey.shade300,
-          elevation: canContinue ? 2 : 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: Text(
-          currentPage < 4 ? 'Continue' : 'Create Plan',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: canContinue ? Colors.white : Colors.grey.shade500,
-          ),
-        ),
-      ),
-    );
-  }
+
 }

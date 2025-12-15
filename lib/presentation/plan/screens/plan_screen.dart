@@ -151,7 +151,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>  WorkoutPlanScreen(
+                          builder: (context) =>  NutritionPlanScreen(navigationStatus: 'both'
                           ),
                         ),
                       );
@@ -169,7 +169,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const NutritionPlanScreen(),
+                          builder: (context) =>  NutritionPlanScreen(navigationStatus: 'normal',),
                         ),
                       );
                     }
