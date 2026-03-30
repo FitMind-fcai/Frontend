@@ -3,8 +3,9 @@ import 'package:retrofit/retrofit.dart';
 
 import '../data/data_sources/local/auth_local_data_source.dart';
 import '../data/models/plan/nutrition_plan_generation_request.dart';
+import '../data/models/plan/nutrition_plan_result.dart';
 import '../data/models/plan/workout_plan_generation_request.dart';
-
+import '../data/models/plan/workout_plan_result.dart';
 
 part 'plan_api_service.g.dart';
 
@@ -23,17 +24,16 @@ abstract class PlanApiService {
         },
       ),
     );
-
     return _PlanApiService(dio);
   }
 
-  @POST("plans/generate/nutrition")
-  Future<void> createNutritionPreferences(
+  @POST("/v1/plans/generate/nutrition")
+  Future<NutritionPlanResult> createNutritionPreferences(
       @Body() NutritionPlanGenerationRequest body,
       );
 
-  @POST("/plans/generate/workout/")
-  Future<void> createWorkoutPreferences(
+  @POST("/v1/plans/generate/workout")
+  Future<WorkoutPlanResult> createWorkoutPreferences(
       @Body() WorkoutPlanGenerationRequest body,
       );
 }

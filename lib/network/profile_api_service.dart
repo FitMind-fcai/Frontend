@@ -25,7 +25,7 @@ abstract class ProfileApiService {
     return _ProfileApiService(dio);
   }
 
-  @POST("/profiles/")
+  @POST("/v1/profiles/")
   Future<void> createProfile(
       @Body() ProfileBody body,
       );

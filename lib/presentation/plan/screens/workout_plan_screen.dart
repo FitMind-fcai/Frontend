@@ -1,9 +1,14 @@
+import 'package:fitmind/presentation/plan/screens/workout_plan_result_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../data/models/plan/workout_plan_generation_request.dart';
+import '../../../data/models/plan/workout_plan_model.dart';
 import '../../assessment/widgets/tag_input_widget.dart';
 import '../../authentication/widgets/common_button.dart';
+import '../manager/plan_bloc.dart';
 
 class WorkoutPlanScreen extends StatefulWidget {
   @override
@@ -29,79 +34,153 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (currentPage > 0) {
-                        setState(() {
-                          currentPage--;
-                        });
-                      }
-                    },
-                    child: const Icon(Icons.arrow_back_ios, size: 20),
-                  ),
-                  const SizedBox(width: 10),
-                  const Text(
-                    'Workout Plan',
-                    style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: AppConstants.fontRegular),
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE3F2FD),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '${currentPage + 1} of 8',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: AppConstants.fontRegular,
-                        color: Color(0xFF2563EB),
+    return BlocConsumer<PlanBloc, PlanState>(
+      listener: (context, state) {
+        if (state is WorkoutPreferencesSuccess) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => WorkoutPlanResultScreen(plan: state.plan),
+            ),
+          );
+        } else if (state is PlanError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        }
+      },
+      builder: (context, state) {  // 👈 now state is in scope
+        return Stack(
+          children: [
+            Scaffold(
+              backgroundColor: Colors.white,
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (currentPage > 0) {
+                                setState(() {
+                                  currentPage--;
+                                });
+                              }
+                            },
+                            child: const Icon(Icons.arrow_back_ios, size: 20),
+                          ),
+                          const SizedBox(width: 10),
+                          const Text(
+                            'Workout Plan',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: AppConstants.fontRegular,
+                            ),
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE3F2FD),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${currentPage + 1} of 8',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppConstants.fontRegular,
+                                color: Color(0xFF2563EB),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      const SizedBox(height: 40),
+
+                      Expanded(child: _getCurrentPage()),
+
+                      const SizedBox(height: 20),
+                      CommonButton(
+                        title: currentPage < 11 ? 'Continue' : 'Submit',
+                        onPressed: _onContinuePressed,
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-              const SizedBox(height: 40),
+            ),
 
-              // Content based on current page
-              Expanded(child: _getCurrentPage()),
-
-              // Continue Button
-              const SizedBox(height: 20),
-              CommonButton(
-                title: currentPage < 11 ? 'Continue' : 'Submit',
-                onPressed: _onContinuePressed,
+            // 👇 now state is accessible here
+            if (state is PlanLoading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RotatedBox(
+                        quarterTurns: -1,
+                        child: SizedBox(
+                          width: 120,
+                          child: LinearProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(AppConstants.primaryColor),
+                            backgroundColor: Colors.white24,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      const Text(
+                        "Creating your plan...",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: AppConstants.fontRegular,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          ),
-        ),
+          ],
+        );
+      },
+    );
+  }
+  void _submitWorkoutPreferences() {
+    final request = WorkoutPlanGenerationRequest(
+      durationWeeks: _durationWeeks,
+      workoutPreferences: WorkoutPreferences(
+        workoutDaysPerWeek: int.parse(_selectedDays),
+        workoutLocation: WorkoutLocation.fromString(_selectedWorkoutLocation),
+        equipmentAvailability:
+        EquipmentAvailability.fromString(_selectedEquipment ?? ''),
+        workoutFocus: WorkoutFocus.fromString(_selectedWorkoutFocus),
+        workoutDifficulty:
+        WorkoutDifficulty.fromString(_selectedDifficulty ?? ''),
+        sessionDurationMinutes: _sessionDuration,
+        focusAreas: focusAreas.isEmpty ? null : focusAreas,
       ),
     );
+
+    context.read<PlanBloc>().add(SubmitWorkoutPreferencesEvent(request));
   }
 
   void _onContinuePressed() {
     if (currentPage < 7) {
       setState(() => currentPage++);
-    } else {}
+    } else {
+      _submitWorkoutPreferences();
+    }
   }
 
   Widget _getCurrentPage() {
@@ -259,12 +338,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: Colors.orange.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ]
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ]
               : null,
         ),
         child: Stack(
@@ -329,12 +408,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: Colors.orange.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ]
               : null,
         ),
         child: Column(
@@ -496,12 +575,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: Colors.orange.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ]
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ]
               : null,
         ),
         child: Row(
@@ -638,7 +717,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
               height: 40,
               decoration: BoxDecoration(
                 color:
-                    isSelected ? Colors.white.withOpacity(0.3) : Colors.white,
+                isSelected ? Colors.white.withOpacity(0.3) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSelected ? Colors.white54 : Colors.transparent,
@@ -754,12 +833,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: Colors.orange.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ]
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ]
               : null,
         ),
         child: Stack(
@@ -869,12 +948,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: Colors.orange.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ]
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ]
               : null,
         ),
         child: Row(
@@ -950,7 +1029,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
                 decoration: BoxDecoration(
                   color: AppConstants.primaryColor,
                   borderRadius: BorderRadius.circular(24),
@@ -1004,7 +1083,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         inactiveTrackColor: Colors.grey[300],
                         thumbColor: AppConstants.primaryColor,
                         overlayColor:
-                            AppConstants.primaryColor.withOpacity(0.2),
+                        AppConstants.primaryColor.withOpacity(0.2),
                         thumbShape: const RoundSliderThumbShape(
                           enabledThumbRadius: 14,
                         ),
@@ -1090,12 +1169,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: Colors.orange.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  )
-                ]
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            )
+          ]
               : null,
         ),
         child: AnimatedDefaultTextStyle(
@@ -1234,7 +1313,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                               }
                             },
                             icon:
-                                const Icon(Icons.add_circle_outline, size: 28),
+                            const Icon(Icons.add_circle_outline, size: 28),
                             color: AppConstants.primaryColor,
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
@@ -1287,19 +1366,19 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: Colors.orange.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ]
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ]
               : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  )
-                ],
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

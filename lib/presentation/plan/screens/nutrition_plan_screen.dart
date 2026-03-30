@@ -8,6 +8,7 @@ import '../../../data/models/plan/nutrition_plan_generation_request.dart';
 import '../../../data/models/plan/nutrition_plan_model.dart';
 import '../../assessment/widgets/tag_input_widget.dart';
 import '../manager/plan_bloc.dart';
+import 'nutrition_plan_result_screen.dart';
 
 class NutritionPlanScreen extends StatefulWidget {
   const NutritionPlanScreen({Key? key,required this.navigationStatus}) : super(key: key);
@@ -66,31 +67,32 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: BlocListener<PlanBloc, PlanState>(
+      body:// Replace your existing BlocListener in NutritionPlanScreen with this:
+
+      BlocListener<PlanBloc, PlanState>(
         listener: (context, state) {
           if (state is NutritionPreferencesSuccess) {
-            // Show success message
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Nutrition preferences saved successfully!'),
+                content: Text('Nutrition plan generated successfully!'),
                 backgroundColor: Colors.green,
               ),
             );
 
-            // Navigate to workout plan if needed
             if (widget.navigationStatus == "both") {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => WorkoutPlanScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => WorkoutPlanScreen()),
               );
             } else {
-              // Navigate back or to home
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => NutritionPlanResultScreen(plan: state.plan,navigationStatus: widget.navigationStatus,),
+                ),
+              );
             }
           } else if (state is PlanError) {
-            // Show error message
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),

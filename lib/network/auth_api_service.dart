@@ -11,34 +11,34 @@ abstract class AuthApiService {
   factory AuthApiService(Dio dio) = _AuthApiService;
 
   /// POST /auth/signup
-  @POST("/auth/signup")
+  @POST("/v1/auth/signup")
   Future<UserModel> signUp(@Body() Map<String, dynamic> body);
 
   /// POST /auth/login
-  @POST("/auth/login")
+  @POST("/v1/auth/login")
   Future<AuthResponseModel> signIn(@Body() Map<String, dynamic> body);
 
   /// GET /auth/verify-email?email={email}
-  @GET("/auth/verify-email")
+  @GET("/v1/auth/verify-email")
   Future<void> verifyEmail(@Query("email") String email);
 
-  @GET("/auth/me")
+  @GET("/v1/auth/me")
   Future<UserModel> getMe(@Header("Authorization") String token);
 
-  @POST("/auth/forgot-password")
+  @POST("/v1/auth/forgot-password")
   Future<void> forgotPassword(@Body() Map<String, dynamic> body);
 
   /// POST /auth/verify-otp
   /// Verifies OTP for password reset
-  @POST("/auth/verify-otp")
+  @POST("/v1/auth/verify-otp")
   Future<void> verifyOtp(@Body() Map<String, dynamic> body);
 
   /// POST /auth/reset-password
   /// Resets the password after OTP verification
-  @POST("/auth/reset-password")
+  @POST("/v1/auth/reset-password")
   Future<void> resetPassword(@Body() Map<String, dynamic> body);
 
-  @GET('/auth/otp-status/{email}')
+  @GET('/v1/auth/otp-status/{email}')
   Future<Map<String, dynamic>> getOtpStatus(
       @Path("email") String email,
       );

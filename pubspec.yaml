@@ -38,13 +38,13 @@ dependencies:
   get: ^4.7.2
   bloc: ^9.1.0
   shared_preferences: ^2.5.3
-  retrofit: ^4.0.1
   dio: ^5.3.3
   json_annotation: ^4.9.0
   get_it: ^7.7.0
   flutter_bloc: ^9.1.1
   flutter_unit_ruler: ^1.0.1
   equatable: ^2.0.7
+  retrofit: 4.1.0
 
 dev_dependencies:
   flutter_test:
@@ -57,9 +57,9 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.3.11
-  retrofit_generator: ^9.1.2
   build_runner: ^2.4.8
   json_serializable: ^6.7.1
+  retrofit_generator: 8.1.0
 
 flutter_native_splash:
     color: "#F97316"
