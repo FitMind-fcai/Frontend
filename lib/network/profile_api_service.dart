@@ -29,4 +29,7 @@ abstract class ProfileApiService {
   Future<void> createProfile(
       @Body() ProfileBody body,
       );
+  @GET("/v1/profiles/me")
+  Future<ProfileBody> getMyProfile();
+
 }

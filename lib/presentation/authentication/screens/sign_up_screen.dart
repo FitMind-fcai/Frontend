@@ -1,3 +1,4 @@
+import 'package:fitmind/presentation/authentication/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -130,7 +131,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthSignUpSuccess) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => SignInScreen()),
+          );
+        }
+        if (state is AuthFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+  child: Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
@@ -379,6 +394,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ],
         ),
       ),
-    );
+    ),
+);
   }
 }

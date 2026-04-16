@@ -10,3 +10,9 @@ class CreateProfileUseCase {
     return repository.createProfile(profile);
   }
 }
+class GetMyProfileUseCase {
+  final ProfileRepository repository;
+  GetMyProfileUseCase(this.repository);
+
+  Future<ProfileBody?> call() => repository.getMyProfile(); // no token needed
+}

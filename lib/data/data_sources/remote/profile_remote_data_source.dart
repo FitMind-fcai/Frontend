@@ -5,6 +5,7 @@ import '../../models/profile_body.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<void> createProfile(ProfileBody body);
+  Future<ProfileBody?> getMyProfile(); // add this
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -29,7 +30,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
             return data['message'].toString();
           }
 
-          // fallback: collect all values
           return data.values.join(', ');
         }
       } catch (_) {}
@@ -45,7 +45,19 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     try {
       await apiService.createProfile(body);
     } on DioException catch (e) {
-      throw Exception(_extractError(e)); // ✅ clean error message
+      throw Exception(_extractError(e));
+    } catch (e) {
+      throw Exception("Unexpected error occurred");
+    }
+  }
+
+  @override
+  Future<ProfileBody?> getMyProfile() async {
+    try {
+      return await apiService.getMyProfile();
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null; // no profile → null
+      throw Exception(_extractError(e));
     } catch (e) {
       throw Exception("Unexpected error occurred");
     }

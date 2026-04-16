@@ -4,6 +4,7 @@ import 'package:fitmind/presentation/plan/manager/plan_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import '../data/data_sources/local/auth_local_data_source.dart';
+import '../data/data_sources/local/profile_local_data_source.dart';
 import '../data/data_sources/remote/auth_remote_data_source.dart';
 import '../data/data_sources/remote/profile_remote_data_source.dart';
 import '../data/repositories/auth_repository_impl.dart';
@@ -39,6 +40,9 @@ Future<void> init() async {
   sl.registerLazySingleton<ProfileRemoteDataSource>(
           () => ProfileRemoteDataSourceImpl(sl()));
 
+  sl.registerLazySingleton<ProfileLocalDataSource>(
+          () => ProfileLocalDataSourceImpl());
+
   sl.registerLazySingleton<PlanRemoteDataSource>(
           () => PlanRemoteDataSourceImpl(sl()));
 
@@ -65,13 +69,14 @@ Future<void> init() async {
       .registerLazySingleton(() => CreateProfileUseCase(sl()));
   sl.registerLazySingleton(()=> CreateNutritionPreferencesUseCase(sl()));
   sl.registerLazySingleton(()=> CreateWorkoutPreferencesUseCase(sl()));
+  sl.registerLazySingleton(() => GetMyProfileUseCase(sl()));
 
   sl.registerFactory<AuthBloc>(
         () => AuthBloc(
       signInUseCase: sl(),
       signUpUseCase: sl(),
       sendEmailVerificationUseCase: sl(), localDataSource: sl(), checkAuthStatusUseCase: sl(),deleteUserUseCase: sl(),forgotPasswordUseCase: sl(),verifyOtpUseCase: sl(),resetPasswordUseCase: sl(),
-      getOtpStatusUseCase: sl(),
+      getOtpStatusUseCase: sl(),getMyProfileUseCase: sl(),profileLocalDataSource: sl(),
 
     ),
   );

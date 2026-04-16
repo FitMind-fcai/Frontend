@@ -11,8 +11,10 @@
         "cupertino_icons",
         "dio",
         "equatable",
+        "fl_chart",
         "flutter",
         "flutter_bloc",
+        "flutter_radar_chart",
         "flutter_svg",
         "flutter_unit_ruler",
         "get",
@@ -144,6 +146,21 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_radar_chart",
+      "version": "0.2.1",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "fl_chart",
+      "version": "0.68.0",
+      "dependencies": [
+        "equatable",
+        "flutter"
       ]
     },
     {

@@ -22,16 +22,17 @@ class NutritionPlanResult {
   });
 
   factory NutritionPlanResult.fromJson(Map<String, dynamic> json) {
+    final draft = json['draft_plan'] as Map<String, dynamic>;
     return NutritionPlanResult(
-      planName: json['plan_name'] ?? '',
-      description: json['description'] ?? '',
-      startDate: json['start_date'] ?? '',
-      endDate: json['end_date'] ?? '',
-      dailyCalories: (json['daily_calories'] ?? 0).toInt(),
-      dailyProteinG: (json['daily_protein_g'] ?? 0).toInt(),
-      dailyCarbsG: (json['daily_carbs_g'] ?? 0).toInt(),
-      dailyFatsG: (json['daily_fats_g'] ?? 0).toInt(),
-      days: (json['days'] as List<dynamic>? ?? [])
+      planName: draft['plan_name'] ?? '',
+      description: draft['description'] ?? '',
+      startDate: draft['start_date'] ?? '',
+      endDate: draft['end_date'] ?? '',
+      dailyCalories: (draft['daily_calories'] ?? 0).toInt(),
+      dailyProteinG: (draft['daily_protein_g'] ?? 0).toInt(),
+      dailyCarbsG: (draft['daily_carbs_g'] ?? 0).toInt(),
+      dailyFatsG: (draft['daily_fats_g'] ?? 0).toInt(),
+      days: (draft['days'] as List<dynamic>? ?? [])
           .map((d) => DayPlan.fromJson(d as Map<String, dynamic>))
           .toList(),
     );

@@ -46,6 +46,60 @@ class ProfileBody {
       "medications": medications.join(','),
     };
   }
+  factory ProfileBody.fromJson(Map<String, dynamic> json) {
+    return ProfileBody(
+      userId: json['user_id'],
+      age: json['age'],
+      height: (json['height'] as num).toDouble(),
+      weight: (json['weight'] as num).toDouble(),
+      gender: Gender.values.firstWhere(
+            (e) => e.name == json['gender'],
+      ),
+      fitnessGoal: _fitnessGoalFromString(json['fitness_goal']),
+      activityLevel: ActivityLevel.values.firstWhere(
+            (e) => e.name == json['activity_level'],
+      ),
+      // Backend stores as comma-separated strings, split them back to lists
+      dietaryPreferences: (json['dietary_preference'] as String?)
+          ?.split(',')
+          .where((s) => s.isNotEmpty)
+          .toList() ??
+          [],
+      medicalConditions: (json['medical_conditions'] as String?)
+          ?.split(',')
+          .where((s) => s.isNotEmpty)
+          .toList() ??
+          [],
+      allergies: (json['allergies'] as String?)
+          ?.split(',')
+          .where((s) => s.isNotEmpty)
+          .toList() ??
+          [],
+      injuries: (json['injuries'] as String?)
+          ?.split(',')
+          .where((s) => s.isNotEmpty)
+          .toList() ??
+          [],
+      medications: (json['medications'] as String?)
+          ?.split(',')
+          .where((s) => s.isNotEmpty)
+          .toList() ??
+          [],
+    );
+  }
+
+  static FitnessGoal _fitnessGoalFromString(String value) {
+    switch (value) {
+      case 'Lose Weight':
+        return FitnessGoal.LoseWeight;
+      case 'Maintain Weight':
+        return FitnessGoal.MaintainWeight;
+      case 'Build Muscle':
+        return FitnessGoal.BuildMuscle;
+      default:
+        return FitnessGoal.LoseWeight;
+    }
+  }
 }
 
 enum Gender { Male, Female }

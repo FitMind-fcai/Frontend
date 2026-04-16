@@ -28,7 +28,7 @@ class AppConstants {
   static const SizedBox horizontalSpaceM = SizedBox(width: 16);
   static const SizedBox horizontalSpaceL = SizedBox(width: 24);
   static const SizedBox horizontalSpaceXL = SizedBox(width: 32);
-  static const SizedBox horizontalSpaceXXL = SizedBox(height: 40);
+  static const SizedBox horizontalSpaceXXL = SizedBox(width:  40);
 
 
   // Font Families

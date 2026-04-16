@@ -1,8 +1,18 @@
+import 'package:fitmind/presentation/home/screens/calorie_home_screen.dart';
+import 'package:fitmind/presentation/home/screens/score_home_screen.dart';
+import 'package:fitmind/presentation/home/screens/steps_home_screen.dart';
+import 'package:fitmind/presentation/home/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../authentication/manager/auth_bloc.dart';
 import '../../authentication/widgets/common_button.dart';
 import '../../../core/constants/app_constants.dart';
+import '../widgets/bnb_custom_painter.dart';
+import '../widgets/fitness_metric_card.dart';
+import '../widgets/home_bottom_nav_bar.dart';
+import '../widgets/home_fb.dart';
+import '../widgets/meal_card.dart';
+import '../widgets/workout_highlight_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,186 +33,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery
-        .of(context)
-        .size;
-
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.grey[100],
       body: _pages[_selectedIndex],
-      bottomNavigationBar: Container(
-        width: size.width,
-        height: 95,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            CustomPaint(
-              size: Size(size.width, 95),
-              painter: _BNBCustomPainter(),
-            ),
-
-            // ── FAB ───────────────────────────────────────
-            Positioned(
-              top: -24,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Container(
-                  width: 65,
-                  height: 65,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppConstants.primaryColor.withOpacity(0.5),
-                        blurRadius: 15,
-
-                        spreadRadius: 2,
-                        offset: const Offset(0, 3),
-                      ),
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: FloatingActionButton(
-                    backgroundColor: AppConstants.primaryColor,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          20),
-                    ),
-                    onPressed: () {
-                      // Your navigation logic
-                    },
-                    child: const Icon(Icons.add, color: Colors.white, size: 35),
-                  ),
-                ),
-              ),
-            ),
-
-            SizedBox(
-              width: size.width,
-              height: 95, //
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildNavItem(icon: Icons.home_rounded, index: 0),
-                  _buildNavItem(icon: Icons.fitness_center, index: 1),
-                  SizedBox(width: size.width * 0.20),
-                  // 👈 SizedBox instead of Container
-                  _buildNavItem(icon: Icons.restaurant, index: 2),
-                  _buildNavItem(icon: Icons.person, index: 3),
-                ],
-              ),
-            ),
-          ],
-        ),
+      bottomNavigationBar: HomeBottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemSelected: (index) => setState(() => _selectedIndex = index),
       ),
     );
   }
-
-  Widget _buildNavItem({required IconData icon, required int index}) {
-    final isSelected = _selectedIndex == index;
-
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => setState(() => _selectedIndex = index),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            padding: EdgeInsets.all(isSelected ? 12 : 8),
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.grey[200] : Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(
-              icon,
-              size: isSelected ? 28 : 24,
-              color: isSelected ? Colors.black : Colors.grey[400],
-            ),
-          ),
-          const SizedBox(height: 4),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 350),
-            curve: Curves.easeOut,
-            width: isSelected ? 20 : 0,
-            height: 3.5,
-            constraints: const BoxConstraints(minWidth: 0),
-            decoration: BoxDecoration(
-              color: isSelected ? AppConstants.primaryColor : Colors
-                  .transparent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BNBCustomPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    Path path = Path();
-    double width = size.width;
-    double height = size.height;
-    double center = width / 2;
-    double cornerRadius = 30;
-
-    double holeWidth = 100;
-    double holeDepth = 48;
-
-    // Top-left rounded corner
-    path.moveTo(0, cornerRadius);
-    path.quadraticBezierTo(0, 0, cornerRadius, 0);
-
-    // Line to notch start
-    path.lineTo(center - holeWidth, 0);
-
-    // Left curve into notch
-    path.cubicTo(
-      center - (holeWidth * 0.5), 0,
-      center - (holeWidth * 0.65), holeDepth,
-      center, holeDepth,
-    );
-
-    // Right curve out of notch
-    path.cubicTo(
-      center + (holeWidth * 0.65), holeDepth,
-      center + (holeWidth * 0.5), 0,
-      center + holeWidth, 0,
-    );
-
-    // Top-right rounded corner
-    path.lineTo(width - cornerRadius, 0);
-    path.quadraticBezierTo(width, 0, width, cornerRadius);
-
-    // Right side, bottom, left side
-    path.lineTo(width, height);
-    path.lineTo(0, height);
-    path.lineTo(0, cornerRadius);
-
-    path.close();
-
-    canvas.drawShadow(path, Colors.black.withOpacity(0.3), 8.0, false);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 // ── Home page content ─────────────────────────────────────────────────────────
@@ -211,28 +51,137 @@ class _HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Home',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w900,
-                fontFamily: AppConstants.fontRegular,
-              ),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const HomeAppBar(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppConstants.verticalSpaceM,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Fitness Metrics',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          fontFamily: AppConstants.fontRegular),
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text('See All',
+                          style: TextStyle(
+                              color: AppConstants.primaryColor,
+                              fontFamily: AppConstants.fontRegular)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Horizontal scrolling metric cards
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  clipBehavior: Clip.none,
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) =>ScorePage() ),
+                        ),
+
+                        child: const MetricCard(
+                          title: 'Score',
+                          value: '88%',
+                          color: AppConstants.primaryColor,
+                          icon: Icons.add,
+                          graphImage:
+                              AssetImage('assets/images/bar_chart_orange.png'),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const StepsTakenPage()),
+                        ),
+
+                        child: const MetricCard(
+                          title: 'Steps taken',
+                          value: '12,540',
+                          color: Colors.blue,
+                          icon: Icons.directions_run,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CalorieStatsPage()),
+                        ),
+                        child: const MetricCard(
+                          title: 'Calories',
+                          value: '1,240',
+                          color: Colors.grey,
+                          icon: Icons.local_fire_department,
+                          fallbackIcon: Icons.local_fire_department_outlined,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                AppConstants.verticalSpaceL,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Workouts',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: AppConstants.fontRegular,
+                            fontWeight: FontWeight.bold)),
+                    IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.more_vert)),
+                  ],
+                ),
+                const WorkoutHighlightCard(),
+
+                const SizedBox(height: 25),
+
+// --- Diet & Nutrition Section ---
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Diet & Nutrition',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    TextButton(
+                        onPressed: () {},
+                        child: const Text('See All',
+                            style: TextStyle(color: Colors.orange))),
+                  ],
+                ),
+                const SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  clipBehavior: Clip.none,
+                  child: Row(
+                    children: [
+                      MealCard(
+                          title: 'Salad & Egg', kcal: '548kcal', time: '20min'),
+                      MealCard(
+                          title: 'Salad & Egg', kcal: '548kcal', time: '20min'),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            CommonButton(
-              title: 'Logout',
-              onPressed: () {
-                context.read<AuthBloc>().add(DeleteUserEvent());
-              },
-            ),
-          ],
-        ),
+          ),
+          AppConstants.verticalSpaceXXL,
+          AppConstants.verticalSpaceXXL,
+          AppConstants.verticalSpaceXXL,
+          AppConstants.verticalSpaceXXL,
+        ],
       ),
     );
   }

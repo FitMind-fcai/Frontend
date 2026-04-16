@@ -214,7 +214,7 @@ class NutritionPlanResultScreen extends StatelessWidget {
                   : CommonButton(
                 title: "Go to Home",
                 onPressed: () {
-                  // your existing home navigation
+
                 },
               ),
             ],

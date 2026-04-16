@@ -1,8 +1,11 @@
 import 'package:bloc/bloc.dart';
 
 import '../../../data/data_sources/local/auth_local_data_source.dart';
+import '../../../data/data_sources/local/profile_local_data_source.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/use_cases/auth_use_cases.dart';
+import '../../../domain/use_cases/profile_use_cases.dart';
+import '../../../network/profile_api_service.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -18,6 +21,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final VerifyOtpUseCase verifyOtpUseCase;
   final ResetPasswordUseCase resetPasswordUseCase;
   final GetOtpStatusUseCase getOtpStatusUseCase;
+  final ProfileLocalDataSource profileLocalDataSource;
+  final GetMyProfileUseCase getMyProfileUseCase;
 
 // ✅ add local storage
 
@@ -32,6 +37,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.verifyOtpUseCase,
     required this.resetPasswordUseCase,
     required this.getOtpStatusUseCase,
+    required this.profileLocalDataSource,
+    required this.getMyProfileUseCase,
   }) : super(AuthInitial()) {
     on<SignInEvent>(_onSignIn);
     on<SignUpEvent>(_onSignUp);
@@ -46,25 +53,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onSignIn(SignInEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
-
-    print("➡️ Starting sign-in request...");
-    print("📧 Email: ${event.email}, 🔑 Password: ${event.password}");
-
     try {
       final authResponse = await signInUseCase(event.email, event.password);
-
-      print("✅ SUCCESS RESPONSE RAW: $authResponse");
-      print("✅ SUCCESS RESPONSE JSON: ${authResponse.toJson()}");
 
       await localDataSource.cacheUser(authResponse.user);
       await localDataSource.cacheToken(authResponse.token);
 
-      print("💾 Saved user & token locally");
+      final profile = await getMyProfileUseCase();
 
-      emit(AuthSuccess(authResponse.user));
-    } catch (e, stack) {
-      print("❌ ERROR: $e");
-      print("📌 STACK: $stack");
+      if (profile != null) {
+        await profileLocalDataSource.cacheProfile(profile);
+        emit(AuthSuccess(authResponse.user));
+      } else {
+        emit(AuthSuccessNoProfile(authResponse.user));
+      }
+
+    } catch (e) {
       emit(AuthFailure(e.toString()));
     }
   }
@@ -73,7 +77,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final user = await signUpUseCase(event.user);
-      emit(AuthSuccess(user));
+      emit(AuthSignUpSuccess());
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }

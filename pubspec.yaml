@@ -45,6 +45,9 @@ dependencies:
   flutter_unit_ruler: ^1.0.1
   equatable: ^2.0.7
   retrofit: 4.1.0
+  fl_chart: ^0.68.0
+  flutter_radar_chart: ^0.2.1
+
 
 dev_dependencies:
   flutter_test:
@@ -117,6 +120,19 @@ flutter:
     - assets/images/diet.jpg
     - assets/images/allergies.jpg
     - assets/images/gym workout emblem.png
+    - assets/images/home_back.jpg
+    - assets/images/score.jpg
+    - assets/images/heatmap.jpg
+    - assets/images/steps.png
+    - assets/images/bar_chart_orange.png
+    - assets/images/burned calories.png
+    - assets/images/heat.png
+    - assets/images/workout.jpg
+    - assets/images/workout_card.png
+    - assets/images/meal_placeholder.jpg
+    - assets/images/meal_image.png
+    - assets/images/Calorie_burnt.png
+    - assets/images/Monotone chevron left.svg
 
 
 
