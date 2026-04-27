@@ -2,6 +2,7 @@ import 'package:fitmind/presentation/home/screens/calorie_home_screen.dart';
 import 'package:fitmind/presentation/home/screens/score_home_screen.dart';
 import 'package:fitmind/presentation/home/screens/steps_home_screen.dart';
 import 'package:fitmind/presentation/home/widgets/home_app_bar.dart';
+import 'package:fitmind/presentation/profile/screens/profile_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../authentication/manager/auth_bloc.dart';
@@ -28,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const _HomePage(),
     const Center(child: Text('Workout')),
     const Center(child: Text('Nutrition')),
-    const Center(child: Text('Profile')),
+    ProfileScreen(),
   ];
 
   @override
