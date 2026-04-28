@@ -1,9 +1,11 @@
 import 'package:fitmind/core/constants/app_constants.dart';
 import 'package:fitmind/presentation/profile/screens/about_us_screen.dart';
+import 'package:fitmind/presentation/profile/screens/feedback_screen.dart';
 import 'package:fitmind/presentation/profile/screens/help_center_screen.dart';
 import 'package:fitmind/presentation/profile/screens/notifications_settings_screen.dart';
 import 'package:fitmind/presentation/profile/screens/personal_information_screen.dart'
     hide AppConstants;
+import 'package:fitmind/presentation/profile/screens/privacy_policy_screen.dart';
 import 'package:flutter/material.dart';
 
 class AccountSettingsPage extends StatelessWidget {
@@ -73,7 +75,12 @@ class AccountSettingsPage extends StatelessWidget {
                     _SettingsTile(
                       icon: Icons.shield_outlined,
                       label: 'Privacy Policy',
-                      onTap: () {},
+                      onTap: () =>
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => PrivacyPolicyPage(),
+                            ),
+                          ),
                       isLast: true,
                     ),
                   ],
@@ -108,7 +115,12 @@ class AccountSettingsPage extends StatelessWidget {
                     _SettingsTile(
                       icon: Icons.feedback_outlined,
                       label: 'Submit Feedback',
-                      onTap: () {},
+                      onTap: () =>
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => FeedbackPage(),
+                            ),
+                          ),
                       isLast: true,
                     ),
                   ],
