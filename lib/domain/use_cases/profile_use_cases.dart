@@ -1,4 +1,5 @@
 import '../../data/models/profile_body.dart';
+import '../../network/profile_api_service.dart';
 import '../repositories/profile_repository.dart';
 
 class CreateProfileUseCase {
@@ -15,4 +16,12 @@ class GetMyProfileUseCase {
   GetMyProfileUseCase(this.repository);
 
   Future<ProfileBody?> call() => repository.getMyProfile(); // no token needed
+}
+
+class UpdateProfileUseCase {
+  final ProfileRepository repository;
+  UpdateProfileUseCase(this.repository);
+
+  Future<ProfileBody> call(ProfileBody profile) =>
+      repository.updateMyProfile(profile);
 }

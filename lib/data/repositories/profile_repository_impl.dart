@@ -15,4 +15,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<ProfileBody?> getMyProfile() {
     return remote.getMyProfile();
   }
+
+  @override
+  Future<ProfileBody> updateMyProfile(ProfileBody profile) => // NEW
+  remote.updateMyProfile(profile);
 }

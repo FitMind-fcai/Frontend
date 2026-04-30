@@ -70,6 +70,7 @@ Future<void> init() async {
   sl.registerLazySingleton(()=> CreateNutritionPreferencesUseCase(sl()));
   sl.registerLazySingleton(()=> CreateWorkoutPreferencesUseCase(sl()));
   sl.registerLazySingleton(() => GetMyProfileUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
 
   sl.registerFactory<AuthBloc>(
         () => AuthBloc(
@@ -82,7 +83,9 @@ Future<void> init() async {
   );
   sl.registerFactory<ProfileBloc>(
         () => ProfileBloc(
-      sl(),
+      createProfile: sl(),
+      getProfile: sl(),
+      updateProfile: sl(),
     ),
   );
   sl.registerFactory<PlanBloc>(

@@ -2,6 +2,7 @@ import 'package:fitmind/presentation/authentication/widgets/common_button.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/plan/workout_plan_result.dart';
+import '../../home/screens/home_screen.dart';
 
 class WorkoutPlanResultScreen extends StatelessWidget {
   final WorkoutPlanResult plan;
@@ -82,8 +83,8 @@ class WorkoutPlanResultScreen extends StatelessWidget {
               // ── Session Duration card ──────────────────────────────────
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24, vertical: 28),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
                 decoration: BoxDecoration(
                   color: AppConstants.primaryColor,
                   borderRadius: BorderRadius.circular(20),
@@ -184,7 +185,16 @@ class WorkoutPlanResultScreen extends StatelessWidget {
               const SizedBox(height: 36),
 
               // ── Go to Home button ──────────────────────────────────────
-              CommonButton(title: "Go to Home", onPressed: (){}),
+              CommonButton(
+                title: "Go to Home",
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => HomeScreen()),
+                    (route) => false,
+                  );
+                },
+              ),
 
               const SizedBox(height: 8),
             ],

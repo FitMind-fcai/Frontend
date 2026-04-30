@@ -39,13 +39,17 @@ class PlanRemoteDataSourceImpl implements PlanRemoteDataSource {
   Future<NutritionPlanResult> createNutritionPreferences(
       NutritionPlanGenerationRequest body) async {
     try {
-      return await apiService.createNutritionPreferences(body);
+      final result = await apiService.createNutritionPreferences(body);
+      print('=== NUTRITION RESULT ===');
+      print('Calories: ${result.dailyCalories}');
+      print('Protein: ${result.dailyProteinG}');
+      print('Carbs: ${result.dailyCarbsG}');
+      print('Fats: ${result.dailyFatsG}');
+      print('Plan name: ${result.planName}');
+      return result;
     } on DioException catch (e) {
+      print('DioException data: ${e.response?.data}');
       throw Exception(_extractError(e));
-    } on TypeError catch (e) {
-      // Retrofit failed to deserialize — backend returned error body, not NutritionPlanResult
-      throw Exception(
-          "Server returned an unexpected response. Please try again.");
     } catch (e, s) {
       print('RAW ERROR: $e');
       print('STACK: $s');

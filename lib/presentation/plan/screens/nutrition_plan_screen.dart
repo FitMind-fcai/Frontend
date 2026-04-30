@@ -65,111 +65,129 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body:// Replace your existing BlocListener in NutritionPlanScreen with this:
+    return BlocConsumer<PlanBloc, PlanState>(
+      listener: (context, state) {
+        if (state is NutritionPreferencesSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Nutrition plan generated successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
 
-      BlocListener<PlanBloc, PlanState>(
-        listener: (context, state) {
-          if (state is NutritionPreferencesSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Nutrition plan generated successfully!'),
-                backgroundColor: Colors.green,
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => NutritionPlanResultScreen(
+                plan: state.plan,
+                navigationStatus: widget.navigationStatus,
               ),
-            );
+            ),
+          );
+        }else if (state is PlanError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Stack(
+          children: [
+            Scaffold(
+              backgroundColor: Colors.white,
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (currentPage > 0) {
+                                setState(() => currentPage--);
+                              } else {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: const Icon(Icons.arrow_back_ios, size: 20),
+                          ),
+                          const SizedBox(width: 10),
+                          const Text(
+                            'Nutrition Plan',
+                            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE3F2FD),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${currentPage + 1} of 6',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF2563EB),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
 
-            if (widget.navigationStatus == "both") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => WorkoutPlanScreen()),
-              );
-            } else {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => NutritionPlanResultScreen(plan: state.plan,navigationStatus: widget.navigationStatus,),
+                      Expanded(child: _getCurrentPage()),
+
+                      const SizedBox(height: 20),
+                      CommonButton(
+                        title: currentPage < 5 ? 'Continue' : 'Submit',
+                        onPressed: state is PlanLoading ? null : _onContinuePressed,
+                      ),
+                    ],
+                  ),
                 ),
-              );
-            }
-          } else if (state is PlanError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
               ),
-            );
-          }
-        },
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        if (currentPage > 0) {
-                          setState(() {
-                            currentPage--;
-                          });
-                        } else {
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: const Icon(Icons.arrow_back_ios, size: 20),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      'Nutrition Plan',
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE3F2FD),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${currentPage + 1} of 6',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF2563EB),
+            ),
+
+            // Loading overlay
+            if (state is PlanLoading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RotatedBox(
+                        quarterTurns: -1,
+                        child: SizedBox(
+                          width: 120,
+                          child: LinearProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                AppConstants.primaryColor),
+                            backgroundColor: Colors.white24,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 30),
+                      const Text(
+                        "Creating your plan...",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: AppConstants.fontRegular,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 40),
-
-                // Content based on current page
-                Expanded(child: _getCurrentPage()),
-
-                // Continue Button
-                const SizedBox(height: 20),
-                BlocBuilder<PlanBloc, PlanState>(
-                  builder: (context, state) {
-                    final isLoading = state is PlanLoading;
-
-                    return CommonButton(
-                      title: currentPage < 5 ? 'Continue' : 'Submit',
-                      onPressed: isLoading ? null : _onContinuePressed,
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
+          ],
+        );
+      },
     );
   }
 

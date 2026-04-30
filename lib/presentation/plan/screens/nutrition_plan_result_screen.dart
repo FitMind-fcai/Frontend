@@ -3,6 +3,7 @@ import 'package:fitmind/presentation/plan/screens/workout_plan_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/plan/nutrition_plan_result.dart';
+import '../../home/screens/home_screen.dart';
 
 class NutritionPlanResultScreen extends StatelessWidget {
   final NutritionPlanResult plan;
@@ -214,7 +215,11 @@ class NutritionPlanResultScreen extends StatelessWidget {
                   : CommonButton(
                 title: "Go to Home",
                 onPressed: () {
-
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => HomeScreen()),
+                        (route) => false,
+                  );
                 },
               ),
             ],

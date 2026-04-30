@@ -10,9 +10,9 @@ part of 'auth_api_service.dart';
 
 class _AuthApiService implements AuthApiService {
   _AuthApiService(
-    this._dio, {
-    this.baseUrl,
-  }) {
+      this._dio, {
+        this.baseUrl,
+      }) {
     baseUrl ??= 'http://10.0.2.2:8000';
   }
 
@@ -33,17 +33,17 @@ class _AuthApiService implements AuthApiService {
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              '/v1/auth/signup',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
+        .compose(
+      _dio.options,
+      '/v1/auth/signup',
+      queryParameters: queryParameters,
+      data: _data,
+    )
+        .copyWith(
+        baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
     final value = UserModel.fromJson(_result.data!);
     return value;
   }
@@ -61,17 +61,17 @@ class _AuthApiService implements AuthApiService {
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              '/v1/auth/login',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
+        .compose(
+      _dio.options,
+      '/v1/auth/login',
+      queryParameters: queryParameters,
+      data: _data,
+    )
+        .copyWith(
+        baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
     final value = AuthResponseModel.fromJson(_result.data!);
     return value;
   }
@@ -88,13 +88,13 @@ class _AuthApiService implements AuthApiService {
       extra: _extra,
     )
         .compose(
-          _dio.options,
-          '/v1/auth/verify-email',
-          queryParameters: queryParameters,
-          data: _data,
-        )
+      _dio.options,
+      '/v1/auth/verify-email',
+      queryParameters: queryParameters,
+      data: _data,
+    )
         .copyWith(
-            baseUrl: _combineBaseUrls(
+        baseUrl: _combineBaseUrls(
           _dio.options.baseUrl,
           baseUrl,
         ))));
@@ -113,17 +113,17 @@ class _AuthApiService implements AuthApiService {
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              '/v1/auth/me',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
+        .compose(
+      _dio.options,
+      '/v1/auth/me',
+      queryParameters: queryParameters,
+      data: _data,
+    )
+        .copyWith(
+        baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
     final value = UserModel.fromJson(_result.data!);
     return value;
   }
@@ -141,13 +141,13 @@ class _AuthApiService implements AuthApiService {
       extra: _extra,
     )
         .compose(
-          _dio.options,
-          '/v1/auth/forgot-password',
-          queryParameters: queryParameters,
-          data: _data,
-        )
+      _dio.options,
+      '/v1/auth/forgot-password',
+      queryParameters: queryParameters,
+      data: _data,
+    )
         .copyWith(
-            baseUrl: _combineBaseUrls(
+        baseUrl: _combineBaseUrls(
           _dio.options.baseUrl,
           baseUrl,
         ))));
@@ -166,13 +166,13 @@ class _AuthApiService implements AuthApiService {
       extra: _extra,
     )
         .compose(
-          _dio.options,
-          '/v1/auth/verify-otp',
-          queryParameters: queryParameters,
-          data: _data,
-        )
+      _dio.options,
+      '/v1/auth/verify-otp',
+      queryParameters: queryParameters,
+      data: _data,
+    )
         .copyWith(
-            baseUrl: _combineBaseUrls(
+        baseUrl: _combineBaseUrls(
           _dio.options.baseUrl,
           baseUrl,
         ))));
@@ -191,13 +191,13 @@ class _AuthApiService implements AuthApiService {
       extra: _extra,
     )
         .compose(
-          _dio.options,
-          '/v1/auth/reset-password',
-          queryParameters: queryParameters,
-          data: _data,
-        )
+      _dio.options,
+      '/v1/auth/reset-password',
+      queryParameters: queryParameters,
+      data: _data,
+    )
         .copyWith(
-            baseUrl: _combineBaseUrls(
+        baseUrl: _combineBaseUrls(
           _dio.options.baseUrl,
           baseUrl,
         ))));
@@ -211,18 +211,18 @@ class _AuthApiService implements AuthApiService {
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<Map<String, dynamic>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
+          method: 'GET',
+          headers: _headers,
+          extra: _extra,
+        )
             .compose(
-              _dio.options,
-              '/v1/auth/otp-status/${email}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
+          _dio.options,
+          '/v1/auth/otp-status/${email}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
             .copyWith(
-                baseUrl: _combineBaseUrls(
+            baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
             ))));
@@ -244,9 +244,9 @@ class _AuthApiService implements AuthApiService {
   }
 
   String _combineBaseUrls(
-    String dioBaseUrl,
-    String? baseUrl,
-  ) {
+      String dioBaseUrl,
+      String? baseUrl,
+      ) {
     if (baseUrl == null || baseUrl.trim().isEmpty) {
       return dioBaseUrl;
     }

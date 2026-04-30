@@ -13,3 +13,14 @@ class SubmitProfileEvent extends ProfileEvent {
   @override
   List<Object?> get props => [profile];
 }
+
+class LoadProfileEvent extends ProfileEvent {}
+
+class UpdateProfileEvent extends ProfileEvent {
+  final ProfileBody profile;
+
+  UpdateProfileEvent(this.profile);
+
+  @override
+  List<Object?> get props => [profile];
+}

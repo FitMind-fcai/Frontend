@@ -149,12 +149,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onDeleteUser(DeleteUserEvent event,
-      Emitter<AuthState> emit) async {
+  Future<void> _onDeleteUser(
+      DeleteUserEvent event,
+      Emitter<AuthState> emit,
+      ) async {
     emit(AuthLoading());
-
     try {
       await deleteUserUseCase();
+      emit(AuthInitial()); // ← add this
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }

@@ -32,4 +32,7 @@ abstract class ProfileApiService {
   @GET("/v1/profiles/me")
   Future<ProfileBody> getMyProfile();
 
+  @PUT("/v1/profiles/me")
+  Future<ProfileBody> updateMyProfile(@Body() ProfileBody body);
+
 }

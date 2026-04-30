@@ -2,6 +2,8 @@ import '../../data/models/profile_body.dart';
 
 abstract class ProfileRepository {
   Future<void> createProfile(ProfileBody profile);
-  Future<ProfileBody?> getMyProfile(); // add this
+  Future<ProfileBody?> getMyProfile();
+  Future<ProfileBody> updateMyProfile(ProfileBody profile); // NEW
+// add this
 
 }

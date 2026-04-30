@@ -7,92 +7,105 @@ import 'package:fitmind/presentation/profile/screens/personal_information_screen
     hide AppConstants;
 import 'package:fitmind/presentation/profile/screens/privacy_policy_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../authentication/manager/auth_bloc.dart';
+import '../../onboarding/screens/welcome_screen.dart';
 
 class AccountSettingsPage extends StatelessWidget {
   const AccountSettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Black banner app bar ───────────────────────────────────
-          _SettingsAppBar(onBack: () => Navigator.of(context).maybePop()),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthInitial) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => WelcomeScreen()),
+                (route) => false,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Black banner app bar ───────────────────────────────────
+            _SettingsAppBar(onBack: () => Navigator.of(context).maybePop()),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // ── Scrollable body ────────────────────────────────────
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: [
-                // ── General ──────────────────────────────────────
-                _SectionHeader(title: 'General'),
-                _SettingsGroup(
-                  children: [
-                    _SettingsTile(
-                      icon: Icons.notifications_outlined,
-                      label: 'Notifications',
-                      onTap: () =>
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => NotificationSettingsPage(),
+            // ── Scrollable body ────────────────────────────────────
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  // ── General ──────────────────────────────────────
+                  _SectionHeader(title: 'General'),
+                  _SettingsGroup(
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.notifications_outlined,
+                        label: 'Notifications',
+                        onTap: () =>
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => NotificationSettingsPage(),
+                              ),
                             ),
-                          ),
-                    ),
-                    _SettingsTile(
-                      icon: Icons.person_outline_rounded,
-                      label: 'Personal Information',
-                      onTap: () =>
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => PersonalInfoPage(),
+                      ),
+                      _SettingsTile(
+                        icon: Icons.person_outline_rounded,
+                        label: 'Personal Information',
+                        onTap: () =>
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => PersonalInfoPage(),
+                              ),
                             ),
-                          ),
-                    ),
-                    _SettingsTile(
-                      icon: Icons.dark_mode_outlined,
-                      label: 'Dark Mode',
-                      onTap: () {},
-                      trailing: _AppToggle(value: false, onChanged: (_) {}),
-                    ),
-                  ],
-                ),
+                      ),
+                      _SettingsTile(
+                        icon: Icons.dark_mode_outlined,
+                        label: 'Dark Mode',
+                        onTap: () {},
+                        trailing: _AppToggle(value: false, onChanged: (_) {}),
+                      ),
+                    ],
+                  ),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // ── Security & Privacy ────────────────────────────
-                _SectionHeader(
-                  title: 'Security & Privacy',
-                  badge: 'Beta',
-                  badgeColor: const Color(0xFF3A7BFF),
-                ),
-                _SettingsGroup(
-                  children: [
+                  // ── Security & Privacy ────────────────────────────
+                  _SectionHeader(
+                    title: 'Security & Privacy',
+                    badge: 'Beta',
+                    badgeColor: const Color(0xFF3A7BFF),
+                  ),
+                  _SettingsGroup(
+                    children: [
 
-                    _SettingsTile(
-                      icon: Icons.shield_outlined,
-                      label: 'Privacy Policy',
-                      onTap: () =>
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => PrivacyPolicyPage(),
+                      _SettingsTile(
+                        icon: Icons.shield_outlined,
+                        label: 'Privacy Policy',
+                        onTap: () =>
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => PrivacyPolicyPage(),
+                              ),
                             ),
-                          ),
-                      isLast: true,
-                    ),
-                  ],
-                ),
+                        isLast: true,
+                      ),
+                    ],
+                  ),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // ── Help & Support ────────────────────────────────
-                _SectionHeader(title: 'Help & Support'),
-                _SettingsGroup(
-                  children: [
-                    _SettingsTile(
+                  // ── Help & Support ────────────────────────────────
+                  _SectionHeader(title: 'Help & Support'),
+                  _SettingsGroup(
+                    children: [
+                      _SettingsTile(
                         icon: Icons.info_outline_rounded,
                         label: 'About Us',
                         onTap: () =>
@@ -101,63 +114,66 @@ class AccountSettingsPage extends StatelessWidget {
                                 builder: (_) => AboutUsPage(),
                               ),
                             ),
-                    ),
-                    _SettingsTile(
-                      icon: Icons.help_outline_rounded,
-                      label: 'Help Center',
-                      onTap: () =>
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => HelpCenterPage(),
+                      ),
+                      _SettingsTile(
+                        icon: Icons.help_outline_rounded,
+                        label: 'Help Center',
+                        onTap: () =>
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => HelpCenterPage(),
+                              ),
                             ),
-                          ),
-                    ),
-                    _SettingsTile(
-                      icon: Icons.feedback_outlined,
-                      label: 'Submit Feedback',
-                      onTap: () =>
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => FeedbackPage(),
+                      ),
+                      _SettingsTile(
+                        icon: Icons.feedback_outlined,
+                        label: 'Submit Feedback',
+                        onTap: () =>
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => FeedbackPage(),
+                              ),
                             ),
-                          ),
-                      isLast: true,
-                    ),
-                  ],
-                ),
+                        isLast: true,
+                      ),
+                    ],
+                  ),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // ── Danger Zone ───────────────────────────────────
-                _SectionHeader(
-                  title: 'Danger Zone',
-                  badge: 'Warning',
-                  badgeColor: Colors.red,
-                  trailingIcon: Icons.warning_amber_rounded,
-                  trailingIconColor: const Color(0xFFFF3B30),
-                ),
-                _DangerButton(onTap: () {}),
+                  // ── Danger Zone ───────────────────────────────────
+                  _SectionHeader(
+                    title: 'Danger Zone',
+                    badge: 'Warning',
+                    badgeColor: Colors.red,
+                    trailingIcon: Icons.warning_amber_rounded,
+                    trailingIconColor: const Color(0xFFFF3B30),
+                  ),
+                  _DangerButton(onTap: () {}),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // ── Log Out ───────────────────────────────────────
-                _SectionHeader(title: 'Log Out'),
-                _SettingsGroup(
-                  children: [
-                    _SettingsTile(
-                      icon: Icons.logout_rounded,
-                      label: 'Sign Out',
-                      onTap: () {},
-                      isLast: true,
-                    ),
-                  ],
-                ),
+                  // ── Log Out ───────────────────────────────────────
+                  _SectionHeader(title: 'Log Out'),
+                  _SettingsGroup(
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.logout_rounded,
+                        label: 'Sign Out',
+                        onTap: () {
+                          context.read<AuthBloc>().add(DeleteUserEvent());
+                        },
+                        isLast: true,
+                      ),
+                    ],
+                  ),
 
-                const SizedBox(height: 32),
-              ],
+                  const SizedBox(height: 32),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

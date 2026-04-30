@@ -11,8 +11,18 @@ class ProfileLoading extends ProfileState {}
 
 class ProfileSuccess extends ProfileState {}
 
+class ProfileLoaded extends ProfileState {
+  final ProfileBody profile;
+
+  ProfileLoaded(this.profile);
+
+  @override
+  List<Object?> get props => [profile];
+}
+
 class ProfileError extends ProfileState {
   final String message;
+
   ProfileError(this.message);
 
   @override
