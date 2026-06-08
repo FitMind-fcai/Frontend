@@ -1,232 +1,326 @@
 import 'package:fitmind/presentation/authentication/widgets/common_button.dart';
 import 'package:fitmind/presentation/plan/screens/workout_plan_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../data/models/plan/nutrition_plan_generation_request.dart';
 import '../../../data/models/plan/nutrition_plan_result.dart';
+import '../../../presentation/plan/manager/plan_bloc.dart';
 import '../../home/screens/home_screen.dart';
 
 class NutritionPlanResultScreen extends StatelessWidget {
   final NutritionPlanResult plan;
   final String navigationStatus;
+  final NutritionPlanGenerationRequest? request;
 
   const NutritionPlanResultScreen({
     Key? key,
     required this.plan,
     this.navigationStatus = 'normal', // 👈 default
+    this.request,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Header ────────────────────────────────────────────────
-              Row(
+        backgroundColor: Colors.white,
+        body: BlocListener<PlanBloc, PlanState>(
+          listener: (context, state) {
+            if (state is NutritionPreferencesSuccess) {
+              // After generating another plan, show the new result
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => NutritionPlanResultScreen(
+                    plan: state.plan,
+                    navigationStatus: navigationStatus,
+                    request: request,
+                  ),
+                ),
+              );
+            } else if (state is NutritionPlanSaveSuccess) {
+              // Navigate based on navigationStatus
+              if (navigationStatus == 'both') {
+                // Go to workout plan
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => WorkoutPlanScreen(),
+                  ),
+                );
+              } else {
+                // Go to home screen
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  (route) => false,
+                );
+              }
+            } else if (state is PlanError) {
+              // Show error message if save fails
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+            }
+          },
+          child: BlocBuilder<PlanBloc, PlanState>(
+            builder: (context, state) {
+              return Stack(
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.arrow_back_ios, size: 20),
-                  ),
-                  const SizedBox(width: 10),
-                  const Text(
-                    'Your Nutrition Plan Summary',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: AppConstants.fontRegular,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 36),
-
-              // ── Plan name ─────────────────────────────────────────────
-              Text(
-                plan.planName,
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w900,
-                  fontFamily: AppConstants.fontRegular,
-                  height: 1.2,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                plan.description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                  fontFamily: AppConstants.fontRegular,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(Icons.calendar_today_outlined,
-                      size: 14, color: Colors.black),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${plan.startDate}  →  ${plan.endDate}',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.black,
-                      fontFamily: AppConstants.fontRegular,
-                      fontWeight: AppConstants.mediumBold,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 36),
-
-              // ── Daily Calories card ────────────────────────────────────
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24, vertical: 28),
-                decoration: BoxDecoration(
-                  color: AppConstants.primaryColor,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.orange.withOpacity(0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Text(
-                          '🔥',
-                          style: TextStyle(fontSize: 18),
+                  // Main content
+                  SafeArea(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                  // ── Header ────────────────────────────────────────────────
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(Icons.arrow_back_ios, size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Your Nutrition Plan Summary',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: AppConstants.fontRegular,
                         ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'DAILY CALORIE TARGET',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                            letterSpacing: 1.2,
+                      ),
+                      SizedBox(width: 32),
+
+                    ],
+                  ),
+
+                  const SizedBox(height: 36),
+
+                  // ── Plan name ─────────────────────────────────────────────
+                  Text(
+                    plan.planName,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      fontFamily: AppConstants.fontRegular,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    plan.description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[700],
+                      fontFamily: AppConstants.fontRegular,
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today_outlined,
+                          size: 14, color: Colors.black),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${plan.startDate}  →  ${plan.endDate}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.black,
+                          fontFamily: AppConstants.fontRegular,
+                          fontWeight: AppConstants.mediumBold,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 36),
+
+                  // ── Daily Calories card ────────────────────────────────────
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 28),
+                    decoration: BoxDecoration(
+                      color: AppConstants.primaryColor,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orange.withOpacity(0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              '🔥',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'DAILY CALORIE TARGET',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                                letterSpacing: 1.2,
+                                fontFamily: AppConstants.fontRegular,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '${plan.dailyCalories} kcal',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 52,
+                            fontWeight: FontWeight.w900,
                             fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.w600,
+                            height: 1,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Recommended intake per day',
+                          style: TextStyle(
+                            color: Colors.white54,
+                            fontSize: 13,
+                            fontFamily: AppConstants.fontRegular,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      '${plan.dailyCalories} kcal',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 52,
-                        fontWeight: FontWeight.w900,
-                        fontFamily: AppConstants.fontRegular,
-                        height: 1,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ── Section label ──────────────────────────────────────────
+                  const Text(
+                    'DAILY MACRONUTRIENTS',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                      color: Color(0xFF9CA3AF),
+                      fontFamily: AppConstants.fontRegular,
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // ── Macros row ─────────────────────────────────────────────
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _MacroCard(
+                          label: 'Protein',
+                          sublabel: '',
+                          value: '${plan.dailyProteinG}g',
+                          emoji: '🥩',
+                          color: const Color(0xFFFFF3E0),
+                          borderColor: const Color(0xFFFFCC80),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _MacroCard(
+                          label: 'Carbs',
+                          sublabel: '',
+                          value: '${plan.dailyCarbsG}g',
+                          emoji: '🌾',
+                          color: const Color(0xFFE8F5E9),
+                          borderColor: const Color(0xFFA5D6A7),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _MacroCard(
+                          label: 'Fats',
+                          sublabel: '',
+                          value: '${plan.dailyFatsG}g',
+                          emoji: '🥑',
+                          color: const Color(0xFFE3F2FD),
+                          borderColor: const Color(0xFF90CAF9),
+                        ),
+                      ),
+                    ],
+                  ),
+                  AppConstants.verticalSpaceXXL,
+                  // ── Choice: Save or Generate Another ────────────────────────
+                  CommonButton(
+                    title: navigationStatus == 'both'
+                        ? "Save & Continue to Workout"
+                        : "Save Plan",
+                    onPressed: () {
+                      context
+                          .read<PlanBloc>()
+                          .add(SaveNutritionPlanEvent(plan));
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  CommonButton(
+                    title: "Generate Another",
+                    onPressed: () {
+                      if (request != null) {
+                        // Regenerate with the same request
+                        context
+                            .read<PlanBloc>()
+                            .add(SubmitNutritionPreferencesEvent(request!));
+                      } else {
+                        // Fallback: go back to edit preferences
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      'Recommended intake per day',
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 13,
-                        fontFamily: AppConstants.fontRegular,
+                  ),
+                  // Loading overlay
+                  if (state is PlanLoading)
+                    Container(
+                      color: Colors.black.withOpacity(0.5),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RotatedBox(
+                              quarterTurns: -1,
+                              child: SizedBox(
+                                width: 120,
+                                child: LinearProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppConstants.primaryColor),
+                                  backgroundColor: Colors.white24,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            const Text(
+                              "Creating your plan...",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontFamily: AppConstants.fontRegular,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ── Section label ──────────────────────────────────────────
-              const Text(
-                'DAILY MACRONUTRIENTS',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
-                  color: Color(0xFF9CA3AF),
-                  fontFamily: AppConstants.fontRegular,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // ── Macros row ─────────────────────────────────────────────
-              Row(
-                children: [
-                  Expanded(
-                    child: _MacroCard(
-                      label: 'Protein',
-                      sublabel: '',
-                      value: '${plan.dailyProteinG}g',
-                      emoji: '🥩',
-                      color: const Color(0xFFFFF3E0),
-                      borderColor: const Color(0xFFFFCC80),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _MacroCard(
-                      label: 'Carbs',
-                      sublabel: '',
-                      value: '${plan.dailyCarbsG}g',
-                      emoji: '🌾',
-                      color: const Color(0xFFE8F5E9),
-                      borderColor: const Color(0xFFA5D6A7),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _MacroCard(
-                      label: 'Fats',
-                      sublabel: '',
-                      value: '${plan.dailyFatsG}g',
-                      emoji: '🥑',
-                      color: const Color(0xFFE3F2FD),
-                      borderColor: const Color(0xFF90CAF9),
-                    ),
-                  ),
                 ],
-              ),
-              AppConstants.verticalSpaceXXL,
-              navigationStatus == 'both'
-                  ? CommonButton(
-                title: "Next: Workout Plan",
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => WorkoutPlanScreen()),
-                  );
-                },
-              )
-                  : CommonButton(
-                title: "Go to Home",
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => HomeScreen()),
-                        (route) => false,
-                  );
-                },
-              ),
-            ],
+              );
+            },
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 

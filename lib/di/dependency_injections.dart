@@ -71,6 +71,14 @@ Future<void> init() async {
   sl.registerLazySingleton(()=> CreateWorkoutPreferencesUseCase(sl()));
   sl.registerLazySingleton(() => GetMyProfileUseCase(sl()));
   sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+  sl.registerLazySingleton(() => SaveNutritionPlanUseCase(sl()));
+  sl.registerLazySingleton(() => SaveWorkoutPlanUseCase(sl()));
+  sl.registerLazySingleton(() => GetActiveNutritionPlanUseCase(sl()));
+  sl.registerLazySingleton(() => GetNutritionPlanByIdUseCase(sl()));
+  sl.registerLazySingleton(() => GetActiveWorkoutPlanUseCase(sl()));
+  sl.registerLazySingleton(() => GetWorkoutPlanByIdUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteNutritionPlanUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteWorkoutPlanUseCase(sl()));
 
   sl.registerFactory<AuthBloc>(
         () => AuthBloc(
@@ -92,6 +100,14 @@ Future<void> init() async {
         () => PlanBloc(
       sl(),
       sl(),
+      sl(),
+      sl(),
+      sl(),
+      sl(),
+      sl(),
+      sl(),
+      sl(),
+        sl(),
     ),
   );
 }

@@ -1,3 +1,4 @@
+import 'package:fitmind/presentation/plan/screens/my_plans/my_plans_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -37,14 +38,22 @@ class MyPlanCard extends StatelessWidget {
                   Positioned(
                     bottom: 0,
                     right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: AppConstants.primaryColor,
-                          borderRadius: BorderRadius.circular(15)),
-                      child: ImageIcon(
-                        AssetImage("assets/images/Monotone arrow right.png"),
-                        color: Colors.white,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const MyPlansScreen()),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: AppConstants.primaryColor,
+                            borderRadius: BorderRadius.circular(15)),
+                        child: ImageIcon(
+                          AssetImage("assets/images/Monotone arrow right.png"),
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

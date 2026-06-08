@@ -12,6 +12,18 @@ abstract class PlanRemoteDataSource {
 
   Future<WorkoutPlanResult> createWorkoutPreferences(
       WorkoutPlanGenerationRequest body);
+
+  Future<NutritionPlanResult> saveNutritionPlan(NutritionPlanResult draft);
+  Future<WorkoutPlanResult> saveWorkoutPlan(WorkoutPlanResult draft);
+  Future<NutritionPlanResult> getActiveNutritionPlan();
+  Future<NutritionPlanResult> getNutritionPlanById(int planId);
+  Future<WorkoutPlanResult> getActiveWorkoutPlan();
+  Future<WorkoutPlanResult> getWorkoutPlanById(int planId);
+  Future<void> deleteNutritionPlan(int planId);
+  Future<void> deleteWorkoutPlan(int planId);
+
+
+
 }
 
 class PlanRemoteDataSourceImpl implements PlanRemoteDataSource {
@@ -66,6 +78,135 @@ class PlanRemoteDataSourceImpl implements PlanRemoteDataSource {
       throw Exception(_extractError(e));
     } catch (e) {
       throw Exception("Unexpected error occurred");
+    }
+  }
+
+  @override
+  Future<NutritionPlanResult> saveNutritionPlan(
+      NutritionPlanResult draft) async {
+    try {
+      print('=== SAVING NUTRITION PLAN ===');
+      print('Plan: ${draft.planName}');
+      print('Days: ${draft.days.length}');
+
+      // Check first meal ingredients
+      if (draft.days.isNotEmpty && draft.days[0].meals.isNotEmpty) {
+        final firstMeal = draft.days[0].meals[0];
+        print('First meal: ${firstMeal.mealName}');
+        print('Ingredients type: ${firstMeal.ingredients.runtimeType}');
+        print('Ingredients length: ${firstMeal.ingredients?.length ?? 0}');
+        if (firstMeal.ingredients != null &&
+            (firstMeal.ingredients as List).isNotEmpty) {
+          print('First ingredient: ${(firstMeal.ingredients as List)[0]}');
+        }
+      }
+
+      final draftJson = draft.toJson();
+      print('Draft JSON keys: ${draftJson.keys}');
+
+      final payload = {
+        "draft_plan": draftJson,
+        "generated_from_preferences": draft.generatedFromPreferences,
+        "update_plan_id": draft.updatePlanId,
+      };
+
+      final result = await apiService.saveNutritionPlan(payload);
+      print('=== SAVE SUCCESS ===');
+      print('Saved plan: ${result.planName}');
+      return result;
+    } on DioException catch (e) {
+      print('DioException during save: ${e.response?.data}');
+      throw Exception(_extractError(e));
+    } catch (e) {
+      print('Error during save: $e');
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<WorkoutPlanResult> saveWorkoutPlan(WorkoutPlanResult draft) async {
+    try {
+      print('=== SENDING SAVE REQUEST ===');
+      final result = await apiService.saveWorkoutPlan({
+        "draft_plan": draft.toJson(),
+        "generated_from_preferences": draft.generatedFromPreferences,
+        "update_plan_id": draft.updatePlanId,
+      });
+      print('=== SAVE RESPONSE RECEIVED: ${result.planName}');
+      return result;
+    } on DioException catch (e) {
+      print('=== DIO ERROR: ${e.response?.data}');
+      throw Exception(_extractError(e));
+    } catch (e, s) {
+      print('=== SAVE CRASH: $e');
+      print('=== STACK: $s');
+      throw Exception(e.toString());
+    }
+  }
+
+  // Add to PlanRemoteDataSourceImpl:
+  @override
+  Future<NutritionPlanResult> getActiveNutritionPlan() async {
+    try {
+      return await apiService.getActiveNutritionPlan();
+    } on DioException catch (e) {
+      throw Exception(_extractError(e));
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<NutritionPlanResult> getNutritionPlanById(int planId) async {
+    try {
+      return await apiService.getNutritionPlanById(planId);
+    } on DioException catch (e) {
+      throw Exception(_extractError(e));
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<WorkoutPlanResult> getActiveWorkoutPlan() async {
+    try {
+      return await apiService.getActiveWorkoutPlan();
+    } on DioException catch (e) {
+      throw Exception(_extractError(e));
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<WorkoutPlanResult> getWorkoutPlanById(int planId) async {
+    try {
+      return await apiService.getWorkoutPlanById(planId);
+    } on DioException catch (e) {
+      throw Exception(_extractError(e));
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+  @override
+  Future<void> deleteNutritionPlan(int planId) async {
+    try {
+      await apiService.deleteNutritionPlan(planId);
+    } on DioException catch (e) {
+      throw Exception(_extractError(e));
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<void> deleteWorkoutPlan(int planId) async {
+    try {
+      await apiService.deleteWorkoutPlan(planId);
+    } on DioException catch (e) {
+      throw Exception(_extractError(e));
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 }

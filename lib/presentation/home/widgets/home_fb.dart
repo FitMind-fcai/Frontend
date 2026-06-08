@@ -1,3 +1,4 @@
+import 'package:fitmind/presentation/log/screens/log_choice_screen.dart';
 import 'package:fitmind/presentation/plan/screens/plan_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class Home_fb extends StatelessWidget {
             onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const PlanSelectionScreen()),
+                  MaterialPageRoute(builder: (_) => const LogEntryPage()),
                 );
               },
             child: const Icon(Icons.add, color: Colors.white, size: 35),

@@ -25,3 +25,52 @@ class SubmitWorkoutPreferencesEvent extends PlanEvent {
   @override
   List<Object> get props => [request];
 }
+class SaveNutritionPlanEvent extends PlanEvent {
+  final NutritionPlanResult draft;
+  const SaveNutritionPlanEvent(this.draft);
+}
+class SaveWorkoutPlanEvent extends PlanEvent {
+final WorkoutPlanResult draft;
+const SaveWorkoutPlanEvent(this.draft);
+
+}
+class LoadActivePlanEvent extends PlanEvent {
+  const LoadActivePlanEvent();
+}
+
+class LoadPlanByIdEvent extends PlanEvent {
+  final int planId;
+  const LoadPlanByIdEvent(this.planId);
+
+  @override
+  List<Object> get props => [planId];
+}
+class LoadActiveWorkoutPlanEvent extends PlanEvent {
+  const LoadActiveWorkoutPlanEvent();
+}
+
+class LoadWorkoutPlanByIdEvent extends PlanEvent {
+  final int planId;
+  const LoadWorkoutPlanByIdEvent(this.planId);
+
+  @override
+  List<Object> get props => [planId];
+}
+class DeleteNutritionPlanEvent extends PlanEvent {
+  final int planId;
+  const DeleteNutritionPlanEvent(this.planId);
+
+  @override
+  List<Object> get props => [planId];
+}
+
+class DeleteWorkoutPlanEvent extends PlanEvent {
+  final int planId;
+  const DeleteWorkoutPlanEvent(this.planId);
+
+  @override
+  List<Object> get props => [planId];
+}
+
+
+

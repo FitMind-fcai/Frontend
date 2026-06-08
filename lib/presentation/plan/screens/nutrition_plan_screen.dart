@@ -81,6 +81,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
               builder: (_) => NutritionPlanResultScreen(
                 plan: state.plan,
                 navigationStatus: widget.navigationStatus,
+                request: _lastRequest,
               ),
             ),
           );
@@ -200,23 +201,21 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     }
   }
 
+  NutritionPlanGenerationRequest? _lastRequest;
+
   void _submitNutritionPreferences() {
-    // Create the request
     final request = NutritionPlanGenerationRequest(
       durationWeeks: _durationWeeks,
       nutritionPreferences: NutritionPreferences(
         caloriePreference: CaloriePreference.fromString(prefferedCalorieMethod),
-        customCalorieTarget: prefferedCalorieMethod == 'Custom'
-            ? _calorieTarget
-            : null,
+        customCalorieTarget: prefferedCalorieMethod == 'Custom' ? _calorieTarget : null,
         mealsPerDay: int.parse(_selectedDays),
         mealComplexity: MealComplexity.fromString(_selectedComplexity),
         cuisinePreference: CuisinePreference.fromString(_selectedCuisine),
         excludeIngredients: diets.isEmpty ? null : diets,
       ),
     );
-
-    // Dispatch event to BLoC
+    _lastRequest = request; // 👈 store it
     context.read<PlanBloc>().add(SubmitNutritionPreferencesEvent(request));
   }
 

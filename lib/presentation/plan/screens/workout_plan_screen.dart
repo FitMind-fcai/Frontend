@@ -40,7 +40,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => WorkoutPlanResultScreen(plan: state.plan),
+              builder: (_) => WorkoutPlanResultScreen(plan: state.plan,request: _lastRequest),
             ),
           );
         } else if (state is PlanError) {
@@ -156,6 +156,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       },
     );
   }
+  WorkoutPlanGenerationRequest? _lastRequest;
+
   void _submitWorkoutPreferences() {
     final request = WorkoutPlanGenerationRequest(
       durationWeeks: _durationWeeks,
@@ -171,7 +173,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         focusAreas: focusAreas.isEmpty ? null : focusAreas,
       ),
     );
-
+    _lastRequest = request; // 👈 store it
     context.read<PlanBloc>().add(SubmitWorkoutPreferencesEvent(request));
   }
 

@@ -1,0 +1,643 @@
+import 'package:flutter/material.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../data/models/plan/nutrition_plan_result.dart';
+
+class DayMealsScreen extends StatelessWidget {
+  final DayPlan day;
+  final DateTime? date;
+
+  const DayMealsScreen({super.key, required this.day, this.date});
+
+  String _formatDate(DateTime d) {
+    const months = [
+      '',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    const weekdays = [
+      '',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+    return '${weekdays[d.weekday]}, ${d.day} ${months[d.month]} ${d.year}';
+  }
+
+  int get _totalCalories => day.meals.fold(0, (sum, m) => sum + m.calories);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Header ────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.maybePop(context),
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(13),
+                        border: Border.all(color: const Color(0xFFEAEAEA)),
+                      ),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 16, color: Color(0xFF1A1A2E)),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          day.dayName.isNotEmpty
+                              ? day.dayName
+                              : 'Day ${day.dayNumber}',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1A1A2E),
+                            letterSpacing: -0.5,
+                            fontFamily: AppConstants.fontRegular,
+                          ),
+                        ),
+                        if (date != null)
+                          Text(
+                            _formatDate(date!),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF9CA3AF),
+                              fontFamily: AppConstants.fontRegular,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            // ── Daily summary strip ───────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A2E),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _SummaryItem(
+                      label: 'Calories',
+                      value: '$_totalCalories',
+                      color: const Color(0xFFF97316),
+                    ),
+                    _divider(),
+                    _SummaryItem(
+                      label: 'Meals',
+                      value: '${day.meals.length}',
+                      color: const Color(0xFF3B82F6),
+                    ),
+                    _divider(),
+                    _SummaryItem(
+                      label: 'Protein',
+                      value: '${day.meals.fold(0, (s, m) => s + m.proteinG)}g',
+                      color: const Color(0xFF10B981),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // ── Meals list ────────────────────────────────────────────
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+                itemCount: day.meals.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, index) =>
+                    _MealCard(meal: day.meals[index]),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _divider() => Container(
+        width: 1,
+        height: 30,
+        color: Colors.white.withOpacity(0.1),
+      );
+}
+
+class _SummaryItem extends StatelessWidget {
+  final String label, value;
+  final Color color;
+
+  const _SummaryItem(
+      {required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            color: color,
+            fontFamily: AppConstants.fontRegular,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11,
+            color: Colors.white54,
+            fontFamily: AppConstants.fontRegular,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  Meal Card  (expandable)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _MealCard extends StatefulWidget {
+  final Meal meal;
+
+  const _MealCard({required this.meal});
+
+  @override
+  State<_MealCard> createState() => _MealCardState();
+}
+
+class _MealCardState extends State<_MealCard>
+    with SingleTickerProviderStateMixin {
+  bool _expanded = false;
+  late AnimationController _ctrl;
+  late Animation<double> _fade;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+        duration: const Duration(milliseconds: 300), vsync: this);
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  void _toggle() {
+    setState(() => _expanded = !_expanded);
+    _expanded ? _ctrl.forward() : _ctrl.reverse();
+  }
+
+  Color get _mealColor {
+    switch (widget.meal.mealType.toLowerCase()) {
+      case 'breakfast':
+        return const Color(0xFFF59E0B);
+      case 'lunch':
+        return const Color(0xFF3B82F6);
+      case 'dinner':
+        return const Color(0xFF8B5CF6);
+      case 'snack':
+        return const Color(0xFF10B981);
+      default:
+        return AppConstants.primaryColor;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final meal = widget.meal;
+    return GestureDetector(
+      onTap: _toggle,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // ── Collapsed row ─────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 54,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: _mealColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Center(
+                      child:Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${meal.calories}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: _mealColor,
+                            fontFamily: AppConstants.fontRegular,
+                            height: 1,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'kcal',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: _mealColor.withOpacity(0.6),
+                            fontFamily: AppConstants.fontRegular,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          meal.mealName,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1A1A2E),
+                            fontFamily: AppConstants.fontRegular,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: _mealColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            meal.mealType,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: _mealColor,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppConstants.fontRegular,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  AnimatedRotation(
+                    duration: const Duration(milliseconds: 300),
+                    turns: _expanded ? 0.5 : 0,
+                    child: const Icon(Icons.keyboard_arrow_down_rounded,
+                        color: Color(0xFFD1D5DB), size: 24),
+                  ),
+                ],
+              ),
+            ),
+            // ── Macro pills row ───────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+              child: Row(
+                children: [
+                  _MacroTag(
+                      label: '${meal.proteinG}g',
+                      sub: 'Protein',
+                      color: const Color(0xFF3B82F6)),
+                  const SizedBox(width: 6),
+                  _MacroTag(
+                      label: '${meal.carbsG}g',
+                      sub: 'Carbs',
+                      color: const Color(0xFF10B981)),
+                  const SizedBox(width: 6),
+                  _MacroTag(
+                      label: '${meal.fatsG}g',
+                      sub: 'Fats',
+                      color: const Color(0xFFF97316)),
+                  if (meal.prepTimeMinutes != null) ...[
+                    const SizedBox(width: 6),
+                    _MacroTag(
+                        label: '${meal.prepTimeMinutes}m',
+                        sub: 'Prep',
+                        color: const Color(0xFF8B5CF6)),
+                  ],
+                ],
+              ),
+            ),
+            // ── Expanded details ──────────────────────────────────────
+            FadeTransition(
+              opacity: _fade,
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+                child: _expanded
+                    ? _ExpandedDetails(meal: meal)
+                    : const SizedBox.shrink(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MacroTag extends StatelessWidget {
+  final String label, sub;
+  final Color color;
+
+  const _MacroTag(
+      {required this.label, required this.sub, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: color,
+              fontFamily: AppConstants.fontRegular,
+            ),
+          ),
+          Text(
+            sub,
+            style: TextStyle(
+              fontSize: 10,
+              color: color.withOpacity(0.7),
+              fontFamily: AppConstants.fontRegular,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExpandedDetails extends StatelessWidget {
+  final Meal meal;
+
+  const _ExpandedDetails({required this.meal});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Divider(color: Color(0xFFF3F4F6), thickness: 1),
+          const SizedBox(height: 10),
+          if (meal.description != null && meal.description!.isNotEmpty) ...[
+            _sectionTitle('Description'),
+            const SizedBox(height: 6),
+            Text(
+              meal.description!,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF6B7280),
+                height: 1.5,
+                fontFamily: AppConstants.fontRegular,
+              ),
+            ),
+            const SizedBox(height: 14),
+          ],
+          if (meal.ingredients.isNotEmpty) ...[
+            _sectionTitle('Ingredients'),
+            const SizedBox(height: 10),
+            ...meal.ingredients.map((ing) => _IngredientRow(ingredient: ing)),
+          ],
+          if (meal.instructions != null && meal.instructions!.isNotEmpty) ...[
+            _sectionTitle('Instructions'),
+            const SizedBox(height: 6),
+            Text(
+              meal.instructions!,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF6B7280),
+                height: 1.6,
+                fontFamily: AppConstants.fontRegular,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionTitle(String text) => Text(
+        text,
+        style: const TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+          color: Color(0xFF1A1A2E),
+          fontFamily: AppConstants.fontRegular,
+        ),
+      );
+}
+class _IngredientRow extends StatelessWidget {
+  final Ingredient ingredient;
+  const _IngredientRow({required this.ingredient});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Food name + amount ──────────────────────────────────
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  ingredient.foodName,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1A1A2E),
+                    fontFamily: AppConstants.fontRegular,
+                  ),
+                ),
+              ),
+              Container(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A2E).withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: Text(
+                  '${ingredient.amountG.toStringAsFixed(ingredient.amountG % 1 == 0 ? 0 : 1)}g',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1A1A2E),
+                    fontFamily: AppConstants.fontRegular,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (ingredient.foodCategory != null) ...[
+            const SizedBox(height: 3),
+            Text(
+              ingredient.foodCategory!,
+              style: const TextStyle(
+                fontSize: 11,
+                color: Color(0xFF9CA3AF),
+                fontFamily: AppConstants.fontRegular,
+              ),
+            ),
+          ],
+          const SizedBox(height: 8),
+          // ── Macro row ───────────────────────────────────────────
+          Row(
+            children: [
+              _IngMacro(
+                label: 'Cal',
+                value: ingredient.calories.toStringAsFixed(0),
+                color: const Color(0xFFF97316),
+              ),
+              const SizedBox(width: 6),
+              _IngMacro(
+                label: 'Protein',
+                value: '${ingredient.proteinG.toStringAsFixed(1)}g',
+                color: const Color(0xFF3B82F6),
+              ),
+              const SizedBox(width: 6),
+              _IngMacro(
+                label: 'Carbs',
+                value: '${ingredient.carbsG.toStringAsFixed(1)}g',
+                color: const Color(0xFF10B981),
+              ),
+              const SizedBox(width: 6),
+              _IngMacro(
+                label: 'Fats',
+                value: '${ingredient.fatsG.toStringAsFixed(1)}g',
+                color: const Color(0xFFF59E0B),
+              ),
+              if (ingredient.fiberG != null) ...[
+                const SizedBox(width: 6),
+                _IngMacro(
+                  label: 'Fiber',
+                  value: '${ingredient.fiberG!.toStringAsFixed(1)}g',
+                  color: const Color(0xFF8B5CF6),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _IngMacro extends StatelessWidget {
+  final String label, value;
+  final Color color;
+
+  const _IngMacro(
+      {required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: color,
+                fontFamily: AppConstants.fontRegular,
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 9,
+                color: color.withOpacity(0.7),
+                fontFamily: AppConstants.fontRegular,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

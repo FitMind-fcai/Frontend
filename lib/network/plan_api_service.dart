@@ -11,7 +11,6 @@ part 'plan_api_service.g.dart';
 
 @RestApi(baseUrl: "http://10.0.2.2:8000")
 abstract class PlanApiService {
-
   factory PlanApiService(Dio dio, AuthLocalDataSource local) {
     dio.interceptors.add(
       InterceptorsWrapper(
@@ -29,11 +28,45 @@ abstract class PlanApiService {
 
   @POST("/v1/plans/generate/nutrition")
   Future<NutritionPlanResult> createNutritionPreferences(
-      @Body() NutritionPlanGenerationRequest body,
-      );
+    @Body() NutritionPlanGenerationRequest body,
+  );
 
   @POST("/v1/plans/generate/workout")
   Future<WorkoutPlanResult> createWorkoutPreferences(
-      @Body() WorkoutPlanGenerationRequest body,
-      );
+    @Body() WorkoutPlanGenerationRequest body,
+  );
+
+  @POST("/v1/plans/save/nutrition")
+  Future<NutritionPlanResult> saveNutritionPlan(
+    @Body() Map<String, dynamic> body,
+  );
+
+  @POST("/v1/plans/save/workout")
+  Future<WorkoutPlanResult> saveWorkoutPlan(
+    @Body() Map<String, dynamic> body,
+  );
+
+  @GET("/v1/nutrition-plans/active")
+  Future<NutritionPlanResult> getActiveNutritionPlan();
+
+  @GET("/v1/nutrition-plans/{plan_id}")
+  Future<NutritionPlanResult> getNutritionPlanById(
+    @Path("plan_id") int planId,
+  );
+
+  @GET("/v1/workout-plans/active")
+  Future<WorkoutPlanResult> getActiveWorkoutPlan();
+
+  @GET("/v1/workout-plans/{planId}")
+  Future<WorkoutPlanResult> getWorkoutPlanById(@Path("planId") int planId);
+
+  @DELETE("/v1/nutrition-plans/{plan_id}")
+  Future<void> deleteNutritionPlan(
+    @Path("plan_id") int planId,
+  );
+
+  @DELETE("/v1/workout-plans/{planId}")
+  Future<void> deleteWorkoutPlan(
+    @Path("planId") int planId,
+  );
 }

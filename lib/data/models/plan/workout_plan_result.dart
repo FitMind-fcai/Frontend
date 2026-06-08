@@ -1,4 +1,5 @@
 class WorkoutPlanResult {
+  final int? id; // 👈 Added ID field
   final String planName;
   final String description;
   final String startDate;
@@ -11,6 +12,7 @@ class WorkoutPlanResult {
   final int? updatePlanId;
 
   WorkoutPlanResult({
+    this.id, // 👈 Added to constructor
     required this.planName,
     required this.description,
     required this.startDate,
@@ -24,8 +26,13 @@ class WorkoutPlanResult {
   });
 
   factory WorkoutPlanResult.fromJson(Map<String, dynamic> json) {
-    final draft = json['draft_plan'] as Map<String, dynamic>;
+    final draft = json.containsKey('draft_plan') && json['draft_plan'] != null
+        ? json['draft_plan'] as Map<String, dynamic>
+        : json; // 👈 flat response fallback
+
     return WorkoutPlanResult(
+      // Extracts ID from either root json or from nested draft map safely
+      id: (json['id'] ?? draft['id'] ?? json['plan_id'] ?? draft['plan_id'] as num?)?.toInt(),
       planName: draft['plan_name'] ?? '',
       description: draft['description'] ?? '',
       startDate: draft['start_date'] ?? '',
@@ -39,11 +46,26 @@ class WorkoutPlanResult {
           .toList(),
       generatedFromPreferences:
       json['generated_from_preferences'] as Map<String, dynamic>? ?? {},
-      updatePlanId: json['update_plan_id'],
+      updatePlanId: (json['update_plan_id'] as num?) == 0
+          ? null
+          : (json['update_plan_id'] as num?)?.toInt(),
     );
   }
-}
 
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) 'id': id, // 👈 Serialize ID if it exists
+      'plan_name': planName,
+      'description': description,
+      'start_date': startDate,
+      'end_date': endDate,
+      'frequency': frequency,
+      'difficulty_level': difficultyLevel,
+      'estimated_duration_per_session': estimatedDurationPerSession,
+      'workout_days': workoutDays.map((d) => d.toJson()).toList(),
+    };
+  }
+}
 class WorkoutDay {
   final int dayNumber;
   final String dayName;
@@ -61,11 +83,19 @@ class WorkoutDay {
     return WorkoutDay(
       dayNumber: (json['day_number'] ?? 0).toInt(),
       dayName: json['day_name'] ?? '',
-      focus: json['focus'],
+      focus: json['focus_area']?? '',
       exercises: (json['exercises'] as List<dynamic>? ?? [])
           .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'day_number': dayNumber,
+      'day_name': dayName,
+      'focus_area': focus,
+      'exercises': exercises.map((e) => e.toJson()).toList(),
+    };
   }
 }
 
@@ -93,16 +123,31 @@ class Exercise {
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
+    final central = json['central_exercise'] as Map<String, dynamic>?;
+
     return Exercise(
-      name: json['name'] ?? '',
-      description: json['description'],
-      sets: json['sets'],
-      reps: json['reps'],
-      durationSeconds: json['duration_seconds'],
-      restSeconds: json['rest_seconds'],
-      muscleGroup: json['muscle_group'],
-      equipment: json['equipment'],
-      difficulty: json['difficulty'],
+      name: central?['name'] ?? json['exercise_name'] ?? json['name'] ?? '',
+      description: central?['instructions'] ?? json['description'],
+      sets: (json['sets'] as num?)?.toInt(),
+      reps: (json['reps'] as num?)?.toInt(),
+      durationSeconds: (json['duration_seconds'] as num?)?.toInt(),
+      restSeconds: (json['rest_seconds'] as num?)?.toInt(),
+      muscleGroup: central?['primary_muscle_group'] ?? json['muscle_group'],
+      equipment: central?['equipment_required'] ?? json['equipment'],
+      difficulty: central?['difficulty_level'] ?? json['difficulty'],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'exercise_name': name,  // 👈 was 'name'
+      'description': description,
+      'sets': sets,
+      'reps': reps,
+      'duration_seconds': durationSeconds,
+      'rest_seconds': restSeconds,
+      'muscle_group': muscleGroup,
+      'equipment': equipment,
+      'difficulty': difficulty,
+    };
   }
 }

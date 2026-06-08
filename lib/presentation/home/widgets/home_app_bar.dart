@@ -1,4 +1,5 @@
 import 'package:fitmind/core/constants/app_constants.dart';
+import 'package:fitmind/presentation/plan/screens/plan_screen.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -177,12 +178,19 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
 
                             GestureDetector(
-                                child: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: Image.asset(
-                                      "assets/images/Monotone arrow right.png"),
-                                )),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const PlanSelectionScreen()),
+                                );
+                              },
+                              child: SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Image.asset(
+                                    "assets/images/Monotone arrow right.png"),
+                              ),
+                            ),
                           ],
                         ),
                   const SizedBox(height: 6),

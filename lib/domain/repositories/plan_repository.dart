@@ -9,4 +9,16 @@ abstract class PlanRepository {
 
   Future<WorkoutPlanResult> createWorkoutPreferences(
       WorkoutPlanGenerationRequest request);
+
+  Future<NutritionPlanResult> saveNutritionPlan(NutritionPlanResult draft);
+  Future<WorkoutPlanResult> saveWorkoutPlan(WorkoutPlanResult draft);
+
+  Future<NutritionPlanResult> getActiveNutritionPlan();
+  Future<NutritionPlanResult> getNutritionPlanById(int planId);
+  Future<WorkoutPlanResult> getActiveWorkoutPlan();
+  Future<WorkoutPlanResult> getWorkoutPlanById(int planId);
+
+  Future<void> deleteNutritionPlan(int planId);
+  Future<void> deleteWorkoutPlan(int planId);
+
 }
