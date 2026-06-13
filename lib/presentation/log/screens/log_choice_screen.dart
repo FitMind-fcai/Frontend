@@ -2,11 +2,13 @@ import 'dart:ui';
 
 import 'package:fitmind/presentation/log/screens/text_log_meal.dart';
 import 'package:fitmind/presentation/log/screens/voice_log_meal.dart';
+import 'package:fitmind/presentation/log/screens/workout_log_text_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_constants.dart';
 import 'image_log_meal.dart';
+import 'meal_text_log_screen.dart';
 
 enum LogType { workout, meal }
 enum LogMethod { voice, image, text }
@@ -71,7 +73,9 @@ class _LogEntryPageState extends State<LogEntryPage>
       case LogMethod.image:
         page = ImageLogPage(type: _selectedType!);
       case LogMethod.text:
-        page = TextLogPage(type: _selectedType!);
+        page = _selectedType == LogType.workout
+            ? const TextLogWorkoutPage()
+            : const TextLogMealPage();
     }
     Navigator.push(context, MaterialPageRoute(builder: (_) => page));
   }
@@ -176,7 +180,7 @@ class _LogEntryPageState extends State<LogEntryPage>
     _ImageLogCard(
       label: 'Meal',
       subtitle: 'Log your food & calories',
-      imagePath: 'assets/images/meal_card.png',
+      imagePath: 'assets/images/meal_image.png',
       accentColor: const Color(0xFF3B82F6),
       isSelected: _selectedType == LogType.meal,
       onTap: () => _selectType(LogType.meal),
