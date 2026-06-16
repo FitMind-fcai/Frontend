@@ -1,3 +1,4 @@
+import 'package:fitmind/presentation/home/manager/home_bloc.dart';
 import 'package:fitmind/presentation/log/manager/log_bloc.dart';
 import 'package:fitmind/presentation/plan/manager/plan_bloc.dart';
 import 'package:fitmind/presentation/profile/manager/profile_bloc.dart';
@@ -28,6 +29,9 @@ void main() async {
         ),
         BlocProvider<LogBloc>(
           create: (_) => di.sl<LogBloc>(),
+        ),
+        BlocProvider<HomeBloc>(
+          create: (_) => di.sl<HomeBloc>(),
         ),
       ],
       child: GetMaterialApp(

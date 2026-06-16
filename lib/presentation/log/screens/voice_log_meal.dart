@@ -1,5 +1,6 @@
 // lib/presentation/log/screens/voice_log_page.dart
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,6 +24,7 @@ class _VoiceLogPageState extends State<VoiceLogPage>
     with TickerProviderStateMixin {
   final _recorder = AudioRecorder();
   bool _isRecording = false;
+  final _player = AudioPlayer(); // <-- add here
   bool _isDone = false;
   int _seconds = 0;
   String? _recordedPath;
@@ -50,6 +52,8 @@ class _VoiceLogPageState extends State<VoiceLogPage>
     _pulseCtrl.dispose();
     _ringCtrl.dispose();
     _recorder.dispose();
+    _player.dispose(); // <-- add this
+
     super.dispose();
   }
 
@@ -89,7 +93,11 @@ class _VoiceLogPageState extends State<VoiceLogPage>
       const RecordConfig(encoder: AudioEncoder.aacLc, bitRate: 128000),
       path: path,
     );
-
+    while (_isRecording) {
+      final amp = await _recorder.getAmplitude();
+      debugPrint('AMP: ${amp.current}');
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
     setState(() {
       _isRecording = true;
       _seconds = 0;
@@ -106,6 +114,8 @@ class _VoiceLogPageState extends State<VoiceLogPage>
 
   Future<void> _onAnalyse() async {
     if (_recordedPath == null) return;
+
+
     const audioFormat = 'm4a';
 
     if (widget.type == LogType.meal) {
@@ -273,7 +283,24 @@ class _VoiceLogPageState extends State<VoiceLogPage>
               ),
 
               const Spacer(),
-
+              if (_isDone)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        if (_recordedPath != null) {
+                          await _player.play(
+                            DeviceFileSource(_recordedPath!),
+                          );
+                        }
+                      },
+                      child: const Text('Play Recording'),
+                    ),
+                  ),
+                ),
               BlocBuilder<LogBloc, LogState>(
                 builder: (context, state) {
                   final isLoading = state is LogLoading;

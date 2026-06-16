@@ -43,6 +43,8 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
     on<LoadPlanByIdEvent>(_onLoadPlanById);
     on<LoadActiveWorkoutPlanEvent>(_onLoadActiveWorkoutPlan);
     on<LoadWorkoutPlanByIdEvent>(_onLoadWorkoutPlanById);
+    on<DeleteNutritionPlanEvent>(_onDeleteNutritionPlan);
+    on<DeleteWorkoutPlanEvent>(_onDeleteWorkoutPlan);
   }
 
   Future<void> _onSubmitNutritionPreferences(

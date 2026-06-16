@@ -1,11 +1,13 @@
 /// Single unified endpoint body for POST /v1/tracking/logs
 class SaveLogRequest {
-  final String category; // 'meal' | 'workout' | 'weight'
+  final String category; // 'meal' | 'workout' | 'weight' | 'sleep' | 'hydration'
   final String logDate;
   final String logMethod; // 'TEXT' | 'VOICE' | 'CAMERA'
   final List<MealLogEntry>? mealEntries;
   final List<WorkoutLogEntry>? workoutEntries;
   final List<WeightLogEntry>? weightEntries;
+  final List<SleepLogEntry>? sleepEntries;
+  final List<HydrationLogEntry>? hydrationEntries;
 
   SaveLogRequest({
     required this.category,
@@ -14,6 +16,8 @@ class SaveLogRequest {
     this.mealEntries,
     this.workoutEntries,
     this.weightEntries,
+    this.sleepEntries,
+    this.hydrationEntries,
   });
 
   Map<String, dynamic> toJson() {
@@ -27,6 +31,10 @@ class SaveLogRequest {
         'workout_entries': workoutEntries!.map((e) => e.toJson()).toList(),
       if (weightEntries != null)
         'weight_entries': weightEntries!.map((e) => e.toJson()).toList(),
+      if (sleepEntries != null)
+        'sleep_entries': sleepEntries!.map((e) => e.toJson()).toList(),
+      if (hydrationEntries != null)
+        'hydration_entries': hydrationEntries!.map((e) => e.toJson()).toList(),
     };
   }
 }
@@ -116,6 +124,43 @@ class WeightLogEntry {
   Map<String, dynamic> toJson() {
     return {
       'weight': weight,
+      if (notes != null && notes!.isNotEmpty) 'notes': notes,
+    };
+  }
+}
+
+class SleepLogEntry {
+  final double sleepHours;
+  final int? sleepQuality; // 1–5
+  final String? notes;
+
+  SleepLogEntry({
+    required this.sleepHours,
+    this.sleepQuality,
+    this.notes,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sleep_hours': sleepHours,
+      if (sleepQuality != null) 'sleep_quality': sleepQuality,
+      if (notes != null && notes!.isNotEmpty) 'notes': notes,
+    };
+  }
+}
+
+class HydrationLogEntry {
+  final int waterMl;
+  final String? notes;
+
+  HydrationLogEntry({
+    required this.waterMl,
+    this.notes,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'water_ml': waterMl,
       if (notes != null && notes!.isNotEmpty) 'notes': notes,
     };
   }

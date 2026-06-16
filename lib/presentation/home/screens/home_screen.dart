@@ -1,17 +1,22 @@
+// lib/presentation/home/screens/home_screen.dart
+
 import 'package:fitmind/presentation/home/screens/calorie_home_screen.dart';
 import 'package:fitmind/presentation/home/screens/score_home_screen.dart';
 import 'package:fitmind/presentation/home/screens/steps_home_screen.dart';
 import 'package:fitmind/presentation/home/widgets/home_app_bar.dart';
+
 import 'package:fitmind/presentation/profile/screens/profile_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../authentication/manager/auth_bloc.dart';
-import '../../authentication/widgets/common_button.dart';
+
 import '../../../core/constants/app_constants.dart';
-import '../widgets/bnb_custom_painter.dart';
+import '../../../data/models/home/next_meal_response.dart';
+import '../../log/screens/hydration_log_screen.dart';
+import '../../log/screens/sleep_log_screen.dart';
+import '../../log/screens/weight_log_screen.dart';
+import '../manager/home_bloc.dart';
 import '../widgets/fitness_metric_card.dart';
 import '../widgets/home_bottom_nav_bar.dart';
-import '../widgets/home_fb.dart';
 import '../widgets/meal_card.dart';
 import '../widgets/workout_highlight_card.dart';
 
@@ -25,12 +30,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const _HomePage(),
-    const Center(child: Text('Workout')),
-    const Center(child: Text('Nutrition')),
-    ProfileScreen(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const _HomePage(),
+      const Center(child: Text('Workout')),
+      const Center(child: Text('Nutrition')),
+      ProfileScreen(),
+    ];
+    context.read<HomeBloc>().add(const LoadHomeEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,136 +64,412 @@ class _HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const HomeAppBar(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppConstants.verticalSpaceM,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const HomeAppBar(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Fitness Metrics',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          fontFamily: AppConstants.fontRegular),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text('See All',
+                    AppConstants.verticalSpaceM,
+
+                    // ── Fitness Metrics header ──────────────────────────────
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Fitness Metrics',
                           style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            fontFamily: AppConstants.fontRegular,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text(
+                            'See All',
+                            style: TextStyle(
                               color: AppConstants.primaryColor,
-                              fontFamily: AppConstants.fontRegular)),
+                              fontFamily: AppConstants.fontRegular,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                // Horizontal scrolling metric cards
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  clipBehavior: Clip.none,
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) =>ScorePage() ),
-                        ),
 
-                        child: const MetricCard(
-                          title: 'Score',
-                          value: '88%',
-                          color: AppConstants.primaryColor,
-                          icon: Icons.add,
-                          graphImage:
-                              AssetImage('assets/images/bar_chart_orange.png'),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const StepsTakenPage()),
-                        ),
+                    const SizedBox(height: 10),
 
-                        child: const MetricCard(
-                          title: 'Steps taken',
-                          value: '12,540',
-                          color: Colors.blue,
-                          icon: Icons.directions_run,
-                        ),
+                    // ── Metric cards ────────────────────────────────────────
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      clipBehavior: Clip.none,
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const ScorePage(),
+                                ),
+                              );
+                              if (context.mounted) {
+                                context.read<HomeBloc>().add(const GetScoreEvent());
+                              }
+                            },
+                            child: MetricCard(
+                              title: 'Score',
+                              value: state is HomeLoaded && state.score != null
+                                  ? '${state.score!.overallScore.toInt()}%'
+                                  : '--',
+                              color: AppConstants.primaryColor,
+                              icon: Icons.add,
+                              graphImage: const AssetImage(
+                                  'assets/images/bar_chart_orange.png'),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const StepsTakenPage()),
+                            ),
+                            child: const MetricCard(
+                              title: 'Steps taken',
+                              value: '12,540',
+                              color: Colors.blue,
+                              icon: Icons.directions_run,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const CalorieStatsPage()),
+                            ),
+                            child: MetricCard(
+                              title: 'Calories',
+                              value: state is HomeLoaded ? '15' : '--',
+                              color: Colors.grey,
+                              icon: Icons.local_fire_department,
+                              fallbackIcon: Icons.local_fire_department_outlined,
+                            ),
+                          ),
+                        ],
                       ),
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const CalorieStatsPage()),
-                        ),
-                        child: const MetricCard(
-                          title: 'Calories',
-                          value: '1,240',
-                          color: Colors.grey,
-                          icon: Icons.local_fire_department,
-                          fallbackIcon: Icons.local_fire_department_outlined,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                AppConstants.verticalSpaceL,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Workouts',
-                        style: TextStyle(
+                    ),
+
+                    AppConstants.verticalSpaceL,
+
+                    // ── Workouts section ────────────────────────────────────
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Workouts',
+                          style: TextStyle(
                             fontSize: 18,
                             fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.bold)),
-                    IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.more_vert)),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.more_vert),
+                        ),
+                      ],
+                    ),
+
+                    if (state is HomeLoading)
+                      _ShimmerBox(height: 240, radius: 25)
+                    else if (state is HomeLoaded)
+                      WorkoutHighlightCard(workout:state.workout)
+                    else if (state is HomeError)
+                        _ErrorTile(message: state.message),
+
+
+                    const SizedBox(height: 25),
+
+                    // ── Diet & Nutrition section ────────────────────────────
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Diet & Nutrition',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text(
+                            'See All',
+                            style: TextStyle(color: Colors.orange),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    if (state is HomeLoading)
+                      _ShimmerBox(height: 220, radius: 30)
+                    else if (state is HomeError)
+                      _ErrorTile(message: state.message)
+                    else
+                      const SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
+                        child: Row(
+                          children: [
+                            MealCard(
+                              title: 'Salad & Egg',
+                              kcal: '548kcal',
+                              time: '20min',
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    const SizedBox(height: 25),
+
+                    // ── Miscellaneous Logs section ──────────────────────────
+                    const Text(
+                      'Miscellaneous Logs',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _MiscLogCard(
+                            label: 'Hydration',
+                            icon: Icons.water_drop_outlined,
+                            color: const Color(0xFF29B6F6),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const HydrationLogPage(),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _MiscLogCard(
+                            label: 'Sleep',
+                            icon: Icons.bedtime_outlined,
+                            color: const Color(0xFF7E57C2),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const SleepLogPage(),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _MiscLogCard(
+                            label: 'Weight',
+                            icon: Icons.monitor_weight_outlined,
+                            color: const Color(0xFF26A69A),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const WeightLogPage(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-                const WorkoutHighlightCard(),
+              ),
+              AppConstants.verticalSpaceXXL,
+              AppConstants.verticalSpaceXXL,
+              AppConstants.verticalSpaceXXL,
+              AppConstants.verticalSpaceXXL,
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
 
-                const SizedBox(height: 25),
+// ── Miscellaneous log card ────────────────────────────────────────────────────
+class _MiscLogCard extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
 
-// --- Diet & Nutrition Section ---
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Diet & Nutrition',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text('See All',
-                            style: TextStyle(color: Colors.orange))),
-                  ],
+  const _MiscLogCard({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '+ Log',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: color,
                 ),
-                const SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  clipBehavior: Clip.none,
-                  child: Row(
-                    children: [
-                      MealCard(
-                          title: 'Salad & Egg', kcal: '548kcal', time: '20min'),
-                      MealCard(
-                          title: 'Salad & Egg', kcal: '548kcal', time: '20min'),
-                    ],
-                  ),
-                ),
-              ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Meal card row built from real API data ────────────────────────────────────
+class _MealCardRow extends StatelessWidget {
+  final NextMealResponse nextMeal;
+  const _MealCardRow({required this.nextMeal});
+
+  @override
+  Widget build(BuildContext context) {
+    final meal = nextMeal.recommendedMeal;
+    if (meal == null) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Text(
+          'No meal plan found. Generate a nutrition plan to get started.',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    final totalTime = meal.prepTimeMinutes + meal.cookTimeMinutes;
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      clipBehavior: Clip.none,
+      child: Row(
+        children: [
+          MealCard(
+            title: meal.mealName,
+            kcal: '${meal.calories.toInt()}kcal',
+            time: '${totalTime}min',
+            proteinG: meal.proteinG,
+            fatsG: meal.fatsG,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Simple shimmer placeholder ────────────────────────────────────────────────
+class _ShimmerBox extends StatelessWidget {
+  final double height;
+  final double radius;
+  const _ShimmerBox({required this.height, required this.radius});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(radius),
+      ),
+    );
+  }
+}
+
+// ── Inline error tile ─────────────────────────────────────────────────────────
+class _ErrorTile extends StatelessWidget {
+  final String message;
+  const _ErrorTile({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red[50],
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.error_outline, color: Colors.red),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(color: Colors.red),
             ),
           ),
-          AppConstants.verticalSpaceXXL,
-          AppConstants.verticalSpaceXXL,
-          AppConstants.verticalSpaceXXL,
-          AppConstants.verticalSpaceXXL,
+          TextButton(
+            onPressed: () =>
+                context.read<HomeBloc>().add(const LoadHomeEvent()),
+            child: const Text('Retry'),
+          ),
         ],
       ),
     );

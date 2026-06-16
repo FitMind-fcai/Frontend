@@ -55,7 +55,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
       mealEntries: [
         MealLogEntry(
           centralFoodId: _selectedFoodId,
-          mealType: _mealType,
+          mealType: _mealType.toUpperCase(),
           mealName: widget.result.mealName,
           servings: _servings,
         ),
