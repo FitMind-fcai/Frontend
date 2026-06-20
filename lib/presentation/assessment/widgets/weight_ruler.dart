@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WeightPicker extends StatefulWidget {
   final Function(double) onChanged;
@@ -64,7 +65,7 @@ class _WeightPickerState extends State<WeightPicker> {
               ),
             ),
             Text(
-              widget.unit,
+              widget.unit == 'kg' ? 'assessment.unit_kg'.tr() : 'assessment.unit_lbs'.tr(),
               style: TextStyle(
                 fontSize: 36,
                 fontFamily: AppConstants.fontRegular,

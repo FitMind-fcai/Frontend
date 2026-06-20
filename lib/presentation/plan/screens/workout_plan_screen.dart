@@ -2,7 +2,8 @@ import 'package:fitmind/presentation/plan/screens/workout_plan_result_screen.dar
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
+import 'dart:ui' as ui;
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/plan/workout_plan_generation_request.dart';
 import '../../../data/models/plan/workout_plan_model.dart';
@@ -34,8 +35,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+    final colorScheme = Theme
+        .of(context)
+        .colorScheme;
 
     return BlocConsumer<PlanBloc, PlanState>(
       listener: (context, state) {
@@ -43,7 +48,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => WorkoutPlanResultScreen(plan: state.plan,request: _lastRequest),
+              builder: (_) =>
+                  WorkoutPlanResultScreen(
+                      plan: state.plan, request: _lastRequest),
             ),
           );
         } else if (state is PlanError) {
@@ -52,7 +59,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           );
         }
       },
-      builder: (context, state) {  // 👈 now state is in scope
+      builder: (context, state) {
+        // 👈 now state is in scope
         return Stack(
           children: [
             Scaffold(
@@ -82,7 +90,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            'Workout Plan',
+                            'workout.title'.tr(),
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w500,
@@ -103,7 +111,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              '${currentPage + 1} of 8',
+                              'workout.step_counter'.tr(
+                                  namedArgs: {'step': '${currentPage + 1}'}),
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
@@ -122,7 +131,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
 
                       const SizedBox(height: 20),
                       CommonButton(
-                        title: currentPage < 11 ? 'Continue' : 'Submit',
+                        title: currentPage < 7
+                            ? 'assessment.continue'.tr()
+                            : 'assessment.submit'.tr(),
                         onPressed: _onContinuePressed,
                       ),
                     ],
@@ -144,15 +155,16 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         child: SizedBox(
                           width: 120,
                           child: LinearProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(AppConstants.primaryColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                AppConstants.primaryColor),
                             backgroundColor: Colors.white24,
                           ),
                         ),
                       ),
                       const SizedBox(height: 30),
-                      const Text(
-                        "Creating your plan...",
-                        style: TextStyle(
+                      Text(
+                        'workout.creating_plan'.tr(),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontFamily: AppConstants.fontRegular,
@@ -168,6 +180,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       },
     );
   }
+
   WorkoutPlanGenerationRequest? _lastRequest;
 
   void _submitWorkoutPreferences() {
@@ -230,7 +243,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       children: [
         Text(
           textAlign: TextAlign.center,
-          'How many days/wk will you commit?',
+          'workout.days_per_week_question'.tr(),
           style: TextStyle(
             fontSize: 36,
             fontWeight: FontWeight.bold,
@@ -255,79 +268,75 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             final index = ((int.tryParse(_selectedDays) ?? 1) - 1).clamp(0, 6);
 
             return Container(
-              height: 50,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Stack(
-                children: [
-                  AnimatedPositioned(
-                    left: index * buttonWidth,
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    child: Container(
-                      width: buttonWidth,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: const Color(0xFFB7C9E2),
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    children: List.generate(7, (index) {
-                      final day = (index + 1).toString();
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => _selectedDays = day),
-                          child: Center(
-                            child: Text(
-                              day,
-                              style: TextStyle(
-                                color: _selectedDays == day
-                                    ? Colors.white
-                                    : (isDark ? Colors.white60 : Colors.grey[600]),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Directionality(
+                  textDirection: ui.TextDirection.ltr,
+                  child: Stack(
+                    children: [
+                      AnimatedPositioned(
+                        left: index * buttonWidth,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        child: Container(
+                          width: buttonWidth,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: const Color(0xFFB7C9E2),
+                              width: 2,
                             ),
                           ),
                         ),
-                      );
-                    }),
+                      ),
+                      Row(
+                        children: List.generate(7, (index) {
+                          final day = (index + 1).toString();
+                          return Expanded(
+                            child: GestureDetector(
+                              onTap: () => setState(() => _selectedDays = day),
+                              child: Center(
+                                child: Text(
+                                  day,
+                                  style: TextStyle(
+                                    color: _selectedDays == day
+                                        ? Colors.white
+                                        : (isDark
+                                        ? Colors.white60
+                                        : Colors.grey[600]),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
+                ));
           },
         ),
         SizedBox(height: 32),
         Center(
-          child: RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 16,
-                fontFamily: AppConstants.fontRegular,
-                fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white : Colors.black,
-              ),
-              children: [
-                TextSpan(text: 'I\'m commited to excersing '),
-                TextSpan(
-                  text: '${_selectedDays}x',
-                  style: TextStyle(fontWeight: AppConstants.extraBold),
-                ),
-                TextSpan(text: ' weekly'),
-              ],
+          child: Text(
+            'workout.committed_days_message'
+                .tr(namedArgs: {'count': _selectedDays}),
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: AppConstants.fontRegular,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white : Colors.black,
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -501,8 +510,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       children: [
         Center(
           child: Text(
-            "Have you got any areas you want to focus on?",
-            textAlign: TextAlign.center,
+            'workout.focus_areas_question'.tr(), textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
               fontFamily: AppConstants.fontRegular,
@@ -540,7 +548,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'What equipment do you have access to?',
+          'workout.equipment_question'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
@@ -554,8 +562,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         Column(
           children: [
             _buildEquipmentOption(
-              title: 'Full Gym Equipment',
-              subtitle: 'Complete gym access',
+              title: 'workout.equipment_full_gym'.tr(),
+              subtitle: 'workout.equipment_full_gym_desc'.tr(),
               icon: '🏋️',
               isSelected: _selectedEquipment == 'Full Gym Equipment',
               isDark: isDark,
@@ -564,8 +572,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             ),
             const SizedBox(height: 16),
             _buildEquipmentOption(
-              title: 'Basic Equipment',
-              subtitle: 'Dumbbells, resistance bands',
+              title: 'workout.equipment_basic'.tr(),
+              subtitle: 'workout.equipment_basic_desc'.tr(),
               icon: '🎯',
               isSelected: _selectedEquipment == 'Basic Equipment',
               isDark: isDark,
@@ -574,8 +582,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             ),
             const SizedBox(height: 16),
             _buildEquipmentOption(
-              title: 'No Equipment',
-              subtitle: 'Bodyweight workouts only',
+              title: 'workout.equipment_none'.tr(),
+              subtitle: 'workout.equipment_none_desc'.tr(),
               icon: '🤸',
               isSelected: _selectedEquipment == 'No Equipment',
               isDark: isDark,
@@ -680,7 +688,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'What\'s your workout focus?',
+          'workout.focus_question'.tr(),
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
@@ -691,42 +699,42 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         ),
         const SizedBox(height: 32),
         _buildWorkoutOption(
-          title: 'Strength Training',
+          title: 'workout.focus_strength'.tr(),
           icon: Icons.fitness_center,
-          description: 'Build muscle & power',
+          description: 'workout.focus_strength_desc'.tr(),
           isSelected: _selectedWorkoutFocus == 'Strength Training',
           isDark: isDark,
           onTap: () =>
               setState(() => _selectedWorkoutFocus = 'Strength Training'),
         ),
         _buildWorkoutOption(
-          title: 'Cardio-\nvascular',
+          title: 'workout.focus_cardio'.tr(),
           icon: Icons.favorite,
-          description: 'Improve endurance',
+          description: 'workout.focus_cardio_desc'.tr(),
           isSelected: _selectedWorkoutFocus == 'Cardiovascular',
           isDark: isDark,
           onTap: () => setState(() => _selectedWorkoutFocus = 'Cardiovascular'),
         ),
         _buildWorkoutOption(
-          title: 'Flexibility',
+          title: 'workout.focus_flexibility'.tr(),
           icon: Icons.self_improvement,
-          description: 'Enhance mobility',
+          description: 'workout.focus_flexibility_desc'.tr(),
           isSelected: _selectedWorkoutFocus == 'Flexibility',
           isDark: isDark,
           onTap: () => setState(() => _selectedWorkoutFocus = 'Flexibility'),
         ),
         _buildWorkoutOption(
-          title: 'Hybrid',
+          title: 'workout.focus_hybrid'.tr(),
           icon: Icons.stars,
-          description: 'Balanced approach',
+          description: 'workout.focus_hybrid_desc'.tr(),
           isSelected: _selectedWorkoutFocus == 'Hybrid',
           isDark: isDark,
           onTap: () => setState(() => _selectedWorkoutFocus = 'Hybrid'),
         ),
         _buildWorkoutOption(
-          title: 'Sport Specific',
+          title: 'workout.focus_sport_specific'.tr(),
           icon: Icons.sports_soccer,
-          description: 'Sport-focused training',
+          description: 'workout.focus_sport_specific_desc'.tr(),
           isSelected: _selectedWorkoutFocus == 'Sport Specific',
           isDark: isDark,
           onTap: () => setState(() => _selectedWorkoutFocus = 'Sport Specific'),
@@ -819,7 +827,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Where will you perform workouts?',
+          'workout.location_question'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
@@ -839,28 +847,28 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           childAspectRatio: 1,
           children: [
             _buildLocationOption(
-              title: 'Gym',
+              title: 'workout.location_gym'.tr(),
               icon: '🏋️',
               isSelected: _selectedWorkoutLocation == 'Gym',
               isDark: isDark,
               onTap: () => setState(() => _selectedWorkoutLocation = 'Gym'),
             ),
             _buildLocationOption(
-              title: 'Home',
+              title: 'workout.location_home'.tr(),
               icon: '🏠',
               isSelected: _selectedWorkoutLocation == 'Home',
               isDark: isDark,
               onTap: () => setState(() => _selectedWorkoutLocation = 'Home'),
             ),
             _buildLocationOption(
-              title: 'Outdoor',
+              title: 'workout.location_outdoor'.tr(),
               icon: '🌳',
               isSelected: _selectedWorkoutLocation == 'Outdoor',
               isDark: isDark,
               onTap: () => setState(() => _selectedWorkoutLocation = 'Outdoor'),
             ),
             _buildLocationOption(
-              title: 'Hybrid',
+              title: 'workout.location_hybrid'.tr(),
               icon: '🔀',
               isSelected: _selectedWorkoutLocation == 'Hybrid',
               isDark: isDark,
@@ -950,7 +958,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'What\'s your workout intensity level?',
+          'workout.difficulty_question'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
@@ -964,8 +972,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         Column(
           children: [
             _buildDifficultyOption(
-              title: 'Beginner',
-              subtitle: 'Just starting out',
+              title: 'workout.difficulty_beginner'.tr(),
+              subtitle: 'workout.difficulty_beginner_desc'.tr(),
               icon: '🌱',
               isSelected: _selectedDifficulty == 'Beginner',
               isDark: isDark,
@@ -973,8 +981,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             ),
             const SizedBox(height: 16),
             _buildDifficultyOption(
-              title: 'Intermediate',
-              subtitle: 'Regular training',
+              title: 'workout.difficulty_intermediate'.tr(),
+              subtitle: 'workout.difficulty_intermediate_desc'.tr(),
               icon: '💪',
               isSelected: _selectedDifficulty == 'Intermediate',
               isDark: isDark,
@@ -982,8 +990,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             ),
             const SizedBox(height: 16),
             _buildDifficultyOption(
-              title: 'Advanced',
-              subtitle: 'Intense workouts',
+              title: 'workout.difficulty_advanced'.tr(),
+              subtitle: 'workout.difficulty_advanced_desc'.tr(),
               icon: '🔥',
               isSelected: _selectedDifficulty == 'Advanced',
               isDark: isDark,
@@ -1088,8 +1096,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'What\'s your target session duration?',
-          textAlign: TextAlign.center,
+          'workout.session_duration_question'.tr(), textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -1137,9 +1144,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                       child: Text('$_sessionDuration'),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'minutes',
-                      style: TextStyle(
+                    Text(
+                      'workout.minutes_unit'.tr(),
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         fontFamily: AppConstants.fontRegular,
@@ -1157,9 +1164,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     SliderTheme(
                       data: SliderThemeData(
                         activeTrackColor: AppConstants.primaryColor,
-                        inactiveTrackColor: isDark
-                            ? const Color(0xFF3A3A3A)
-                            : Colors.grey[300],
+                        inactiveTrackColor:
+                        isDark ? const Color(0xFF3A3A3A) : Colors.grey[300],
                         thumbColor: AppConstants.primaryColor,
                         overlayColor:
                         AppConstants.primaryColor.withOpacity(0.2),
@@ -1188,7 +1194,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '15 min',
+                          'workout.min_short'.tr(namedArgs: {'count': '15'}),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -1197,7 +1203,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           ),
                         ),
                         Text(
-                          '180 min',
+                          'workout.min_short'.tr(namedArgs: {'count': '180'}),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -1259,17 +1265,18 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
               : null,
         ),
         child: AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            fontFamily: AppConstants.fontRegular,
-            color: isSelected
-                ? Colors.white
-                : (isDark ? Colors.white : Colors.black),
-          ),
-          child: Text('$minutes min'),
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              fontFamily: AppConstants.fontRegular,
+              color: isSelected
+                  ? Colors.white
+                  : (isDark ? Colors.white : Colors.black),
+            ),
+            child: Text(
+                'workout.min_short'.tr(namedArgs: {'count': '$minutes'})),
         ),
       ),
     );
@@ -1280,7 +1287,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'How many weeks do you want your plan to be?',
+          'workout.duration_question'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
@@ -1299,12 +1306,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           mainAxisSpacing: 12,
           childAspectRatio: 0.85,
           children: [
-            _buildWeekCard(4, '1 Month', isDark),
-            _buildWeekCard(8, '2 Months', isDark),
-            _buildWeekCard(12, '3 Months', isDark),
-            _buildWeekCard(16, '4 Months', isDark),
-            _buildWeekCard(24, '6 Months', isDark),
-            _buildWeekCard(52, '1 Year', isDark),
+            _buildWeekCard(4, 'workout.month_1'.tr(), isDark),
+            _buildWeekCard(8, 'workout.months_2'.tr(), isDark),
+            _buildWeekCard(12, 'workout.months_3'.tr(), isDark),
+            _buildWeekCard(16, 'workout.months_4'.tr(), isDark),
+            _buildWeekCard(24, 'workout.months_6'.tr(), isDark),
+            _buildWeekCard(52, 'workout.year_1'.tr(), isDark),
           ],
         ),
         const SizedBox(height: 24),
@@ -1330,7 +1337,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Custom Duration',
+                      'workout.custom_duration'.tr(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -1354,7 +1361,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         border: Border.all(
                           color: _isCustomWeeks
                               ? AppConstants.primaryColor
-                              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey[300]!),
+                              : (isDark
+                              ? const Color(0xFF3A3A3A)
+                              : Colors.grey[300]!),
                           width: 2,
                         ),
                       ),
@@ -1413,7 +1422,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
               const SizedBox(height: 8),
               Center(
                 child: Text(
-                  _customWeeks == 1 ? 'week' : 'weeks',
+                  _customWeeks == 1 ? 'workout.week_singular'.tr() : 'workout.week_plural'.tr(),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -1498,7 +1507,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     ? Colors.white70
                     : (isDark ? Colors.white60 : Colors.grey[600]),
               ),
-              child: Text(weeks == 1 ? 'week' : 'weeks'),
+              child: Text(weeks == 1 ? 'workout.week_singular'.tr() : 'workout.week_plural'.tr()),
             ),
             const SizedBox(height: 8),
             AnimatedDefaultTextStyle(

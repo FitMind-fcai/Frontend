@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' hide SearchBar;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/meal_log/excersise_search_result.dart';
 import '../../../data/models/save_log_request.dart';
@@ -30,12 +30,12 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
   final _weightController = TextEditingController();
   final _notesController = TextEditingController();
 
-  static const _quickSearches = [
-    'chest push with barbell',
-    'back pull cable',
-    'leg press machine',
-    'shoulder press dumbbell',
-    'bicep curl',
+  static const _quickSearchKeys = [
+    'text_log_workout.quick_search_chest_push',
+    'text_log_workout.quick_search_back_pull',
+    'text_log_workout.quick_search_leg_press',
+    'text_log_workout.quick_search_shoulder_press',
+    'text_log_workout.quick_search_bicep_curl',
   ];
 
   // ── Actions ───────────────────────────────────────────────────────────────
@@ -58,9 +58,8 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
           centralExerciseId: _selectedExercise!.id,
           setsCompleted: _sets,
           repsCompleted: _reps,
-          weightUsed: weightText.isNotEmpty
-              ? double.tryParse(weightText)
-              : null,
+          weightUsed:
+              weightText.isNotEmpty ? double.tryParse(weightText) : null,
           notes: _notesController.text.trim().isNotEmpty
               ? _notesController.text.trim()
               : null,
@@ -89,12 +88,12 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                '${_selectedExercise!.name} logged! '
-                    '$_sets sets × $_reps reps',
-              ),
-              backgroundColor: accent,
-              behavior: SnackBarBehavior.floating,
-            ),
+                'text_log_workout.logged_snackbar'.tr(namedArgs: {
+                  'name': _selectedExercise!.name,
+                  'sets': '$_sets',
+                  'reps': '$_reps',
+                }),
+              )),
           );
           Navigator.pop(context);
         } else if (state is LogError) {
@@ -109,7 +108,7 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
       },
       child: LogPageShell(
         type: LogType.workout,
-        methodLabel: 'Text',
+        methodLabel: 'text_log_workout.method_label'.tr(),
         body: GestureDetector(
           onTap: () => _searchFocus.unfocus(),
           child: Padding(
@@ -124,7 +123,7 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
                   controller: _searchController,
                   focusNode: _searchFocus,
                   accent: accent,
-                  hint: 'Describe the exercise...',
+                  hint: 'text_log_workout.search_hint'.tr(),
                   onSearch: _search,
                 ),
 
@@ -133,7 +132,7 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
                 // ── Quick search chips ─────────────────────────────────────
                 if (_selectedExercise == null)
                   QuickChips(
-                    items: _quickSearches,
+                    items: _quickSearchKeys.map((k) => k.tr()).toList(),
                     accent: accent,
                     onTap: (q) {
                       _searchController.text = q;
@@ -156,19 +155,18 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
                       if (state is ExerciseSearchSuccess &&
                           _selectedExercise == null) {
                         if (state.results.isEmpty) {
-                          return const EmptyResults(
-                              message:
-                              'No exercises found. Try different words.');
+                          return EmptyResults(
+                              message: 'text_log_workout.no_results'.tr());
                         }
                         return ListView.separated(
                           itemCount: state.results.length,
                           separatorBuilder: (_, __) =>
-                          const SizedBox(height: 8),
+                              const SizedBox(height: 8),
                           itemBuilder: (_, i) => ExerciseResultCard(
                             exercise: state.results[i],
                             accent: accent,
                             onTap: () => setState(
-                                    () => _selectedExercise = state.results[i]),
+                                () => _selectedExercise = state.results[i]),
                           ),
                         );
                       }
@@ -196,8 +194,7 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
                       }
 
                       return IdleHint(
-                        message:
-                        'Describe an exercise above or pick a quick suggestion.',
+                        message: 'text_log_workout.idle_hint'.tr(),
                         icon: Icons.fitness_center_outlined,
                       );
                     },
@@ -209,15 +206,14 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
                 // ── Save button ────────────────────────────────────────────
                 BlocBuilder<LogBloc, LogState>(
                   builder: (context, state) {
-                    final isSaving =
-                        state is LogLoading && state.isSaving;
+                    final isSaving = state is LogLoading && state.isSaving;
                     return SaveButton(
                       enabled: _selectedExercise != null,
                       isSaving: isSaving,
                       accent: accent,
                       label: _selectedExercise != null
-                          ? 'Save — $_sets × $_reps'
-                          : 'Select an exercise first',
+                          ? 'text_log_workout.save_button_ready'.tr(namedArgs: {'sets': '$_sets', 'reps': '$_reps'})
+                          : 'text_log_workout.save_button_empty'.tr(),
                       onTap: _onSave,
                     );
                   },

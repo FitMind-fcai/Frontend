@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../core/constants/app_constants.dart';
 import 'log_choice_screen.dart';
@@ -19,7 +20,9 @@ class LogPageShell extends StatelessWidget {
       ? AppConstants.primaryColor
       : const Color(0xFF3B82F6);
 
-  String get typeLabel => type == LogType.workout ? 'Workout' : 'Meal';
+  String get typeLabel => type == LogType.workout
+      ? 'log_page_shell.type_workout'.tr()
+      : 'log_page_shell.type_meal'.tr();
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +43,13 @@ class LogPageShell extends StatelessWidget {
                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
-                      color:
-                      isDark ? colorScheme.surfaceContainerHighest : Colors.white,
+                      color: isDark
+                          ? colorScheme.surfaceContainerHighest
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(13),
                       border: Border.all(
-                        color: isDark ? Colors.white24 : const Color(0xFFEAEAEA),
+                        color:
+                            isDark ? Colors.white24 : const Color(0xFFEAEAEA),
                       ),
                     ),
                     child: Icon(
@@ -58,14 +63,17 @@ class LogPageShell extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Log $typeLabel',
+                    Text(
+                        'log_page_shell.title'
+                            .tr(namedArgs: {'type': typeLabel}),
                         style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: isDark?Colors.white:const Color(0xFF1A1A2E),
+                            color:
+                                isDark ? Colors.white : const Color(0xFF1A1A2E),
                             letterSpacing: -0.4,
                             fontFamily: AppConstants.fontRegular)),
-                    Text('via $methodLabel',
+                    Text('log_page_shell.via_method'.tr(namedArgs: {'method': methodLabel}),
                         style: TextStyle(
                             fontSize: 13,
                             color: accent,

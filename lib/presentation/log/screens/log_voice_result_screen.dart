@@ -1,12 +1,10 @@
 // lib/presentation/log/screens/log_voice_result_screen.dart
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/meal_log/meal_scan_result.dart';
-
 import '../../../data/models/meal_log/voice_meal_scan_result.dart' hide MatchedFood;
 import '../../../data/models/meal_log/voice_workout_scan_result.dart';
 import '../../../data/models/save_log_request.dart';
@@ -73,8 +71,8 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
       listener: (context, state) {
         if (state is LogSaveSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Meal logged successfully!'),
+            SnackBar(
+              content: Text('voice_meal_result.save_success'.tr()),
               backgroundColor: Color(0xFF22C55E),
               behavior: SnackBarBehavior.floating,
             ),
@@ -100,7 +98,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            'Meal Summary',
+            'voice_meal_result.title'.tr(),
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -136,7 +134,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('You said',
+                          Text('voice_meal_result.you_said'.tr(),
                               style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
@@ -166,7 +164,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.result.mealName.isNotEmpty ? widget.result.mealName : 'Unnamed Meal',
+                    widget.result.mealName.isNotEmpty ? widget.result.mealName : 'voice_meal_result.unnamed_meal'.tr(),
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -199,7 +197,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const _Label('Items Detected'),
+                    _Label('voice_meal_result.items_detected'.tr()),
                     const SizedBox(height: 10),
                     Wrap(
                       spacing: 8,
@@ -228,9 +226,9 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                   children: [
                     Row(
                       children: [
-                        const _Label('Best Matches'),
+                        _Label('voice_meal_result.best_matches'.tr()),
                         const Spacer(),
-                        Text('Tap to select',
+                        Text('voice_meal_result.tap_to_select'.tr(),
                             style: TextStyle(
                                 fontSize: 11,
                                 color: textMid,
@@ -239,7 +237,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Macros will be calculated from the selected food × servings.',
+                      'voice_meal_result.macro_calc_note'.tr(),
                       style: TextStyle(
                           fontSize: 12,
                           color: textMid,
@@ -263,7 +261,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                 children: [
                   Icon(Icons.restaurant_rounded, size: 18, color: textMid),
                   const SizedBox(width: 10),
-                  Text('Servings',
+                  Text('voice_meal_result.servings_label'.tr(),
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -304,7 +302,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
           ],
         ),
         bottomSheet: _SaveBar(
-          label: 'Save Meal',
+          label: 'voice_meal_result.save_button'.tr(),
           accent: _blue,
           onSave: _onSave,
         ),
@@ -376,8 +374,8 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
       listener: (context, state) {
         if (state is LogSaveSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Workout logged successfully!'),
+            SnackBar(
+              content: Text('voice_workout_result.save_success'.tr()),
               backgroundColor: Color(0xFF22C55E),
               behavior: SnackBarBehavior.floating,
             ),
@@ -403,7 +401,7 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            'Workout Summary',
+            'voice_workout_result.title'.tr(),
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -439,7 +437,7 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('You said',
+                          Text('voice_workout_result.you_said'.tr(),
                               style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
@@ -488,7 +486,7 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const _Label('Tags'),
+                    _Label('voice_workout_result.tags_label'.tr()),
                     const SizedBox(height: 10),
                     Wrap(
                       spacing: 8,
@@ -524,7 +522,7 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
           ],
         ),
         bottomSheet: _SaveBar(
-          label: 'Save Workout',
+          label: 'voice_workout_result.save_button'.tr(),
           accent: _green,
           onSave: _onSave,
         ),
@@ -609,13 +607,13 @@ class _MacroRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _MacroTile(label: 'Calories', value: calories.toStringAsFixed(0), unit: 'kcal', color: accent),
+          _MacroTile(label: 'voice_log_shared.label_calories'.tr(), value: calories.toStringAsFixed(0), unit: 'voice_log_shared.unit_kcal'.tr(), color: accent),
           _divider(borderColor),
-          _MacroTile(label: 'Protein', value: protein.toStringAsFixed(1), unit: 'g', color: const Color(0xFFEF4444)),
+          _MacroTile(label: 'voice_log_shared.macro_protein'.tr(), value: protein.toStringAsFixed(1), unit: 'g', color: const Color(0xFFEF4444)),
           _divider(borderColor),
-          _MacroTile(label: 'Carbs', value: carbs.toStringAsFixed(1), unit: 'g', color: const Color(0xFFF59E0B)),
+          _MacroTile(label: 'voice_log_shared.macro_carbs'.tr(), value: carbs.toStringAsFixed(1), unit: 'g', color: const Color(0xFFF59E0B)),
           _divider(borderColor),
-          _MacroTile(label: 'Fats', value: fats.toStringAsFixed(1), unit: 'g', color: const Color(0xFF8B5CF6)),
+          _MacroTile(label: 'voice_log_shared.macro_fats'.tr(), value: fats.toStringAsFixed(1), unit: 'g', color: const Color(0xFF8B5CF6)),
         ],
       ),
     );
@@ -660,7 +658,12 @@ class _MacroTile extends StatelessWidget {
 // ── Meal type selector ────────────────────────────────────────────────────────
 
 const _mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
-
+const _mealTypeLabelKeys = [
+  'voice_log_shared.meal_type_breakfast',
+  'voice_log_shared.meal_type_lunch',
+  'voice_log_shared.meal_type_dinner',
+  'voice_log_shared.meal_type_snack',
+];
 class _MealTypeSelector extends StatelessWidget {
   final String selected;
   final ValueChanged<String> onChanged;
@@ -672,12 +675,14 @@ class _MealTypeSelector extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Row(
-      children: _mealTypes
-          .map((type) => Padding(
-        padding: const EdgeInsets.only(right: 8),
-        child: GestureDetector(
-          onTap: () => onChanged(type),
-          child: AnimatedContainer(
+        children: List.generate(_mealTypes.length, (i) {
+          final type = _mealTypes[i];
+          final label = _mealTypeLabelKeys[i].tr();
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: GestureDetector(
+              onTap: () => onChanged(type),
+              child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -702,9 +707,8 @@ class _MealTypeSelector extends StatelessWidget {
             ),
           ),
         ),
-      ))
-          .toList(),
-    );
+          );},
+    ));
   }
 
   String _capitalize(String s) => s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
@@ -815,13 +819,13 @@ class _MatchedFoodTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('${food.caloriesPer100g.toStringAsFixed(0)} kcal',
+                Text('${food.caloriesPer100g.toStringAsFixed(0)} ${'voice_log_shared.unit_kcal'.tr()}',
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: accent,
                         fontFamily: AppConstants.fontRegular)),
-                Text('per 100g',
+                Text('voice_log_shared.per_100g'.tr(),
                     style: TextStyle(
                         fontSize: 11, color: textMid, fontFamily: AppConstants.fontRegular)),
               ],
@@ -938,11 +942,11 @@ class _WorkoutStatsRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _StatTile(value: '$exerciseCount', label: 'Exercises', icon: Icons.fitness_center_rounded, color: accent),
+          _StatTile(value: '$exerciseCount', label: 'voice_log_shared.stat_exercises'.tr(), icon: Icons.fitness_center_rounded, color: accent),
           Container(width: 1, height: 36, color: borderColor),
           _StatTile(
               value: duration.isNotEmpty ? duration : '—',
-              label: 'Duration',
+              label: 'voice_log_shared.stat_duration'.tr(),
               icon: Icons.timer_outlined,
               color: const Color(0xFF8B5CF6)),
         ],
@@ -1050,7 +1054,7 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(ex.name.isNotEmpty ? ex.name : 'Unknown Exercise',
+                      Text(ex.name.isNotEmpty ? ex.name : 'voice_log_shared.unnamed_exercise'.tr(),
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
@@ -1069,7 +1073,7 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                       decoration: BoxDecoration(color: toggleBg, borderRadius: BorderRadius.circular(8)),
                       child: Row(
                         children: [
-                          Text('Match',
+                          Text('voice_log_shared.match_label'.tr(),
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -1095,7 +1099,7 @@ class _ExerciseCardState extends State<_ExerciseCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Select best match:',
+                  Text('voice_log_shared.select_best_match'.tr(),
                       style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -1129,13 +1133,15 @@ class _ExerciseMetaRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final parts = <String>[];
-    if (exercise.sets > 0) parts.add('${exercise.sets} sets');
-    if (exercise.reps > 0) parts.add('${exercise.reps} reps');
+    if (exercise.sets > 0) parts.add('voice_log_shared.sets_short'.tr(namedArgs: {'count': '${exercise.sets}'}));
+    if (exercise.reps > 0) parts.add('voice_log_shared.reps_short'.tr(namedArgs: {'count': '${exercise.reps}'}));
     if (exercise.weightStr.isNotEmpty) parts.add(exercise.weightStr);
     if (exercise.durationSeconds > 0) {
       final mins = exercise.durationSeconds ~/ 60;
       final secs = exercise.durationSeconds % 60;
-      parts.add(mins > 0 ? '${mins}m ${secs}s' : '${secs}s');
+      parts.add(mins > 0
+          ? 'voice_log_shared.duration_min_sec'.tr(namedArgs: {'min': '$mins', 'sec': '$secs'})
+          : 'voice_log_shared.duration_sec'.tr(namedArgs: {'sec': '$secs'}));
     }
     if (parts.isEmpty) return const SizedBox.shrink();
     return Text(parts.join(' · '),

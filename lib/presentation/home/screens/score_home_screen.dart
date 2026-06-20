@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/constants/app_constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ScorePage extends StatelessWidget {
   const ScorePage({super.key});
@@ -23,7 +24,7 @@ class ScorePage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Fitmind Score',
+          'score.title'.tr(),
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
             fontWeight: FontWeight.w600,
@@ -61,9 +62,13 @@ class ScorePage extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                       getTitle: (index, angle) {
-                        const titles = [
-                          "Calorie", "BMI", "BPM",
-                          "Hydration", "Sleep", "Steps",
+                        final titles = [
+                          'score.radar_calorie'.tr(),
+                          'score.radar_bmi'.tr(),
+                          'score.radar_bpm'.tr(),
+                          'score.radar_hydration'.tr(),
+                          'score.radar_sleep'.tr(),
+                          'score.radar_steps'.tr(),
                         ];
                         return RadarChartTitle(text: titles[index]);
                       },
@@ -134,7 +139,7 @@ class ScorePage extends StatelessWidget {
                 const SizedBox(height: 10),
 
                 Text(
-                  "You are a healthy individual.",
+                  'score.summary_healthy'.tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontFamily: AppConstants.fontRegular,
@@ -150,9 +155,9 @@ class ScorePage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      LegendItem(Colors.orange, "STRENGTH"),
-                      LegendItem(isDark ? Colors.white70 : Colors.black, "AGILITY"),
-                      LegendItem(Colors.blue, "ENDURANCE"),
+                      LegendItem(Colors.orange, 'score.legend_strength'.tr()),
+                      LegendItem(isDark ? Colors.white70 : Colors.black, 'score.legend_agility'.tr()),
+                      LegendItem(Colors.blue, 'score.legend_endurance'.tr()),
                     ],
                   ),
                 ),

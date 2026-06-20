@@ -7,6 +7,7 @@ import '../../../../data/models/plan/nutrition_plan_result.dart';
 import '../../../../data/models/plan/workout_plan_result.dart';
 import '../../manager/plan_bloc.dart';
 import '../../widgets/macro_pill.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../widgets/nutrition_plan_body.dart';
 import '../../widgets/plan_type.dart';
 import '../../widgets/week_card.dart';
@@ -154,10 +155,10 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
               const SizedBox(width: 14),
               Text(
                 _selectedType == null
-                    ? 'My Plans'
+                    ? 'my_plans.title'.tr()
                     : _selectedType == _PlanType.nutrition
-                    ? 'Nutrition Plan'
-                    : 'Workout Plan',
+                    ? 'my_plans.nutrition_plan_title'.tr()
+                    : 'my_plans.workout_plan_title'.tr(),
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
@@ -209,13 +210,12 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Delete Plan'),
-        content: const Text(
-            'Are you sure you want to delete this active plan permanently?'),
+        title: Text('my_plans.delete_plan_title'.tr()),
+        content: Text('my_plans.delete_plan_confirm'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: Text('my_plans.cancel'.tr(), style: const TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
@@ -226,7 +226,7 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
                 context.read<PlanBloc>().add(DeleteWorkoutPlanEvent(planId));
               }
             },
-            child: const Text('Delete',
+            child: Text('my_plans.delete'.tr(),
                 style: TextStyle(color: Color(0xFFEF4444))),
           ),
         ],
@@ -245,7 +245,7 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'What would you like to view?',
+            'my_plans.view_question'.tr(),
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -257,16 +257,16 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
           ),
           const SizedBox(height: 16),
           PlanTypeCard(
-            label: 'Nutrition',
-            subtitle: 'View your meal & calorie plans',
+            label: 'my_plans.nutrition_label'.tr(),
+            subtitle: 'my_plans.nutrition_subtitle'.tr(),
             imagePath: 'assets/images/meal_image.png',
             accentColor: const Color(0xFF3B82F6),
             onTap: () => _selectType(_PlanType.nutrition),
           ),
           const SizedBox(height: 14),
           PlanTypeCard(
-            label: 'Workout',
-            subtitle: 'View your exercise & training plans',
+            label: 'my_plans.workout_label'.tr(),
+            subtitle: 'my_plans.workout_subtitle'.tr(),
             imagePath: 'assets/images/workout_card.png',
             accentColor: AppConstants.primaryColor,
             onTap: () => _selectType(_PlanType.workout),
@@ -335,9 +335,9 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16)),
                 ),
-                child: const Text(
-                  'Try Again',
-                  style: TextStyle(
+                child: Text(
+                  'my_plans.try_again'.tr(),
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     fontFamily: AppConstants.fontRegular,

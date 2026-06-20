@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_constants.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../data/models/meal_log/meal_text_result.dart';
 import '../../../data/models/save_log_request.dart';
 import '../manager/log_bloc.dart';
@@ -28,13 +28,12 @@ class _TextLogMealPageState extends State<TextLogMealPage> {
   String _selectedMealType = 'Lunch';
   double _servings = 1.0;
 
-  static const _mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
-  static const _quickSearches = [
-    'grilled chicken with rice',
-    'scrambled eggs',
-    'oats with milk',
-    'protein shake',
-    'salad with tuna',
+  static const _quickSearchKeys = [
+    'text_log_meal.quick_search_grilled_chicken',
+    'text_log_meal.quick_search_scrambled_eggs',
+    'text_log_meal.quick_search_oats',
+    'text_log_meal.quick_search_protein_shake',
+    'text_log_meal.quick_search_salad_tuna',
   ];
 
   // ── Derived macros for selected food + servings ───────────────────────────
@@ -97,8 +96,10 @@ class _TextLogMealPageState extends State<TextLogMealPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                '${_selectedFood!.foodName} logged! '
-                    '${_calories.toStringAsFixed(0)} kcal',
+                'text_log_meal.logged_snackbar'.tr(namedArgs: {
+                  'name': _selectedFood!.foodName,
+                  'calories': _calories.toStringAsFixed(0),
+                }),
               ),
               backgroundColor: accent,
               behavior: SnackBarBehavior.floating,
@@ -117,7 +118,7 @@ class _TextLogMealPageState extends State<TextLogMealPage> {
       },
       child: LogPageShell(
         type: LogType.meal,
-        methodLabel: 'Text',
+        methodLabel: 'text_log_meal.method_label'.tr(),
         body: GestureDetector(
           onTap: () => _searchFocus.unfocus(),
           child: Padding(
@@ -142,7 +143,7 @@ class _TextLogMealPageState extends State<TextLogMealPage> {
                   controller: _searchController,
                   focusNode: _searchFocus,
                   accent: accent,
-                  hint: 'Describe what you ate...',
+                  hint: 'text_log_meal.search_hint'.tr(),
                   onSearch: _search,
                 ),
 
@@ -151,7 +152,7 @@ class _TextLogMealPageState extends State<TextLogMealPage> {
                 // ── Quick search chips ─────────────────────────────────────
                 if (_selectedFood == null)
                   QuickChips(
-                    items: _quickSearches,
+                    items: _quickSearchKeys.map((k) => k.tr()).toList(),
                     accent: accent,
                     onTap: (q) {
                       _searchController.text = q;
@@ -173,8 +174,8 @@ class _TextLogMealPageState extends State<TextLogMealPage> {
 
                       if (state is FoodSearchSuccess && _selectedFood == null) {
                         if (state.results.isEmpty) {
-                          return const EmptyResults(
-                              message: 'No foods found. Try different words.');
+                          return EmptyResults(
+                              message: 'text_log_meal.no_results'.tr());
                         }
                         return ListView.separated(
                           itemCount: state.results.length,
@@ -208,9 +209,8 @@ class _TextLogMealPageState extends State<TextLogMealPage> {
                       }
 
                       // Initial / idle state
-                      return const IdleHint(
-                        message:
-                        'Search for a food above or tap a quick suggestion.',
+                      return IdleHint(
+                        message: 'text_log_meal.idle_hint'.tr(),
                         icon: Icons.restaurant_outlined,
                       );
                     },
@@ -226,8 +226,8 @@ class _TextLogMealPageState extends State<TextLogMealPage> {
                       (context.watch<LogBloc>().state as LogLoading).isSaving,
                   accent: accent,
                   label: _selectedFood != null
-                      ? 'Save — ${_calories.toStringAsFixed(0)} kcal'
-                      : 'Select a food first',
+                      ? 'text_log_meal.save_button_ready'.tr(namedArgs: {'calories': _calories.toStringAsFixed(0)})
+                      : 'text_log_meal.save_button_empty'.tr(),
                   onTap: _onSave,
                 ),
 

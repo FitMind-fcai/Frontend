@@ -2,6 +2,7 @@ import 'package:fitmind/core/constants/app_constants.dart';
 import 'package:fitmind/presentation/plan/screens/workout_plan_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'nutrition_plan_screen.dart';
 
@@ -44,7 +45,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                             color: isDark ? Colors.white60 : Colors.grey,
                           ),
                           Text(
-                            'Create Plan',
+                            'plan_selection.title'.tr(),
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -59,7 +60,8 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                       // Question
                       Center(
                         child: Text(
-                          'What type of plan\ndo you want to\ncreate?',
+                          'plan_selection.question'.tr(),
+
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 32,
@@ -121,7 +123,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                       // Option Tiles
                       _buildOptionTile(
                         icon: Icons.fitness_center,
-                        label: 'Workout Plan',
+                        label: 'plan_selection.workout_plan'.tr(),
                         isSelected: isWorkoutSelected,
                         isDark: isDark,
                         onTap: () {
@@ -134,7 +136,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
 
                       _buildOptionTile(
                         icon: Icons.restaurant,
-                        label: 'Nutrition Plan',
+                        label: 'plan_selection.nutrition_plan'.tr(),
                         isSelected: isNutritionSelected,
                         isDark: isDark,
                         onTap: () {
@@ -202,7 +204,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                     ),
                   ),
                   child: Text(
-                    'Continue',
+                    'plan_selection.continue_button'.tr(),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

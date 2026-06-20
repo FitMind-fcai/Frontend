@@ -8,7 +8,7 @@ import 'package:fitmind/presentation/home/widgets/home_app_bar.dart';
 import 'package:fitmind/presentation/profile/screens/profile_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/home/next_meal_response.dart';
 import '../../log/screens/hydration_log_screen.dart';
@@ -86,9 +86,9 @@ class _HomePage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Fitness Metrics',
-                          style: TextStyle(
+                        Text(
+                          'home.fitness_metrics'.tr(),
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
                             fontFamily: AppConstants.fontRegular,
@@ -128,7 +128,7 @@ class _HomePage extends StatelessWidget {
                               }
                             },
                             child: MetricCard(
-                              title: 'Score',
+                              title: 'home.metric_score'.tr(),
                               value: state is HomeLoaded && state.score != null
                                   ? '${state.score!.overallScore.toInt()}%'
                                   : '--',
@@ -144,8 +144,8 @@ class _HomePage extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (_) => const StepsTakenPage()),
                             ),
-                            child: const MetricCard(
-                              title: 'Steps taken',
+                            child: MetricCard(
+                              title: 'home.metric_steps'.tr(),
                               value: '12,540',
                               color: Colors.blue,
                               icon: Icons.directions_run,
@@ -157,8 +157,8 @@ class _HomePage extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (_) => const CalorieStatsPage()),
                             ),
-                            child: MetricCard(
-                              title: 'Calories',
+                            child:MetricCard(
+                              title: 'home.metric_calories'.tr(),
                               value: state is HomeLoaded ? '15' : '--',
                               // CHANGED: was a flat Colors.grey, which has no
                               // dark-mode equivalent. outline reads as a
@@ -178,9 +178,9 @@ class _HomePage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Workouts',
-                          style: TextStyle(
+                        Text(
+                          'home.workouts_section'.tr(),
+                          style: const TextStyle(
                             fontSize: 18,
                             fontFamily: AppConstants.fontRegular,
                             fontWeight: FontWeight.bold,
@@ -207,9 +207,9 @@ class _HomePage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Diet & Nutrition',
-                          style: TextStyle(
+                        Text(
+                          'home.diet_nutrition_section'.tr(),
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -246,9 +246,9 @@ class _HomePage extends StatelessWidget {
                     const SizedBox(height: 25),
 
                     // ── Miscellaneous Logs section ──────────────────────────
-                    const Text(
-                      'Miscellaneous Logs',
-                      style: TextStyle(
+                    Text(
+                      'home.misc_logs_section'.tr(),
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -260,7 +260,7 @@ class _HomePage extends StatelessWidget {
                       children: [
                         Expanded(
                           child: _MiscLogCard(
-                            label: 'Hydration',
+                            label: 'home.log_hydration'.tr(),
                             icon: Icons.water_drop_outlined,
                             color: const Color(0xFF29B6F6),
                             onTap: () => Navigator.push(
@@ -274,7 +274,7 @@ class _HomePage extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: _MiscLogCard(
-                            label: 'Sleep',
+                            label: 'home.log_sleep'.tr(),
                             icon: Icons.bedtime_outlined,
                             color: const Color(0xFF7E57C2),
                             onTap: () => Navigator.push(
@@ -287,8 +287,8 @@ class _HomePage extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: _MiscLogCard(
-                            label: 'Weight',
+                          child:_MiscLogCard(
+                            label: 'home.log_weight'.tr(),
                             icon: Icons.monitor_weight_outlined,
                             color: const Color(0xFF26A69A),
                             onTap: () => Navigator.push(
@@ -387,7 +387,7 @@ class _MiscLogCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                '+ Log',
+                'home.add_log_chip'.tr(),
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -414,9 +414,7 @@ class _MealCardRow extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Text(
-          'No meal plan found. Generate a nutrition plan to get started.',
-          // CHANGED: was Colors.grey — onSurfaceVariant gives a muted but
-          // theme-correct tone in both light and dark.
+          'home.no_meal_plan'.tr(),
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -498,7 +496,7 @@ class _ErrorTile extends StatelessWidget {
           TextButton(
             onPressed: () =>
                 context.read<HomeBloc>().add(const LoadHomeEvent()),
-            child: const Text('Retry'),
+            child: Text('home.retry'.tr()),
           ),
         ],
       ),

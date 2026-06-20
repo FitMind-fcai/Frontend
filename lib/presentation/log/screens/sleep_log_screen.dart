@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/save_log_request.dart';
 import '../manager/log_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 class SleepLogPage extends StatefulWidget {
   const SleepLogPage({super.key});
 
@@ -19,8 +19,13 @@ class _SleepLogPageState extends State<SleepLogPage> {
   final TextEditingController _notesController = TextEditingController();
   DateTime _logDate = DateTime.now();
 
-  static const _qualityLabels = ['Terrible', 'Poor', 'Fair', 'Good', 'Great'];
-  static const _qualityColors = [
+  static const _qualityLabelKeys = [
+    'sleep_log.quality_terrible',
+    'sleep_log.quality_poor',
+    'sleep_log.quality_fair',
+    'sleep_log.quality_good',
+    'sleep_log.quality_great',
+  ];  static const _qualityColors = [
     Color(0xFFEF5350),
     Color(0xFFFF7043),
     Color(0xFFFFA726),
@@ -37,8 +42,8 @@ class _SleepLogPageState extends State<SleepLogPage> {
   String get _formattedHours {
     final h = _sleepHours.floor();
     final m = ((_sleepHours - h) * 60).round();
-    if (m == 0) return '${h}h';
-    return '${h}h ${m}m';
+    if (m == 0) return 'sleep_log.duration_short'.tr(namedArgs: {'hours': '$h'});
+    return 'sleep_log.duration_with_minutes'.tr(namedArgs: {'hours': '$h', 'minutes': '$m'});
   }
 
   Future<void> _pickDate() async {
@@ -77,7 +82,7 @@ class _SleepLogPageState extends State<SleepLogPage> {
       listener: (context, state) {
         if (state is LogSaveSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Sleep logged successfully')),
+            SnackBar(content: Text('sleep_log.log_success'.tr())),
           );
           Navigator.of(context).pop();
         } else if (state is LogError) {
@@ -96,7 +101,7 @@ class _SleepLogPageState extends State<SleepLogPage> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'Log Sleep',
+            'sleep_log.title'.tr(),
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w700,
               fontFamily: AppConstants.fontRegular,
@@ -128,7 +133,7 @@ class _SleepLogPageState extends State<SleepLogPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Duration',
+                      'sleep_log.duration_label'.tr(),
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.5),
                         letterSpacing: 0.8,
@@ -170,12 +175,12 @@ class _SleepLogPageState extends State<SleepLogPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('1h',
+                        Text('sleep_log.hour_min'.tr(),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface.withOpacity(0.4),
                               fontFamily: AppConstants.fontRegular,
                             )),
-                        Text('12h',
+                        Text('sleep_log.hour_max'.tr(),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface.withOpacity(0.4),
                               fontFamily: AppConstants.fontRegular,
@@ -194,7 +199,7 @@ class _SleepLogPageState extends State<SleepLogPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Quality',
+                      'sleep_log.quality_label'.tr(),
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.5),
                         letterSpacing: 0.8,
@@ -246,7 +251,7 @@ class _SleepLogPageState extends State<SleepLogPage> {
                       child: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 200),
                         child: Text(
-                          _qualityLabels[_sleepQuality - 1],
+                          _qualityLabelKeys[_sleepQuality - 1].tr(),
                           key: ValueKey(_sleepQuality),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: _qualityColors[_sleepQuality - 1],
@@ -269,7 +274,7 @@ class _SleepLogPageState extends State<SleepLogPage> {
                   maxLines: 3,
                   style: const TextStyle(fontFamily: AppConstants.fontRegular),
                   decoration: InputDecoration(
-                    hintText: 'Notes (optional)…',
+                    hintText: 'sleep_log.notes_hint'.tr(),
                     hintStyle: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.35),
                       fontFamily: AppConstants.fontRegular,
@@ -307,9 +312,9 @@ class _SleepLogPageState extends State<SleepLogPage> {
                           strokeWidth: 2.5,
                         ),
                       )
-                          : const Text(
-                        'Save Sleep',
-                        style: TextStyle(
+                          : Text(
+                        'sleep_log.save_sleep'.tr(),
+                    style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           fontFamily: AppConstants.fontRegular,

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../manager/log_bloc.dart';
 import 'log_choice_screen.dart';
@@ -171,7 +171,7 @@ class _VoiceLogPageState extends State<VoiceLogPage>
       },
       child: LogPageShell(
         type: widget.type,
-        methodLabel: 'Voice',
+        methodLabel: 'voice_log.method_label'.tr(),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Column(
@@ -266,10 +266,10 @@ class _VoiceLogPageState extends State<VoiceLogPage>
               const SizedBox(height: 24),
               Text(
                 _isDone
-                    ? 'Recording ready!'
+                    ? 'voice_log.status_ready'.tr()
                     : _isRecording
-                        ? 'Tap to stop recording'
-                        : 'Tap the mic to start',
+                    ? 'voice_log.status_recording'.tr()
+                    : 'voice_log.status_idle'.tr(),
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -293,9 +293,9 @@ class _VoiceLogPageState extends State<VoiceLogPage>
                           );
                         }
                       },
-                      child: const Text(
-                        'Play Recording',
-                        style: TextStyle(fontFamily: AppConstants.fontRegular),
+                      child: Text(
+                        'voice_log.play_recording'.tr(),
+                        style: const TextStyle(fontFamily: AppConstants.fontRegular),
                       ),
                     ),
                   ),
@@ -326,8 +326,8 @@ class _VoiceLogPageState extends State<VoiceLogPage>
                                     strokeWidth: 2.5,
                                     color: Colors.white.withOpacity(0.8)),
                               )
-                            : const Text('Analyse',
-                                style: TextStyle(
+                            : Text('voice_log.analyse'.tr(),
+                            style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     fontFamily: AppConstants.fontRegular)),
@@ -363,8 +363,8 @@ class _HintCard extends StatelessWidget {
       ),
       child: Text(
         type == LogType.workout
-            ? "Speak naturally: Describe the exercises, repetitions, and performance weights achieved."
-            : "Speak naturally: Detail your portion balances, dishes eaten, and ingredients mixed.",
+            ? 'voice_log.hint_workout'.tr()
+            : 'voice_log.hint_meal'.tr(),
         style: const TextStyle(
             fontSize: 13, color: Color(0xFF6B7280), height: 1.4),
       ),

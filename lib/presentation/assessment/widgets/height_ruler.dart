@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 
 class HeightPicker extends StatefulWidget {
@@ -160,7 +160,7 @@ class _HeightPickerState extends State<HeightPicker> {
             ),
             if (widget.unit == 'cm')
               Text(
-                'cm',
+                'assessment.unit_cm'.tr(),
                 style: TextStyle(
                   fontSize: 36,
                   fontFamily: AppConstants.fontRegular,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../data/models/plan/workout_plan_result.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WorkoutDayExercisesScreen extends StatelessWidget {
   final WorkoutDay day;
@@ -9,15 +10,37 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
   const WorkoutDayExercisesScreen({super.key, required this.day, this.date});
 
   String _formatDate(DateTime d) {
-    const months = [
-      '', 'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+    final months = [
+      '',
+      'week_days.month_january'.tr(),
+      'week_days.month_february'.tr(),
+      'week_days.month_march'.tr(),
+      'week_days.month_april'.tr(),
+      'week_days.month_may'.tr(),
+      'week_days.month_june'.tr(),
+      'week_days.month_july'.tr(),
+      'week_days.month_august'.tr(),
+      'week_days.month_september'.tr(),
+      'week_days.month_october'.tr(),
+      'week_days.month_november'.tr(),
+      'week_days.month_december'.tr(),
     ];
-    const weekdays = [
-      '', 'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-      'Friday', 'Saturday', 'Sunday'
+    final weekdays = [
+      '',
+      'week_days.weekday_monday'.tr(),
+      'week_days.weekday_tuesday'.tr(),
+      'week_days.weekday_wednesday'.tr(),
+      'week_days.weekday_thursday'.tr(),
+      'week_days.weekday_friday'.tr(),
+      'week_days.weekday_saturday'.tr(),
+      'week_days.weekday_sunday'.tr(),
     ];
-    return '${weekdays[d.weekday]}, ${d.day} ${months[d.month]} ${d.year}';
+    return 'workout_day_exercises.date_label'.tr(namedArgs: {
+      'weekday': weekdays[d.weekday],
+      'day': '${d.day}',
+      'month': months[d.month],
+      'year': '${d.year}',
+    });
   }
 
   @override
@@ -70,7 +93,7 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
                         Text(
                           day.dayName.isNotEmpty
                               ? day.dayName
-                              : 'Day ${day.dayNumber}',
+                              : 'workout_day_exercises.day_label'.tr(namedArgs: {'number': '${day.dayNumber}'}),
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
@@ -118,13 +141,13 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _SummaryItem(
-                      label: 'Exercises',
+                      label: 'workout_day_exercises.summary_exercises'.tr(),
                       value: '${day.exercises.length}',
                       color: AppConstants.primaryColor,
                     ),
                     _divider(),
                     _SummaryItem(
-                      label: 'Focus',
+                      label: 'workout_day_exercises.summary_focus'.tr(),
                       value: day.focus?.isNotEmpty == true
                           ? day.focus!
                           : '—',
@@ -132,7 +155,7 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
                     ),
                     _divider(),
                     _SummaryItem(
-                      label: 'Sets',
+                      label: 'workout_day_exercises.summary_sets'.tr(),
                       value: '${day.exercises.fold<int>(0, (s, e) => s + (e.sets ?? 0))}',
                       color: const Color(0xFF10B981),
                     ),
@@ -312,7 +335,7 @@ class _ExerciseCardState extends State<_ExerciseCard>
                               ),
                             ),
                             Text(
-                              'sets',
+                              'workout_day_exercises.sets_short'.tr(),
                               style: TextStyle(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w600,
@@ -386,25 +409,25 @@ class _ExerciseCardState extends State<_ExerciseCard>
                   if (ex.sets != null)
                     _StatTag(
                         label: '${ex.sets}',
-                        sub: 'Sets',
+                        sub: 'workout_day_exercises.stat_sets'.tr(),
                         color: _muscleColor),
                   if (ex.sets != null) const SizedBox(width: 6),
                   if (ex.reps != null)
                     _StatTag(
                         label: '${ex.reps}',
-                        sub: 'Reps',
+                        sub: 'workout_day_exercises.stat_reps'.tr(),
                         color: const Color(0xFF3B82F6)),
                   if (ex.reps != null) const SizedBox(width: 6),
                   if (ex.durationSeconds != null)
                     _StatTag(
                         label: '${ex.durationSeconds}s',
-                        sub: 'Duration',
+                        sub: 'workout_day_exercises.stat_duration'.tr(),
                         color: const Color(0xFF10B981)),
                   if (ex.durationSeconds != null) const SizedBox(width: 6),
                   if (ex.restSeconds != null)
                     _StatTag(
                         label: '${ex.restSeconds}s',
-                        sub: 'Rest',
+                        sub: 'workout_day_exercises.stat_rest'.tr(),
                         color: const Color(0xFF8B5CF6)),
                 ],
               ),
@@ -505,7 +528,7 @@ class _ExerciseDetails extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           if (ex.description != null && ex.description!.isNotEmpty) ...[
-            _sectionTitle('Description', isDark, colorScheme),
+            _sectionTitle('workout_day_exercises.section_description'.tr(), isDark, colorScheme),
             const SizedBox(height: 6),
             Text(
               ex.description!,
@@ -521,7 +544,7 @@ class _ExerciseDetails extends StatelessWidget {
             const SizedBox(height: 14),
           ],
           if (ex.equipment != null && ex.equipment!.isNotEmpty) ...[
-            _sectionTitle('Equipment', isDark, colorScheme),
+            _sectionTitle('workout_day_exercises.section_equipment'.tr(), isDark, colorScheme),
             const SizedBox(height: 6),
             Container(
               padding:
@@ -563,7 +586,7 @@ class _ExerciseDetails extends StatelessWidget {
             const SizedBox(height: 14),
           ],
           if (ex.difficulty != null && ex.difficulty!.isNotEmpty) ...[
-            _sectionTitle('Difficulty', isDark, colorScheme),
+            _sectionTitle('workout_day_exercises.section_difficulty'.tr(), isDark, colorScheme),
             const SizedBox(height: 6),
             _DifficultyBadge(level: ex.difficulty!),
           ],

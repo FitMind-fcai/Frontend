@@ -4,7 +4,8 @@ import 'package:fitmind/presentation/plan/screens/plan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_unit_ruler/flutter_unit_ruler.dart';
-
+import 'package:easy_localization/easy_localization.dart';
+import 'dart:ui' as ui;
 import '../../../data/data_sources/local/auth_local_data_source.dart';
 import '../../../data/models/profile_body.dart';
 import '../../profile/manager/profile_bloc.dart';
@@ -42,6 +43,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   late ColorScheme _colorScheme;
 
   double kgToLbs(double kg) => kg * 2.20462;
+
   double lbsToKg(double lbs) => lbs * 0.45359237;
 
   @override
@@ -95,7 +97,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      'Assessment',
+                      'assessment.title'.tr(),
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -115,7 +117,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        '${currentPage + 1} of 11',
+                        'assessment.step_counter'
+                            .tr(namedArgs: {'step': '${currentPage + 1}'}),
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -133,7 +136,9 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
 
                 const SizedBox(height: 20),
                 CommonButton(
-                  title: currentPage < 11 ? 'Continue' : 'Submit',
+                  title: currentPage < 11
+                      ? 'assessment.continue'.tr()
+                      : 'assessment.submit'.tr(),
                   onPressed: _onContinuePressed,
                 ),
               ],
@@ -168,8 +173,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
         fitnessGoal: selectedGoal == 'lose_weight'
             ? FitnessGoal.LoseWeight
             : selectedGoal == 'get_bulks'
-            ? FitnessGoal.BuildMuscle
-            : FitnessGoal.MaintainWeight,
+                ? FitnessGoal.BuildMuscle
+                : FitnessGoal.MaintainWeight,
         activityLevel: ActivityLevel.Sedentary,
         dietaryPreferences: diets,
         medicalConditions: medicalConditions,
@@ -184,18 +189,30 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
 
   Widget _getCurrentPage() {
     switch (currentPage) {
-      case 0: return _buildGoalPage();
-      case 1: return _buildGenderPage();
-      case 2: return _buildWeightPage();
-      case 3: return _buildHeightPage();
-      case 4: return _buildActivityLeveLPage();
-      case 5: return _buildAgeScroll();
-      case 6: return _physicalTagInput();
-      case 7: return _medicalConditionInput();
-      case 8: return _AllergiesInput();
-      case 9: return _dietInput();
-      case 10: return _medicationsInput();
-      default: return const SizedBox.shrink();
+      case 0:
+        return _buildGoalPage();
+      case 1:
+        return _buildGenderPage();
+      case 2:
+        return _buildWeightPage();
+      case 3:
+        return _buildHeightPage();
+      case 4:
+        return _buildActivityLeveLPage();
+      case 5:
+        return _buildAgeScroll();
+      case 6:
+        return _physicalTagInput();
+      case 7:
+        return _medicalConditionInput();
+      case 8:
+        return _AllergiesInput();
+      case 9:
+        return _dietInput();
+      case 10:
+        return _medicationsInput();
+      default:
+        return const SizedBox.shrink();
     }
   }
 
@@ -205,7 +222,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       children: [
         Text(
           textAlign: TextAlign.center,
-          "What's your fitness goal/target?",
+          'assessment.goal_question'.tr(),
           style: TextStyle(
             fontSize: 32,
             fontFamily: AppConstants.fontRegular,
@@ -220,35 +237,35 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             children: [
               _buildOptionTile(
                 icon: const AssetImage('assets/images/coldair.png'),
-                label: 'Lose Weight',
+                label: 'assessment.goal_lose_weight'.tr(),
                 value: 'lose_weight',
                 isGoal: true,
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/robothead.png'),
-                label: 'I wanna try AI Coach',
+                label: 'assessment.goal_ai_coach'.tr(),
                 value: 'ai_coach',
                 isGoal: true,
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/dumbbell.png'),
-                label: 'I wanna get bulks',
+                label: 'assessment.goal_bulk'.tr(),
                 value: 'get_bulks',
                 isGoal: true,
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/heartbeats.png'),
-                label: 'I wanna gain endurance',
+                label: 'assessment.goal_endurance'.tr(),
                 value: 'gain_endurance',
                 isGoal: true,
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/Solid head heart.png'),
-                label: 'Just trying out the app! 👍',
+                label: 'assessment.goal_trying_app'.tr(),
                 value: 'trying_app',
                 isGoal: true,
               ),
@@ -265,7 +282,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       children: [
         Text(
           textAlign: TextAlign.center,
-          "What's your fitness Level",
+          'assessment.activity_question'.tr(),
           style: TextStyle(
             fontSize: 32,
             fontFamily: AppConstants.fontRegular,
@@ -280,28 +297,28 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             children: [
               _buildOptionTile(
                 icon: const AssetImage('assets/images/coldair.png'),
-                label: 'Sedentary',
+                label: 'assessment.activity_sedentary'.tr(),
                 value: 'lose_weight',
                 isGoal: true,
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/robothead.png'),
-                label: 'Lightly Active',
+                label: 'assessment.activity_light'.tr(),
                 value: 'ai_coach',
                 isGoal: true,
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/dumbbell.png'),
-                label: 'Moderately Active',
+                label: 'assessment.activity_moderate'.tr(),
                 value: 'get_bulks',
                 isGoal: true,
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/heartbeats.png'),
-                label: 'Very Active',
+                label: 'assessment.activity_very'.tr(),
                 value: 'Extra Active',
                 isGoal: true,
               ),
@@ -317,7 +334,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "What is your gender?",
+          'assessment.gender_question'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 32,
@@ -333,13 +350,15 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             children: [
               _buildGenderCard(
                 gender: 'Male',
-                imagePath: 'assets/images/man running with shirt that says jogger it.png',
+                imagePath:
+                    'assets/images/man running with shirt that says jogger it.png',
                 value: 'male',
               ),
               const SizedBox(height: 16),
               _buildGenderCard(
                 gender: 'Female',
-                imagePath: 'assets/images/woman running sportswear with white background.png',
+                imagePath:
+                    'assets/images/woman running sportswear with white background.png',
                 value: 'female',
               ),
               const SizedBox(height: 16),
@@ -380,8 +399,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             color: isSelected
                 ? AppConstants.primaryColor
                 : _isDark
-                ? _colorScheme.surfaceContainerHighest
-                : const Color(0xFFF5F5F5),
+                    ? _colorScheme.surfaceContainerHighest
+                    : const Color(0xFFF5F5F5),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected ? Colors.white54 : Colors.transparent,
@@ -394,7 +413,9 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 icon,
                 color: isSelected
                     ? Colors.white
-                    : _isDark ? Colors.white54 : Colors.grey[700],
+                    : _isDark
+                        ? Colors.white54
+                        : Colors.grey[700],
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -407,7 +428,9 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     fontFamily: AppConstants.fontRegular,
                     color: isSelected
                         ? Colors.white
-                        : _isDark ? Colors.white : Colors.black87,
+                        : _isDark
+                            ? Colors.white
+                            : Colors.black87,
                   ),
                 ),
               ),
@@ -422,7 +445,9 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                   border: Border.all(
                     color: isSelected
                         ? Colors.white
-                        : _isDark ? Colors.white38 : Colors.grey[400]!,
+                        : _isDark
+                            ? Colors.white38
+                            : Colors.grey[400]!,
                     width: 2,
                   ),
                 ),
@@ -432,7 +457,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                       ScaleTransition(scale: anim, child: child),
                   child: isSelected
                       ? const Icon(Icons.check,
-                      size: 16, color: Color(0xFFFF6B35), key: ValueKey(1))
+                          size: 16, color: Color(0xFFFF6B35), key: ValueKey(1))
                       : const SizedBox(key: ValueKey(2)),
                 ),
               ),
@@ -504,17 +529,23 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                   children: [
                     Icon(
                       gender == 'Male' ? Icons.male : Icons.female,
-                      color: _isDark?_colorScheme.surfaceContainerHighest:Colors.white,
+                      color: _isDark
+                          ? _colorScheme.surfaceContainerHighest
+                          : Colors.white,
                       size: 28,
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      gender,
+                      gender == 'Male'
+                          ? 'assessment.male'.tr()
+                          : 'assessment.female'.tr(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         fontFamily: AppConstants.fontRegular,
-                        color: _isDark?_colorScheme.surfaceContainerHighest:Colors.white,
+                        color: _isDark
+                            ? _colorScheme.surfaceContainerHighest
+                            : Colors.white,
                       ),
                     ),
                   ],
@@ -545,7 +576,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                         ScaleTransition(scale: anim, child: child),
                     child: isSelected
                         ? const Icon(Icons.check,
-                        size: 18, color: Colors.white, key: ValueKey(1))
+                            size: 18, color: Colors.white, key: ValueKey(1))
                         : const SizedBox(key: ValueKey(2)),
                   ),
                 ),
@@ -562,7 +593,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "What is your weight?",
+          'assessment.weight_question'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 32,
@@ -573,21 +604,23 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           ),
         ),
         const SizedBox(height: 32),
-        Container(
-          height: 50,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: _isDark
-                ? _colorScheme.surfaceContainerHighest
-                : Colors.grey[200],
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Stack(
-            children: [
-              AnimatedAlign(
-                alignment: _selectedUnit == "kg"
-                    ? Alignment.centerLeft
-                    : Alignment.centerRight,
+    Container(
+    height: 50,
+    width: double.infinity,
+    decoration: BoxDecoration(
+    color: _isDark
+    ? _colorScheme.surfaceContainerHighest
+        : Colors.grey[200],
+    borderRadius: BorderRadius.circular(16),
+    ),
+    child: Directionality(
+    textDirection: ui.TextDirection.ltr,
+    child: Stack(
+    children: [
+    AnimatedAlign(
+    alignment: _selectedUnit == "kg"
+    ? Alignment.centerLeft
+        : Alignment.centerRight,
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
                 child: Container(
@@ -596,7 +629,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                   decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFB7C9E2), width: 2),
+                    border:
+                        Border.all(color: const Color(0xFFB7C9E2), width: 2),
                   ),
                 ),
               ),
@@ -609,11 +643,13 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                         height: 50,
                         alignment: Alignment.center,
                         child: Text(
-                          "kg",
+                          'assessment.unit_kg'.tr(),
                           style: TextStyle(
                             color: _selectedUnit == "kg"
                                 ? Colors.white
-                                : _isDark ? Colors.white38 : Colors.grey[600],
+                                : _isDark
+                                    ? Colors.white38
+                                    : Colors.grey[600],
                             fontSize: 16,
                             fontFamily: AppConstants.fontRegular,
                             fontWeight: FontWeight.w600,
@@ -629,12 +665,14 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                         height: 50,
                         alignment: Alignment.center,
                         child: Text(
-                          "lbs",
+                          'assessment.unit_lbs'.tr(),
                           style: TextStyle(
                             fontFamily: AppConstants.fontRegular,
                             color: _selectedUnit == "lbs"
                                 ? Colors.white
-                                : _isDark ? Colors.white38 : Colors.grey[600],
+                                : _isDark
+                                    ? Colors.white38
+                                    : Colors.grey[600],
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -647,6 +685,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             ],
           ),
         ),
+    ),
         const SizedBox(height: 48),
         WeightPicker(
           unit: _selectedUnit,
@@ -663,7 +702,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       children: [
         Center(
           child: Text(
-            "What is your height?",
+            'assessment.height_question'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
@@ -675,21 +714,23 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           ),
         ),
         const SizedBox(height: 32),
-        Container(
-          height: 50,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: _isDark
-                ? _colorScheme.surfaceContainerHighest
-                : Colors.grey[200],
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Stack(
-            children: [
-              AnimatedAlign(
-                alignment: _selectedHeightUnit == "cm"
-                    ? Alignment.centerLeft
-                    : Alignment.centerRight,
+    Container(
+    height: 50,
+    width: double.infinity,
+    decoration: BoxDecoration(
+    color: _isDark
+    ? _colorScheme.surfaceContainerHighest
+        : Colors.grey[200],
+    borderRadius: BorderRadius.circular(16),
+    ),
+    child: Directionality(
+    textDirection: ui.TextDirection.ltr,
+    child: Stack(
+    children: [
+    AnimatedAlign(
+    alignment: _selectedHeightUnit == "cm"
+    ? Alignment.centerLeft
+        : Alignment.centerRight,
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
                 child: Container(
@@ -698,7 +739,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                   decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFB7C9E2), width: 2),
+                    border:
+                        Border.all(color: const Color(0xFFB7C9E2), width: 2),
                   ),
                 ),
               ),
@@ -711,11 +753,13 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                         height: 50,
                         alignment: Alignment.center,
                         child: Text(
-                          "cm",
+                          'assessment.unit_cm'.tr(),
                           style: TextStyle(
                             color: _selectedHeightUnit == "cm"
                                 ? Colors.white
-                                : _isDark ? Colors.white38 : Colors.grey[600],
+                                : _isDark
+                                    ? Colors.white38
+                                    : Colors.grey[600],
                             fontSize: 16,
                             fontFamily: AppConstants.fontRegular,
                             fontWeight: FontWeight.w600,
@@ -731,12 +775,14 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                         height: 50,
                         alignment: Alignment.center,
                         child: Text(
-                          "ft",
+                          'assessment.unit_ft'.tr(),
                           style: TextStyle(
                             fontFamily: AppConstants.fontRegular,
                             color: _selectedHeightUnit == "ft"
                                 ? Colors.white
-                                : _isDark ? Colors.white38 : Colors.grey[600],
+                                : _isDark
+                                    ? Colors.white38
+                                    : Colors.grey[600],
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -749,6 +795,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             ],
           ),
         ),
+    ),
         const SizedBox(height: 48),
         HeightPicker(
           unit: _selectedHeightUnit,
@@ -772,7 +819,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       children: [
         const SizedBox(height: 16),
         Text(
-          "What is your Age?",
+          'assessment.age_question'.tr(),
           style: TextStyle(
             fontSize: 32,
             fontFamily: AppConstants.fontRegular,
@@ -866,7 +913,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       children: [
         Center(
           child: Text(
-            "Do you have any physical limitations?",
+            'assessment.physical_limitations_question'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
@@ -881,7 +928,10 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           height: 196,
           width: double.infinity,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark?null:Image.asset('assets/images/wheelchair.png', fit: BoxFit.contain),
+          child: _isDark
+              ? null
+              : Image.asset('assets/images/wheelchair.png',
+                  fit: BoxFit.contain),
         ),
         TagInputWidget(
           initialValues: physicalLimitations,
@@ -899,7 +949,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       children: [
         Center(
           child: Text(
-            "Do you have any medical conditions?",
+            'assessment.medical_conditions_question'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
@@ -914,7 +964,9 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           height: 196,
           width: double.infinity,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark?null:Image.asset('assets/images/medical.jpg', fit: BoxFit.contain),
+          child: _isDark
+              ? null
+              : Image.asset('assets/images/medical.jpg', fit: BoxFit.contain),
         ),
         TagInputWidget(
           initialValues: medicalConditions,
@@ -932,7 +984,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       children: [
         Center(
           child: Text(
-            "Do you have any Allergies?",
+            'assessment.allergies_question'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
@@ -947,7 +999,9 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           height: 196,
           width: double.infinity,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark?null:Image.asset('assets/images/allergies.jpg', fit: BoxFit.contain),
+          child: _isDark
+              ? null
+              : Image.asset('assets/images/allergies.jpg', fit: BoxFit.contain),
         ),
         TagInputWidget(
           initialValues: allergies,
@@ -965,7 +1019,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       children: [
         Center(
           child: Text(
-            "Do you have any Dietary Preferences?",
+            'assessment.diet_question'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
@@ -980,7 +1034,9 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           height: 196,
           width: double.infinity,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark?null:Image.asset('assets/images/diet.jpg', fit: BoxFit.contain),
+          child: _isDark
+              ? null
+              : Image.asset('assets/images/diet.jpg', fit: BoxFit.contain),
         ),
         TagInputWidget(
           initialValues: diets,
@@ -998,7 +1054,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       children: [
         Center(
           child: Text(
-            "Are you currently on any medications?",
+            'assessment.medications_question'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
@@ -1013,7 +1069,10 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           height: 196,
           width: double.infinity,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark?null:Image.asset('assets/images/medications.jpg', fit: BoxFit.contain),
+          child: _isDark
+              ? null
+              : Image.asset('assets/images/medications.jpg',
+                  fit: BoxFit.contain),
         ),
         TagInputWidget(
           initialValues: medications,

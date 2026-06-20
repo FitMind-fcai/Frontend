@@ -7,6 +7,8 @@ import '../../../data/models/plan/nutrition_plan_generation_request.dart';
 import '../../../data/models/plan/nutrition_plan_result.dart';
 import '../../../presentation/plan/manager/plan_bloc.dart';
 import '../../home/screens/home_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 
 class NutritionPlanResultScreen extends StatelessWidget {
   final NutritionPlanResult plan;
@@ -90,7 +92,7 @@ class NutritionPlanResultScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 10),
                               Text(
-                                'Your Nutrition Plan Summary',
+                                'nutrition_result.title'.tr(),
                                 style: TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
@@ -133,7 +135,7 @@ class NutritionPlanResultScreen extends StatelessWidget {
                                   size: 14, color: isDark ? Colors.white : Colors.black),
                               const SizedBox(width: 6),
                               Text(
-                                '${plan.startDate}  →  ${plan.endDate}',
+                                'nutrition_result.date_range'.tr(namedArgs: {'start': plan.startDate, 'end': plan.endDate}),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: isDark ? Colors.white : Colors.black,
@@ -172,9 +174,9 @@ class NutritionPlanResultScreen extends StatelessWidget {
                                       style: TextStyle(fontSize: 18),
                                     ),
                                     const SizedBox(width: 8),
-                                    const Text(
-                                      'DAILY CALORIE TARGET',
-                                      style: TextStyle(
+                                    Text(
+                                      'nutrition_result.daily_calorie_target'.tr(),
+                                      style: const TextStyle(
                                         color: Colors.white70,
                                         fontSize: 12,
                                         letterSpacing: 1.2,
@@ -186,7 +188,7 @@ class NutritionPlanResultScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
-                                  '${plan.dailyCalories} kcal',
+                                  'nutrition_result.calories_value'.tr(namedArgs: {'count': '${plan.dailyCalories}'}),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 52,
@@ -196,9 +198,9 @@ class NutritionPlanResultScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 6),
-                                const Text(
-                                  'Recommended intake per day',
-                                  style: TextStyle(
+                                Text(
+                                  'nutrition_result.recommended_intake'.tr(),
+                                  style: const TextStyle(
                                     color: Colors.white54,
                                     fontSize: 13,
                                     fontFamily: AppConstants.fontRegular,
@@ -212,7 +214,7 @@ class NutritionPlanResultScreen extends StatelessWidget {
 
                           // ── Section label ──────────────────────────────────────────
                           Text(
-                            'DAILY MACRONUTRIENTS',
+                            'nutrition_result.daily_macronutrients'.tr(),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
@@ -229,7 +231,7 @@ class NutritionPlanResultScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _MacroCard(
-                                  label: 'Protein',
+                                  label: 'nutrition_result.macro_protein'.tr(),
                                   sublabel: '',
                                   value: '${plan.dailyProteinG}g',
                                   emoji: '🥩',
@@ -245,7 +247,7 @@ class NutritionPlanResultScreen extends StatelessWidget {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: _MacroCard(
-                                  label: 'Carbs',
+                                  label: 'nutrition_result.macro_carbs'.tr(),
                                   sublabel: '',
                                   value: '${plan.dailyCarbsG}g',
                                   emoji: '🌾',
@@ -261,7 +263,7 @@ class NutritionPlanResultScreen extends StatelessWidget {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: _MacroCard(
-                                  label: 'Fats',
+                                  label: 'nutrition_result.macro_fats'.tr(),
                                   sublabel: '',
                                   value: '${plan.dailyFatsG}g',
                                   emoji: '🥑',
@@ -280,8 +282,8 @@ class NutritionPlanResultScreen extends StatelessWidget {
                           // ── Choice: Save or Generate Another ────────────────────────
                           CommonButton(
                             title: navigationStatus == 'both'
-                                ? "Save & Continue to Workout"
-                                : "Save Plan",
+                                ? 'nutrition_result.save_and_continue_to_workout'.tr()
+                                : 'nutrition_result.save_plan'.tr(),
                             onPressed: () {
                               context
                                   .read<PlanBloc>()
@@ -290,7 +292,7 @@ class NutritionPlanResultScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 12),
                           CommonButton(
-                            title: "Generate Another",
+                            title: 'nutrition_result.generate_another'.tr(),
                             onPressed: () {
                               if (request != null) {
                                 // Regenerate with the same request
@@ -327,9 +329,9 @@ class NutritionPlanResultScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 30),
-                            const Text(
-                              "Creating your plan...",
-                              style: TextStyle(
+                            Text(
+                              'nutrition_result.creating_plan'.tr(),
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontFamily: AppConstants.fontRegular,
@@ -391,7 +393,7 @@ class _MacroCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Daily $label',
+            'nutrition_result.macro_daily_label'.tr(namedArgs: {'label': label}),
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,

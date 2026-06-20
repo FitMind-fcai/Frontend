@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/meal_log/meal_scan_request.dart';
 import '../manager/log_bloc.dart';
@@ -101,7 +101,7 @@ class _ImageLogPageState extends State<ImageLogPage> {
       },
       child: LogPageShell(
         type: widget.type,
-        methodLabel: 'Image',
+        methodLabel: 'image_log.method_label'.tr(),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
@@ -154,10 +154,10 @@ class _ImageLogPageState extends State<ImageLogPage> {
                             padding: const EdgeInsets.symmetric(
                                 vertical: 8),
                             color: Colors.black.withOpacity(0.4),
-                            child: const Text(
-                              'Tap to change',
+                            child: Text(
+                              'image_log.tap_to_change'.tr(),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.white, fontSize: 13),
                             ),
                           ),
@@ -178,17 +178,17 @@ class _ImageLogPageState extends State<ImageLogPage> {
                             color: accent, size: 44),
                       ),
                       const SizedBox(height: 14),
-                      const Text(
-                        'Take or upload a photo',
-                        style: TextStyle(
+                      Text(
+                        'image_log.upload_prompt_title'.tr(),
+                        style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF1A1A2E)),
                       ),
                       const SizedBox(height: 6),
-                      const Text(
-                        'Tap to open camera or gallery',
-                        style: TextStyle(
+                      Text(
+                        'image_log.upload_prompt_subtitle'.tr(),
+                        style: const TextStyle(
                             fontSize: 13, color: Color(0xFF9CA3AF)),
                       ),
                     ],
@@ -203,7 +203,7 @@ class _ImageLogPageState extends State<ImageLogPage> {
                 Expanded(
                   child: _SourceButton(
                     icon: Icons.camera_alt_rounded,
-                    label: 'Camera',
+                    label: 'image_log.source_camera'.tr(),
                     accent: accent,
                     onTap: () => _pickImage(ImageSource.camera),
                   ),
@@ -212,7 +212,7 @@ class _ImageLogPageState extends State<ImageLogPage> {
                 Expanded(
                   child: _SourceButton(
                     icon: Icons.photo_library_rounded,
-                    label: 'Gallery',
+                    label: 'image_log.source_gallery'.tr(),
                     accent: accent,
                     onTap: () => _pickImage(ImageSource.gallery),
                   ),
@@ -249,8 +249,8 @@ class _ImageLogPageState extends State<ImageLogPage> {
                       )
                           : Text(
                         _imagePicked
-                            ? 'Analyse'
-                            : 'Select a photo first',
+                            ? 'image_log.analyse'.tr()
+                            : 'image_log.select_photo_first'.tr(),
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -281,7 +281,12 @@ class _MealTypeSelector extends StatelessWidget {
   final ValueChanged<String> onChanged;
 
   static const _mealTypes = ['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK'];
-  static const _mealTypeLabels = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+  static const _mealTypeLabelKeys = [
+    'image_log.meal_type_breakfast',
+    'image_log.meal_type_lunch',
+    'image_log.meal_type_dinner',
+    'image_log.meal_type_snack',
+  ];
   static const _mealTypeIcons = [
     Icons.wb_sunny_outlined,
     Icons.lunch_dining_outlined,
@@ -300,9 +305,9 @@ class _MealTypeSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Meal type',
-          style: TextStyle(
+        Text(
+          'image_log.meal_type_label'.tr(),
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Color(0xFF1A1A2E),
@@ -337,7 +342,7 @@ class _MealTypeSelector extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _mealTypeLabels[i],
+                        _mealTypeLabelKeys[i].tr(),
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -369,14 +374,14 @@ class _HintCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tips = type == LogType.workout
         ? [
-      'A clear photo of you or the equipment works best',
-      'Make sure the background is not too cluttered',
-      'Good lighting helps with recognition',
+      'image_log.tip_workout_1'.tr(),
+      'image_log.tip_workout_2'.tr(),
+      'image_log.tip_workout_3'.tr(),
     ]
         : [
-      'Place the food in a well-lit area',
-      'Capture the whole plate from above',
-      'Include any packaging if available',
+      'image_log.tip_meal_1'.tr(),
+      'image_log.tip_meal_2'.tr(),
+      'image_log.tip_meal_3'.tr(),
     ];
 
     return Container(
@@ -394,7 +399,7 @@ class _HintCard extends StatelessWidget {
             Icon(Icons.lightbulb_outline_rounded, color: accent, size: 18),
             const SizedBox(width: 8),
             Text(
-              'Tips for a good photo',
+              'image_log.tips_title'.tr(),
               style: TextStyle(
                   fontWeight: FontWeight.w700,
                   color: accent,

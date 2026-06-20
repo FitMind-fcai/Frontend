@@ -1,5 +1,6 @@
 import 'package:fitmind/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CalorieStatsPage extends StatefulWidget {
   const CalorieStatsPage({super.key});
@@ -23,28 +24,28 @@ class _CalorieStatsPageState extends State<CalorieStatsPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return [
       _BarData(
-        label: 'Fat',
+        label: 'calorie_stats.macro_fat'.tr(),
         percent: 0.20,
         value: '20%',
         color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF1A1A1A),
         icon: Icons.egg_alt,
       ),
       _BarData(
-        label: 'Protein',
+        label: 'calorie_stats.macro_protein'.tr(),
         percent: 0.30,
         value: '30%',
         color: const Color(0xFFFF6B00),
         icon: Icons.local_drink,
       ),
       _BarData(
-        label: 'Carbs',
+        label: 'calorie_stats.macro_carbs'.tr(),
         percent: 0.40,
         value: '40%',
         color: const Color(0xFF3B82F6),
         icon: Icons.restaurant,
       ),
       _BarData(
-        label: 'Macro',
+        label: 'calorie_stats.macro_other'.tr(),
         percent: 0.10,
         value: '10%',
         color: const Color(0xFF84CC16),
@@ -57,13 +58,13 @@ class _CalorieStatsPageState extends State<CalorieStatsPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return [
       _LegendData(
-        label: 'Fat',
+        label: 'calorie_stats.macro_fat'.tr(),
         amount: '201g',
         color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF1A1A1A),
       ),
-      _LegendData(label: 'Protein', amount: '158g', color: const Color(0xFFFF6B00)),
-      _LegendData(label: 'Carbs', amount: '11g', color: const Color(0xFF3B82F6)),
-      _LegendData(label: 'Macro', amount: '5g', color: const Color(0xFF84CC16)),
+      _LegendData(label: 'calorie_stats.macro_protein'.tr(), amount: '158g', color: const Color(0xFFFF6B00)),
+      _LegendData(label: 'calorie_stats.macro_carbs'.tr(),amount: '11g', color: const Color(0xFF3B82F6)),
+      _LegendData(label: 'calorie_stats.macro_other'.tr(), amount: '5g', color: const Color(0xFF84CC16)),
     ];
   }
 
@@ -123,9 +124,10 @@ class _CalorieStatsPageState extends State<CalorieStatsPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Calorie Stats',
+                  'calorie_stats.title'.tr(),
                   style: TextStyle(
-                    fontSize: 26,
+
+                  fontSize: 26,
                     fontWeight: FontWeight.w800,
                     fontFamily: AppConstants.fontRegular,
                     // CHANGED: was Colors.black87 — now onSurface.

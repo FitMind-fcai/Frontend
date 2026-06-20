@@ -2,6 +2,7 @@ import 'package:fitmind/presentation/plan/screens/my_plans/workout_days_excersis
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../data/models/plan/workout_plan_result.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WorkoutWeekDaysScreen extends StatelessWidget {
   final int weekNumber;
@@ -25,15 +26,36 @@ class WorkoutWeekDaysScreen extends StatelessWidget {
   }
 
   String _formatDate(DateTime d) {
-    const months = [
-      '', 'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+    final months = [
+      '',
+      'week_days.month_january'.tr(),
+      'week_days.month_february'.tr(),
+      'week_days.month_march'.tr(),
+      'week_days.month_april'.tr(),
+      'week_days.month_may'.tr(),
+      'week_days.month_june'.tr(),
+      'week_days.month_july'.tr(),
+      'week_days.month_august'.tr(),
+      'week_days.month_september'.tr(),
+      'week_days.month_october'.tr(),
+      'week_days.month_november'.tr(),
+      'week_days.month_december'.tr(),
     ];
-    const weekdays = [
-      '', 'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-      'Friday', 'Saturday', 'Sunday'
+    final weekdays = [
+      '',
+      'week_days.weekday_monday'.tr(),
+      'week_days.weekday_tuesday'.tr(),
+      'week_days.weekday_wednesday'.tr(),
+      'week_days.weekday_thursday'.tr(),
+      'week_days.weekday_friday'.tr(),
+      'week_days.weekday_saturday'.tr(),
+      'week_days.weekday_sunday'.tr(),
     ];
-    return '${weekdays[d.weekday]}, ${d.day} ${months[d.month]}';
+    return 'week_days.date_label'.tr(namedArgs: {
+      'weekday': weekdays[d.weekday],
+      'day': '${d.day}',
+      'month': months[d.month],
+    });
   }
 
   @override
@@ -85,7 +107,7 @@ class WorkoutWeekDaysScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Week $weekNumber',
+                        'week_days.week_label'.tr(namedArgs: {'number': '$weekNumber'}),
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
@@ -99,7 +121,7 @@ class WorkoutWeekDaysScreen extends StatelessWidget {
                       // has reasonable contrast against both a light and a
                       // dark background, so this caption is left untouched.
                       Text(
-                        '${days.length} days',
+                        'week_days.days_count'.tr(namedArgs: {'count': '${days.length}'}),
                         style: const TextStyle(
                           fontSize: 13,
                           color: Color(0xFF9CA3AF),
@@ -191,7 +213,7 @@ class _WorkoutDayCard extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  'D${day.dayNumber}',
+                  'week_days.day_short'.tr(namedArgs: {'number': '${day.dayNumber}'}),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
@@ -208,7 +230,7 @@ class _WorkoutDayCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    day.dayName.isNotEmpty ? day.dayName : 'Day ${day.dayNumber}',
+                    day.dayName.isNotEmpty ? day.dayName : 'week_days.day_label'.tr(namedArgs: {'number': '${day.dayNumber}'}),
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -254,7 +276,7 @@ class _WorkoutDayCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                '${day.exercises.length} exercises',
+                'week_days.exercises_count'.tr(namedArgs: {'count': '${day.exercises.length}'}),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../data/models/plan/nutrition_plan_result.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 class DayMealsScreen extends StatelessWidget {
   final DayPlan day;
   final DateTime? date;
@@ -9,32 +9,37 @@ class DayMealsScreen extends StatelessWidget {
   const DayMealsScreen({super.key, required this.day, this.date});
 
   String _formatDate(DateTime d) {
-    const months = [
+    final months = [
       '',
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
+      'week_days.month_january'.tr(),
+      'week_days.month_february'.tr(),
+      'week_days.month_march'.tr(),
+      'week_days.month_april'.tr(),
+      'week_days.month_may'.tr(),
+      'week_days.month_june'.tr(),
+      'week_days.month_july'.tr(),
+      'week_days.month_august'.tr(),
+      'week_days.month_september'.tr(),
+      'week_days.month_october'.tr(),
+      'week_days.month_november'.tr(),
+      'week_days.month_december'.tr(),
     ];
-    const weekdays = [
+    final weekdays = [
       '',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday'
+      'week_days.weekday_monday'.tr(),
+      'week_days.weekday_tuesday'.tr(),
+      'week_days.weekday_wednesday'.tr(),
+      'week_days.weekday_thursday'.tr(),
+      'week_days.weekday_friday'.tr(),
+      'week_days.weekday_saturday'.tr(),
+      'week_days.weekday_sunday'.tr(),
     ];
-    return '${weekdays[d.weekday]}, ${d.day} ${months[d.month]} ${d.year}';
+    return 'day_meals.date_label'.tr(namedArgs: {
+      'weekday': weekdays[d.weekday],
+      'day': '${d.day}',
+      'month': months[d.month],
+      'year': '${d.year}',
+    });
   }
 
   int get _totalCalories => day.meals.fold(0, (sum, m) => sum + m.calories);
@@ -89,7 +94,7 @@ class DayMealsScreen extends StatelessWidget {
                         Text(
                           day.dayName.isNotEmpty
                               ? day.dayName
-                              : 'Day ${day.dayNumber}',
+                              : 'day_meals.day_label'.tr(namedArgs: {'number': '${day.dayNumber}'}),
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
@@ -138,19 +143,19 @@ class DayMealsScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _SummaryItem(
-                      label: 'Calories',
+                      label: 'day_meals.summary_calories'.tr(),
                       value: '$_totalCalories',
                       color: const Color(0xFFF97316),
                     ),
                     _divider(),
                     _SummaryItem(
-                      label: 'Meals',
+                      label: 'day_meals.summary_meals'.tr(),
                       value: '${day.meals.length}',
                       color: const Color(0xFF3B82F6),
                     ),
                     _divider(),
                     _SummaryItem(
-                      label: 'Protein',
+                      label: 'day_meals.summary_protein'.tr(),
                       value: '${day.meals.fold(0, (s, m) => s + m.proteinG)}g',
                       color: const Color(0xFF10B981),
                     ),
@@ -324,7 +329,7 @@ class _MealCardState extends State<_MealCard>
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'kcal',
+                            'day_meals.unit_kcal_short'.tr(),
                             style: TextStyle(
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
@@ -393,22 +398,22 @@ class _MealCardState extends State<_MealCard>
                 children: [
                   _MacroTag(
                       label: '${meal.proteinG}g',
-                      sub: 'Protein',
+                      sub: 'day_meals.macro_protein'.tr(),
                       color: const Color(0xFF3B82F6)),
                   const SizedBox(width: 6),
                   _MacroTag(
                       label: '${meal.carbsG}g',
-                      sub: 'Carbs',
+                      sub: 'day_meals.macro_carbs'.tr(),
                       color: const Color(0xFF10B981)),
                   const SizedBox(width: 6),
                   _MacroTag(
                       label: '${meal.fatsG}g',
-                      sub: 'Fats',
+                      sub: 'day_meals.macro_fats'.tr(),
                       color: const Color(0xFFF97316)),
                   if (meal.prepTimeMinutes != null) ...[
                     const SizedBox(width: 6),
                     _MacroTag(
-                        label: '${meal.prepTimeMinutes}m',
+                        label: 'day_meals.prep_time_short'.tr(namedArgs: {'count': '${meal.prepTimeMinutes}'}),
                         sub: 'Prep',
                         color: const Color(0xFF8B5CF6)),
                   ],
@@ -498,7 +503,7 @@ class _ExpandedDetails extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           if (meal.description != null && meal.description!.isNotEmpty) ...[
-            _sectionTitle('Description', isDark, colorScheme),
+            _sectionTitle('day_meals.section_description'.tr(), isDark, colorScheme),
             const SizedBox(height: 6),
             Text(
               meal.description!,
@@ -514,12 +519,12 @@ class _ExpandedDetails extends StatelessWidget {
             const SizedBox(height: 14),
           ],
           if (meal.ingredients.isNotEmpty) ...[
-            _sectionTitle('Ingredients', isDark, colorScheme),
+            _sectionTitle('day_meals.section_ingredients'.tr(), isDark, colorScheme),
             const SizedBox(height: 10),
             ...meal.ingredients.map((ing) => _IngredientRow(ingredient: ing)),
           ],
           if (meal.instructions != null && meal.instructions!.isNotEmpty) ...[
-            _sectionTitle('Instructions', isDark, colorScheme),
+            _sectionTitle('day_meals.section_instructions'.tr(), isDark, colorScheme),
             const SizedBox(height: 6),
             Text(
               meal.instructions!,
@@ -637,32 +642,32 @@ class _IngredientRow extends StatelessWidget {
           Row(
             children: [
               _IngMacro(
-                label: 'Cal',
+                label: 'day_meals.ing_macro_cal'.tr(),
                 value: ingredient.calories.toStringAsFixed(0),
                 color: const Color(0xFFF97316),
               ),
               const SizedBox(width: 6),
               _IngMacro(
-                label: 'Protein',
+                label: 'day_meals.ing_macro_protein'.tr(),
                 value: '${ingredient.proteinG.toStringAsFixed(1)}g',
                 color: const Color(0xFF3B82F6),
               ),
               const SizedBox(width: 6),
               _IngMacro(
-                label: 'Carbs',
+                label: 'day_meals.ing_macro_carbs'.tr(),
                 value: '${ingredient.carbsG.toStringAsFixed(1)}g',
                 color: const Color(0xFF10B981),
               ),
               const SizedBox(width: 6),
               _IngMacro(
-                label: 'Fats',
+                label: 'day_meals.ing_macro_fats'.tr(),
                 value: '${ingredient.fatsG.toStringAsFixed(1)}g',
                 color: const Color(0xFFF59E0B),
               ),
               if (ingredient.fiberG != null) ...[
                 const SizedBox(width: 6),
                 _IngMacro(
-                  label: 'Fiber',
+                  label: 'day_meals.ing_macro_fiber'.tr(),
                   value: '${ingredient.fiberG!.toStringAsFixed(1)}g',
                   color: const Color(0xFF8B5CF6),
                 ),

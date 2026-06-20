@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:fitmind/presentation/log/screens/text_log_meal.dart';
 import 'package:fitmind/presentation/log/screens/voice_log.dart';
@@ -86,8 +87,8 @@ class _LogEntryPageState extends State<LogEntryPage>
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor:
-      isDark ? colorScheme.surface : const Color(0xFFF5F5F5),      body: SafeArea(
+      backgroundColor: isDark ? colorScheme.surface : const Color(0xFFF5F5F5),
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -98,7 +99,7 @@ class _LogEntryPageState extends State<LogEntryPage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _sectionLabel('What would you like to log?'),
+                    _sectionLabel('log_entry.type_question'.tr()),
                     const SizedBox(height: 16),
                     _buildTypeCards(),
                     if (_selectedType != null) ...[
@@ -110,7 +111,7 @@ class _LogEntryPageState extends State<LogEntryPage>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _sectionLabel('How would you like to log it?'),
+                              _sectionLabel('log_entry.method_question'.tr()),
                               const SizedBox(height: 16),
                               _buildMethodCards(),
                             ],
@@ -162,7 +163,7 @@ class _LogEntryPageState extends State<LogEntryPage>
           ),
           const SizedBox(width: 14),
           Text(
-            'Log',
+            'log_entry.title'.tr(),
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
@@ -192,8 +193,8 @@ class _LogEntryPageState extends State<LogEntryPage>
 
   Widget _buildTypeCards() => Column(children: [
         _ImageLogCard(
-          label: 'Workout',
-          subtitle: 'Log your exercise & sets',
+          label: 'log_entry.type_workout'.tr(),
+          subtitle: 'log_entry.type_workout_subtitle'.tr(),
           imagePath: 'assets/images/workout_card.png',
           accentColor: AppConstants.primaryColor,
           isSelected: _selectedType == LogType.workout,
@@ -201,8 +202,8 @@ class _LogEntryPageState extends State<LogEntryPage>
         ),
         const SizedBox(height: 14),
         _ImageLogCard(
-          label: 'Meal',
-          subtitle: 'Log your food & calories',
+          label: 'log_entry.type_meal'.tr(),
+          subtitle: 'log_entry.type_meal_subtitle'.tr(),
           imagePath: 'assets/images/meal_image.png',
           accentColor: const Color(0xFF3B82F6),
           isSelected: _selectedType == LogType.meal,
@@ -214,14 +215,24 @@ class _LogEntryPageState extends State<LogEntryPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final methods = [
-      (LogMethod.voice, Icons.mic_rounded, 'Voice', 'Speak your log naturally'),
+      (
+        LogMethod.voice,
+        Icons.mic_rounded,
+        'log_entry.method_voice'.tr(),
+        'log_entry.method_voice_subtitle'.tr()
+      ),
       (
         LogMethod.image,
         Icons.camera_alt_rounded,
-        'Image',
-        'Snap a photo to log'
+        'log_entry.method_image'.tr(),
+        'log_entry.method_image_subtitle'.tr()
       ),
-      (LogMethod.text, Icons.edit_rounded, 'Text', 'Type in your details'),
+      (
+        LogMethod.text,
+        Icons.edit_rounded,
+        'log_entry.method_text'.tr(),
+        'log_entry.method_text_subtitle'.tr()
+      ),
     ];
     return Column(
       children: methods.map((m) {
@@ -263,9 +274,8 @@ class _LogEntryPageState extends State<LogEntryPage>
                   child: Icon(icon,
                       color: isSelected
                           ? _accent
-                          : (isDark
-                          ? Colors.white60
-                          : const Color(0xFF9CA3AF)),                      size: 22),
+                          : (isDark ? Colors.white60 : const Color(0xFF9CA3AF)),
+                      size: 22),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -279,15 +289,16 @@ class _LogEntryPageState extends State<LogEntryPage>
                               color: isSelected
                                   ? _accent
                                   : (isDark
-                                  ? Colors.white
-                                  : const Color(0xFF1A1A2E)),                              fontFamily: AppConstants.fontRegular)),
+                                      ? Colors.white
+                                      : const Color(0xFF1A1A2E)),
+                              fontFamily: AppConstants.fontRegular)),
                       const SizedBox(height: 3),
-                      Text(subtitle,
+                      Text(
+                        subtitle,
                         style: TextStyle(
                           fontSize: 12,
-                          color: isDark
-                              ? Colors.white60
-                              : const Color(0xFF9CA3AF),
+                          color:
+                              isDark ? Colors.white60 : const Color(0xFF9CA3AF),
                         ),
                       ),
                     ],
@@ -304,8 +315,9 @@ class _LogEntryPageState extends State<LogEntryPage>
                         color: isSelected
                             ? _accent
                             : (isDark
-                            ? Colors.white24
-                            : const Color(0xFFD1D5DB)),                        width: 2),
+                                ? Colors.white24
+                                : const Color(0xFFD1D5DB)),
+                        width: 2),
                   ),
                   child: isSelected
                       ? const Icon(Icons.check, color: Colors.white, size: 13)
@@ -320,9 +332,14 @@ class _LogEntryPageState extends State<LogEntryPage>
   }
 
   Widget _buildContinueButton() {
-    final typeLabel = _selectedType == LogType.workout ? 'Workout' : 'Meal';
-    final methodLabel = _selectedMethod!.name[0].toUpperCase() +
-        _selectedMethod!.name.substring(1);
+    final typeLabel = _selectedType == LogType.workout
+        ? 'log_entry.type_workout'.tr()
+        : 'log_entry.type_meal'.tr();
+    final methodLabel = switch (_selectedMethod!) {
+      LogMethod.voice => 'log_entry.method_voice'.tr(),
+      LogMethod.image => 'log_entry.method_image'.tr(),
+      LogMethod.text => 'log_entry.method_text'.tr(),
+    };
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -338,7 +355,7 @@ class _LogEntryPageState extends State<LogEntryPage>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Log $typeLabel via $methodLabel',
+            Text('log_entry.continue_button'.tr(namedArgs: {'type': typeLabel, 'method': methodLabel}),
                 style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -358,7 +375,6 @@ class _LogEntryPageState extends State<LogEntryPage>
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ImageLogCard extends StatelessWidget {
-
   final String label, subtitle, imagePath;
   final Color accentColor;
   final bool isSelected;
@@ -385,17 +401,16 @@ class _ImageLogCard extends StatelessWidget {
         height: 200,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark
-              ? colorScheme.surfaceContainerHighest
-              : Colors.black87,          borderRadius: BorderRadius.circular(25),
+          color: isDark ? colorScheme.surfaceContainerHighest : Colors.black87,
+          borderRadius: BorderRadius.circular(25),
           border: isSelected ? Border.all(color: accentColor, width: 3) : null,
           boxShadow: [
             BoxShadow(
               color: isSelected
                   ? accentColor.withOpacity(0.35)
                   : (isDark
-                  ? Colors.black.withOpacity(0.30)
-                  : Colors.black.withOpacity(0.10)),
+                      ? Colors.black.withOpacity(0.30)
+                      : Colors.black.withOpacity(0.10)),
               blurRadius: isSelected ? 20 : 10,
               offset: const Offset(0, 6),
             )

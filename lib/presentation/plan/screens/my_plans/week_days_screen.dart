@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../data/models/plan/nutrition_plan_result.dart';
 import 'day_meals_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WeekDaysScreen extends StatelessWidget {
   final int weekNumber;
@@ -25,32 +26,36 @@ class WeekDaysScreen extends StatelessWidget {
   }
 
   String _formatDate(DateTime d) {
-    const months = [
+    final months = [
       '',
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
+      'week_days.month_january'.tr(),
+      'week_days.month_february'.tr(),
+      'week_days.month_march'.tr(),
+      'week_days.month_april'.tr(),
+      'week_days.month_may'.tr(),
+      'week_days.month_june'.tr(),
+      'week_days.month_july'.tr(),
+      'week_days.month_august'.tr(),
+      'week_days.month_september'.tr(),
+      'week_days.month_october'.tr(),
+      'week_days.month_november'.tr(),
+      'week_days.month_december'.tr(),
     ];
-    const weekdays = [
+    final weekdays = [
       '',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday'
+      'week_days.weekday_monday'.tr(),
+      'week_days.weekday_tuesday'.tr(),
+      'week_days.weekday_wednesday'.tr(),
+      'week_days.weekday_thursday'.tr(),
+      'week_days.weekday_friday'.tr(),
+      'week_days.weekday_saturday'.tr(),
+      'week_days.weekday_sunday'.tr(),
     ];
-    return '${weekdays[d.weekday]}, ${d.day} ${months[d.month]}';
+    return 'week_days.date_label'.tr(namedArgs: {
+      'weekday': weekdays[d.weekday],
+      'day': '${d.day}',
+      'month': months[d.month],
+    });
   }
 
   @override
@@ -102,7 +107,7 @@ class WeekDaysScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Week $weekNumber',
+                        'week_days.week_label'.tr(namedArgs: {'number': '$weekNumber'}),
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
@@ -115,7 +120,7 @@ class WeekDaysScreen extends StatelessWidget {
                       // NOTE: mid-tone gray, already reads fine on both
                       // light and dark — left untouched.
                       Text(
-                        '${days.length} days',
+                        'week_days.days_count'.tr(namedArgs: {'count': '${days.length}'}),
                         style: const TextStyle(
                           fontSize: 13,
                           color: Color(0xFF9CA3AF),
@@ -208,7 +213,7 @@ class _DayCard extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  'D${day.dayNumber}',
+                  'week_days.day_short'.tr(namedArgs: {'number': '${day.dayNumber}'}),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
@@ -226,7 +231,7 @@ class _DayCard extends StatelessWidget {
                   Text(
                     day.dayName.isNotEmpty
                         ? day.dayName
-                        : 'Day ${day.dayNumber}',
+                        : 'week_days.day_label'.tr(namedArgs: {'number': '${day.dayNumber}'}),
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -262,7 +267,7 @@ class _DayCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                '${day.meals.length} meals',
+                'week_days.meals_count'.tr(namedArgs: {'count': '${day.meals.length}'}),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,

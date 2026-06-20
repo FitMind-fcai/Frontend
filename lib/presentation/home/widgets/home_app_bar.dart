@@ -182,7 +182,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const AssessmentScreen()),
+                                  MaterialPageRoute(builder: (_) => const PlanSelectionScreen()),
                                 );
                               },
                               child: SizedBox(

@@ -6,6 +6,7 @@ import '../../../data/models/plan/workout_plan_generation_request.dart';
 import '../../../data/models/plan/workout_plan_result.dart';
 import '../../home/screens/home_screen.dart';
 import '../manager/plan_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WorkoutPlanResultScreen extends StatelessWidget {
   final WorkoutPlanResult plan;
@@ -74,7 +75,7 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              'Your Workout Plan Summary',
+                              'workout_result.title'.tr(),
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w700,
@@ -118,7 +119,7 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                                 color: isDark ? Colors.white38 : Colors.grey[400]),
                             const SizedBox(width: 6),
                             Text(
-                              '${plan.startDate}  →  ${plan.endDate}',
+                              'workout_result.date_range'.tr(namedArgs: {'start': plan.startDate, 'end': plan.endDate}),
                               style: TextStyle(
                                 fontSize: 13,
                                 color: isDark ? Colors.white60 : Colors.grey[500],
@@ -150,12 +151,12 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                children: const [
-                                  Text('⏱️', style: TextStyle(fontSize: 18)),
-                                  SizedBox(width: 8),
+                                children: [
+                                  const Text('⏱️', style: TextStyle(fontSize: 18)),
+                                  const SizedBox(width: 8),
                                   Text(
-                                    'ESTIMATED SESSION DURATION',
-                                    style: TextStyle(
+                                    'workout_result.estimated_session_duration'.tr(),
+                                    style: const TextStyle(
                                       color: Colors.white70,
                                       fontSize: 12,
                                       letterSpacing: 1.2,
@@ -167,7 +168,7 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                '${plan.estimatedDurationPerSession} min',
+                                'workout_result.duration_value'.tr(namedArgs: {'count': '${plan.estimatedDurationPerSession}'}),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 52,
@@ -177,9 +178,9 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              const Text(
-                                'Recommended duration per session',
-                                style: TextStyle(
+                              Text(
+                                'workout_result.recommended_duration'.tr(),
+                                style: const TextStyle(
                                   color: Colors.white54,
                                   fontSize: 13,
                                   fontFamily: AppConstants.fontRegular,
@@ -192,7 +193,7 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                         const SizedBox(height: 20),
 
                         Text(
-                          'PLAN OVERVIEW',
+                          'workout_result.plan_overview'.tr(),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -209,8 +210,8 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                           children: [
                             Expanded(
                               child: _InfoCard(
-                                label: 'Frequency',
-                                sublabel: 'per week',
+                                label: 'workout_result.info_frequency'.tr(),
+                                sublabel: 'workout_result.info_frequency_sub'.tr(),
                                 value: plan.frequency,
                                 emoji: '📅',
                                 color: isDark
@@ -225,8 +226,8 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                             const SizedBox(width: 12),
                             Expanded(
                               child: _InfoCard(
-                                label: 'Difficulty',
-                                sublabel: 'level',
+                                label: 'workout_result.info_difficulty'.tr(),
+                                sublabel: 'workout_result.info_difficulty_sub'.tr(),
                                 value: plan.difficultyLevel,
                                 emoji: '🔥',
                                 color: isDark
@@ -245,7 +246,7 @@ class WorkoutPlanResultScreen extends StatelessWidget {
 
                         // ── Save button ──────────────────────────────────
                         CommonButton(
-                          title: 'Save Plan',
+                          title: 'workout_result.save_plan'.tr(),
                           onPressed: isLoading
                               ? null
                               : () => context
@@ -272,9 +273,9 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                               }
                             },
                             icon: const Icon(Icons.refresh_rounded),
-                            label: const Text(
-                              'Generate Again',
-                              style: TextStyle(
+                            label: Text(
+                              'workout_result.generate_again'.tr(),
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: AppConstants.fontRegular,
@@ -319,8 +320,8 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                           const SizedBox(height: 30),
                           Text(
                             isSaving
-                                ? 'Saving your plan...'
-                                : 'Creating your plan...',
+                                ? 'workout_result.saving_plan'.tr()
+                                : 'workout_result.creating_plan'.tr(),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/meal_log/meal_scan_result.dart';
 import '../../../data/models/save_log_request.dart';
@@ -155,8 +155,8 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
             SnackBar(
               content: Text(
                 _selections.isEmpty
-                    ? 'Meal logged!'
-                    : '${_selections.length} food${_selections.length > 1 ? 's' : ''} logged!',
+                    ? 'meal_scan_result.meal_logged_singular'.tr()
+                    : 'meal_scan_result.meal_logged_plural'.tr(namedArgs: {'count': '${_selections.length}'}),
               ),
               backgroundColor: _accent,
               behavior: SnackBarBehavior.floating,
@@ -185,9 +185,9 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
                 color: _textPrimary, size: 20),
             onPressed: () => Navigator.pop(context),
           ),
-          title: const Text(
-            'Scan Result',
-            style: TextStyle(
+          title: Text(
+            'meal_scan_result.title'.tr(),
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: _textPrimary,
@@ -210,7 +210,7 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
 
                     // Detected items
                     if (widget.scanResult.foodItems.isNotEmpty) ...[
-                      _sectionTitle('Detected Items'),
+                      _sectionTitle('meal_scan_result.section_detected_items'.tr()),
                       ...widget.scanResult.foodItems
                           .map((item) => _FoodItemCard(item: item)),
                       const SizedBox(height: 24),
@@ -218,9 +218,9 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
 
                     // Matched foods — multi-select
                     if (widget.scanResult.matchedFoods.isNotEmpty) ...[
-                      _sectionTitle('Catalog Matches'),
-                      const Text(
-                        'Select one or more foods to log with precise nutrition data.',
+                      _sectionTitle('meal_scan_result.section_catalog_matches'.tr()),
+                      Text(
+                        'meal_scan_result.catalog_matches_hint'.tr(),
                         style:
                         TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
                       ),
@@ -252,7 +252,7 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
                     // Health notes
                     if (widget.scanResult.healthNotes.isNotEmpty) ...[
                       const SizedBox(height: 24),
-                      _sectionTitle('Health Notes'),
+                      _sectionTitle('meal_scan_result.section_health_notes'.tr()),
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
@@ -318,7 +318,7 @@ class _AiResultCard extends StatelessWidget {
                     Text(
                       result.mealName.isNotEmpty
                           ? result.mealName
-                          : 'Scanned Meal',
+                          : 'meal_scan_result.scanned_meal_fallback'.tr(),
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -327,10 +327,7 @@ class _AiResultCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      result.mealType.isNotEmpty
-                          ? result.mealType[0].toUpperCase() +
-                          result.mealType.substring(1)
-                          : '',
+                      result.mealType,
                       style: const TextStyle(
                           fontSize: 13, color: Color(0xFF9CA3AF)),
                     ),
@@ -346,7 +343,7 @@ class _AiResultCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  '${(result.confidenceScore * 100).toStringAsFixed(0)}% confidence',
+                  'meal_scan_result.confidence_badge'.tr(namedArgs: {'percent': (result.confidenceScore * 100).toStringAsFixed(0)}),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -358,7 +355,7 @@ class _AiResultCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '${result.totalCalories.toStringAsFixed(0)} kcal',
+            'meal_scan_result.calories_kcal'.tr(namedArgs: {'count': result.totalCalories.toStringAsFixed(0)}),
             style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.w800,
@@ -366,21 +363,21 @@ class _AiResultCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          const Text(
-            'AI estimate — select catalog matches below for accurate data',
-            style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
+          Text(
+            'meal_scan_result.ai_estimate_note'.tr(),
+            style: const TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
           ),
           const SizedBox(height: 14),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _macroChip('Protein',
+              _macroChip('meal_scan_result.macro_protein'.tr(),
                   '${result.totalProteinG.toStringAsFixed(1)}g',
                   const Color(0xFFEF4444)),
-              _macroChip('Carbs',
+              _macroChip('meal_scan_result.macro_carbs'.tr(),
                   '${result.totalCarbsG.toStringAsFixed(1)}g',
                   const Color(0xFFF59E0B)),
-              _macroChip('Fats',
+              _macroChip('meal_scan_result.macro_fats'.tr(),
                   '${result.totalFatsG.toStringAsFixed(1)}g',
                   const Color(0xFF10B981)),
             ],
@@ -476,16 +473,18 @@ class _FoodItemCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('${item.calories.toStringAsFixed(0)} kcal',
+              Text('meal_scan_result.calories_kcal'.tr(namedArgs: {'count': item.calories.toStringAsFixed(0)}),
                   style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF1A1A2E))),
               const SizedBox(height: 2),
               Text(
-                'P ${item.proteinG.toStringAsFixed(0)}g  '
-                    'C ${item.carbsG.toStringAsFixed(0)}g  '
-                    'F ${item.fatsG.toStringAsFixed(0)}g',
+                'meal_scan_result.macro_summary_line'.tr(namedArgs: {
+                  'protein': item.proteinG.toStringAsFixed(0),
+                  'carbs': item.carbsG.toStringAsFixed(0),
+                  'fats': item.fatsG.toStringAsFixed(0),
+                }),
                 style:
                 const TextStyle(fontSize: 11, color: Color(0xFF9CA3AF)),
               ),
@@ -591,7 +590,7 @@ class _MatchedFoodCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '${food.caloriesPer100g.toStringAsFixed(0)} kcal/100g',
+                        'meal_scan_result.calories_per_100g'.tr(namedArgs: {'count': food.caloriesPer100g.toStringAsFixed(0)}),
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -600,7 +599,7 @@ class _MatchedFoodCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${(food.similarityScore * 100).toStringAsFixed(0)}% match',
+                        'meal_scan_result.match_percent'.tr(namedArgs: {'percent': (food.similarityScore * 100).toStringAsFixed(0)}),
                         style: TextStyle(
                             fontSize: 11,
                             color: _matchColor(food.similarityScore)),
@@ -660,7 +659,10 @@ class _ServingsRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${servings.toStringAsFixed(1)}× ${food.servingDescription}',
+                'meal_scan_result.servings_value'.tr(namedArgs: {
+                  'count': servings.toStringAsFixed(1),
+                  'description': food.servingDescription,
+                }),
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -668,7 +670,7 @@ class _ServingsRow extends StatelessWidget {
                 ),
               ),
               Text(
-                '${calories.toStringAsFixed(0)} kcal',
+                'meal_scan_result.calories_kcal'.tr(namedArgs: {'count': calories.toStringAsFixed(0)}),
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -763,7 +765,9 @@ class _TotalsCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '$count item${count > 1 ? 's' : ''} selected',
+                count == 1
+                    ? 'meal_scan_result.items_selected'.tr(namedArgs: {'count': '$count'})
+                    : 'meal_scan_result.items_selected_plural'.tr(namedArgs: {'count': '$count'}),
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -771,7 +775,7 @@ class _TotalsCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '${calories.toStringAsFixed(0)} kcal total',
+                'meal_scan_result.calories_total'.tr(namedArgs: {'count': calories.toStringAsFixed(0)}),
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
@@ -784,11 +788,11 @@ class _TotalsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _totalPill('Protein', '${protein.toStringAsFixed(1)}g',
+              _totalPill('meal_scan_result.macro_protein'.tr(), '${protein.toStringAsFixed(1)}g',
                   const Color(0xFFEF4444)),
-              _totalPill('Carbs', '${carbs.toStringAsFixed(1)}g',
+              _totalPill('meal_scan_result.macro_carbs'.tr(), '${carbs.toStringAsFixed(1)}g',
                   const Color(0xFFF59E0B)),
-              _totalPill('Fats', '${fats.toStringAsFixed(1)}g',
+              _totalPill('meal_scan_result.macro_fats'.tr(), '${fats.toStringAsFixed(1)}g',
                   const Color(0xFF10B981)),
             ],
           ),
@@ -839,12 +843,12 @@ class _SaveBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (!hasSelections)
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 8),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    'No match selected — AI estimate will be saved',
+                    'meal_scan_result.no_match_note'.tr(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 12, color: Color(0xFF9CA3AF)),
                   ),
                 ),
@@ -873,8 +877,10 @@ class _SaveBar extends StatelessWidget {
                   )
                       : Text(
                     hasSelections
-                        ? 'Save ${selections.length} food${selections.length > 1 ? 's' : ''}'
-                        : 'Save AI Result',
+                        ? (selections.length == 1
+                        ? 'meal_scan_result.save_food_singular'.tr(namedArgs: {'count': '${selections.length}'})
+                        : 'meal_scan_result.save_food_plural'.tr(namedArgs: {'count': '${selections.length}'}))
+                        : 'meal_scan_result.save_ai_result'.tr(),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,

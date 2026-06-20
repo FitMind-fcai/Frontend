@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/save_log_request.dart';
 import '../manager/log_bloc.dart';
@@ -21,10 +21,10 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
   static const int _goalMl = 2500;
 
   static const _quickAmounts = [
-    _QuickAmount(label: 'Sip', ml: 100, icon: Icons.water_drop_outlined),
-    _QuickAmount(label: 'Glass', ml: 250, icon: Icons.local_drink_outlined),
-    _QuickAmount(label: 'Bottle', ml: 500, icon: Icons.sports_bar_outlined),
-    _QuickAmount(label: 'Large', ml: 750, icon: Icons.water_outlined),
+    _QuickAmount(labelKey: 'hydration_log.quick_sip', ml: 100, icon: Icons.water_drop_outlined),
+    _QuickAmount(labelKey: 'hydration_log.quick_glass', ml: 250, icon: Icons.local_drink_outlined),
+    _QuickAmount(labelKey: 'hydration_log.quick_bottle', ml: 500, icon: Icons.sports_bar_outlined),
+    _QuickAmount(labelKey: 'hydration_log.quick_large', ml: 750, icon: Icons.water_outlined),
   ];
 
   @override
@@ -54,7 +54,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
   void _save() {
     if (_waterMl <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please add some water first')),
+        SnackBar(content: Text('hydration_log.add_water_first'.tr())),
       );
       return;
     }
@@ -76,9 +76,11 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
 
   String _formatMl(int ml) {
     if (ml >= 1000) {
-      return '${(ml / 1000).toStringAsFixed(ml % 1000 == 0 ? 0 : 1)}L';
+      return 'hydration_log.liters_short'.tr(namedArgs: {
+        'count': (ml / 1000).toStringAsFixed(ml % 1000 == 0 ? 0 : 1),
+      });
     }
-    return '${ml}ml';
+    return 'hydration_log.ml_short'.tr(namedArgs: {'count': '$ml'});
   }
 
   @override
@@ -93,7 +95,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
       listener: (context, state) {
         if (state is LogSaveSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Hydration logged successfully')),
+            SnackBar(content: Text('hydration_log.log_success'.tr())),
           );
           Navigator.of(context).pop();
         } else if (state is LogError) {
@@ -112,7 +114,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'Log Hydration',
+            'hydration_log.title'.tr(),
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w700,
               fontFamily: AppConstants.fontRegular,
@@ -188,7 +190,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${(progress * 100).round()}% of daily goal',
+                          'hydration_log.goal_progress'.tr(namedArgs: {'percent': '${(progress * 100).round()}'}),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.5),
                             fontFamily: AppConstants.fontRegular,
@@ -198,7 +200,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
                           GestureDetector(
                             onTap: () => setState(() => _waterMl = 0),
                             child: Text(
-                              'Reset',
+                              'hydration_log.reset'.tr(),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.error,
                                 fontWeight: FontWeight.w600,
@@ -220,7 +222,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Quick Add',
+                      'hydration_log.quick_add_label'.tr(),
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.5),
                         letterSpacing: 0.8,
@@ -257,7 +259,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Custom Amount (ml)',
+                      'hydration_log.custom_amount_label'.tr(),
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.5),
                         letterSpacing: 0.8,
@@ -284,7 +286,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
                             ),
                             child: Center(
                               child: Text(
-                                '${_waterMl} ml',
+                                'hydration_log.ml_value'.tr(namedArgs: {'count': '$_waterMl'}),
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: AppConstants.primaryColor,
@@ -316,7 +318,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
                   maxLines: 3,
                   style: const TextStyle(fontFamily: AppConstants.fontRegular),
                   decoration: InputDecoration(
-                    hintText: 'Notes (optional)…',
+                    hintText: 'hydration_log.notes_hint'.tr(),
                     hintStyle: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.35),
                       fontFamily: AppConstants.fontRegular,
@@ -354,9 +356,9 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
                           strokeWidth: 2.5,
                         ),
                       )
-                          : const Text(
-                        'Save Hydration',
-                        style: TextStyle(
+                          : Text(
+                        'hydration_log.save_hydration'.tr(),
+                    style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           fontFamily: AppConstants.fontRegular,
@@ -377,11 +379,11 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
 // ── Supporting widgets ─────────────────────────────────────────────────────────
 
 class _QuickAmount {
-  final String label;
+  final String labelKey;
   final int ml;
   final IconData icon;
   const _QuickAmount(
-      {required this.label, required this.ml, required this.icon});
+      {required this.labelKey, required this.ml, required this.icon});
 }
 
 class _QuickAddTile extends StatelessWidget {
@@ -411,7 +413,7 @@ class _QuickAddTile extends StatelessWidget {
                 Icon(amount.icon, color: AppConstants.primaryColor, size: 22),
                 const SizedBox(height: 6),
                 Text(
-                  '${amount.ml}ml',
+                  'hydration_log.ml_short'.tr(namedArgs: {'count': '${amount.ml}'}),
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -425,7 +427,7 @@ class _QuickAddTile extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          amount.label,
+          amount.labelKey.tr(),
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.5),
             fontFamily: AppConstants.fontRegular,

@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 
 class StepsTakenPage extends StatefulWidget {
@@ -56,7 +56,7 @@ class _StepsTakenPageState extends State<StepsTakenPage>
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Steps Taken',
+          'steps_taken.title'.tr(),
           style: TextStyle(
             // CHANGED: was Colors.black87 — now onSurface.
             color: colorScheme.onSurface,
@@ -125,7 +125,7 @@ class _StepsTakenPageState extends State<StepsTakenPage>
             ),
             const SizedBox(height: 4),
             Text(
-              'total steps',
+              'steps_taken.total_steps'.tr(),
               style: TextStyle(
                 fontSize: 20,
                 // CHANGED: was Colors.grey[700] — now onSurfaceVariant.
@@ -144,10 +144,10 @@ class _StepsTakenPageState extends State<StepsTakenPage>
             // read fine in both themes.
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
-                _StatItem(icon: Icons.local_fire_department, value: '578', label: 'kcal', color: Color(0xFFFF6B00)),
-                _StatItem(icon: Icons.location_on_outlined, value: '7.5', label: 'kilometer', color: Color(0xFF6B7280)),
-                _StatItem(icon: Icons.timer_outlined, value: '25', label: 'minute', color: Color(0xFF3B82F6)),
+              children: [
+                _StatItem(icon: Icons.local_fire_department, value: '578', label: 'steps_taken.unit_kcal'.tr(), color: const Color(0xFFFF6B00)),
+                _StatItem(icon: Icons.location_on_outlined, value: '7.5', label: 'steps_taken.unit_kilometer'.tr(), color: const Color(0xFF6B7280)),
+                _StatItem(icon: Icons.timer_outlined, value: '25', label: 'steps_taken.unit_minute'.tr(), color: const Color(0xFF3B82F6)),
               ],
             ),
           ],

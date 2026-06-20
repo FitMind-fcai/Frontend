@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/meal_log/excersise_search_result.dart';
 import '../../../data/models/meal_log/meal_text_result.dart';
-
 
 // ── Search Bar ────────────────────────────────────────────────────────────────
 
@@ -40,16 +40,14 @@ class SearchBar extends StatelessWidget {
         style: const TextStyle(fontSize: 14, color: Color(0xFF1A1A2E)),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle:
-          const TextStyle(fontSize: 14, color: Color(0xFFB0B7C3)),
-          prefixIcon:
-          Icon(Icons.search_rounded, color: accent, size: 20),
+          hintStyle: const TextStyle(fontSize: 14, color: Color(0xFFB0B7C3)),
+          prefixIcon: Icon(Icons.search_rounded, color: accent, size: 20),
           suffixIcon: IconButton(
             icon: Icon(Icons.arrow_forward_rounded, color: accent, size: 20),
             onPressed: () => onSearch(controller.text),
           ),
           contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           border: InputBorder.none,
         ),
       ),
@@ -81,8 +79,7 @@ class QuickChips extends StatelessWidget {
         itemBuilder: (_, i) => GestureDetector(
           onTap: () => onTap(items[i]),
           child: Container(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
               color: accent.withOpacity(0.08),
               borderRadius: BorderRadius.circular(20),
@@ -134,6 +131,7 @@ class IdleHint extends StatelessWidget {
 
 class EmptyResults extends StatelessWidget {
   final String message;
+
   const EmptyResults({required this.message});
 
   @override
@@ -175,24 +173,23 @@ class SaveButton extends StatelessWidget {
           foregroundColor: Colors.white,
           elevation: 0,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
         child: isSaving
             ? SizedBox(
-          width: 22,
-          height: 22,
-          child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              color: Colors.white.withOpacity(0.8)),
-        )
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2.5, color: Colors.white.withOpacity(0.8)),
+              )
             : Text(
-          label,
-          style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: enabled ? Colors.white : const Color(0xFF9CA3AF),
-              fontFamily: AppConstants.fontRegular),
-        ),
+                label,
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: enabled ? Colors.white : const Color(0xFF9CA3AF),
+                    fontFamily: AppConstants.fontRegular),
+              ),
       ),
     );
   }
@@ -204,7 +201,17 @@ class MealTypeSelector extends StatelessWidget {
   final String selected;
   final Color accent;
   final ValueChanged<String> onSelect;
+
+  // Values stay fixed/English — sent to the backend as-is. Display labels
+  // are translated separately via the keys below, so UI text and stored
+  // values can vary independently.
   static const _types = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+  static const _labelKeys = [
+    'text_log_shared.meal_type_breakfast',
+    'text_log_shared.meal_type_lunch',
+    'text_log_shared.meal_type_dinner',
+    'text_log_shared.meal_type_snack',
+  ];
 
   const MealTypeSelector({
     required this.selected,
@@ -215,44 +222,41 @@ class MealTypeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: _types
-          .map((type) => Expanded(
-        child: Padding(
-          padding: EdgeInsets.only(
-              right: type == _types.last ? 0 : 8),
-          child: GestureDetector(
-            onTap: () => onSelect(type),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              height: 38,
-              decoration: BoxDecoration(
-                color: selected == type
-                    ? accent
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: selected == type
-                      ? accent
-                      : const Color(0xFFEAEAEA),
+      children: List.generate(_types.length, (i) {
+        final type = _types[i];
+        final label = _labelKeys[i].tr();
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(right: type == _types.last ? 0 : 8),
+            child: GestureDetector(
+              onTap: () => onSelect(type),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: 38,
+                decoration: BoxDecoration(
+                  color: selected == type ? accent : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: selected == type ? accent : const Color(0xFFEAEAEA),
+                  ),
                 ),
-              ),
-              child: Center(
-                child: Text(
-                  type,
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: selected == type
-                          ? Colors.white
-                          : const Color(0xFF6B7280),
-                      fontFamily: AppConstants.fontRegular),
+                child: Center(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: selected == type
+                            ? Colors.white
+                            : const Color(0xFF6B7280),
+                        fontFamily: AppConstants.fontRegular),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ))
-          .toList(),
+        );
+      }).toList(),
     );
   }
 }
@@ -298,10 +302,13 @@ class FoodResultCard extends StatelessWidget {
                           fontSize: 12, color: Color(0xFF9CA3AF))),
                   const SizedBox(height: 3),
                   Text(
-                    '${food.servingDescription} · '
-                        '${food.caloriesForServings(1).toStringAsFixed(0)} kcal/serving',
-                    style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF6B7280)),
+                    'text_log_shared.per_serving_value'.tr(namedArgs: {
+                      'description': food.servingDescription,
+                      'calories':
+                          food.caloriesForServings(1).toStringAsFixed(0),
+                    }),
+                    style:
+                        const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
                   ),
                 ],
               ),
@@ -311,11 +318,10 @@ class FoodResultCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: _matchColor(food.similarityScore)
-                        .withOpacity(0.1),
+                    color: _matchColor(food.similarityScore).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -327,8 +333,7 @@ class FoodResultCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Icon(Icons.add_circle_outline_rounded,
-                    color: accent, size: 22),
+                Icon(Icons.add_circle_outline_rounded, color: accent, size: 22),
               ],
             ),
           ],
@@ -433,13 +438,16 @@ class SelectedFoodPanel extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Servings',
+                    Text('text_log_shared.servings_label'.tr(),
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF1A1A2E))),
                     Text(
-                      '${servings.toStringAsFixed(1)}x ${food.servingDescription}',
+                      'text_log_shared.servings_value'.tr(namedArgs: {
+                        'count': servings.toStringAsFixed(1),
+                        'description': food.servingDescription,
+                      }),
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -461,16 +469,14 @@ class SelectedFoodPanel extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        if (servings > 0.5)
-                          onServingsChanged(servings - 0.5);
+                        if (servings > 0.5) onServingsChanged(servings - 0.5);
                       },
                       child: StepButton(icon: Icons.remove_rounded),
                     ),
                     const Spacer(),
                     GestureDetector(
                       onTap: () {
-                        if (servings < 5.0)
-                          onServingsChanged(servings + 0.5);
+                        if (servings < 5.0) onServingsChanged(servings + 0.5);
                       },
                       child: StepButton(icon: Icons.add_rounded),
                     ),
@@ -494,7 +500,8 @@ class SelectedFoodPanel extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${calories.toStringAsFixed(0)} kcal',
+                  'text_log_shared.calories_value'
+                      .tr(namedArgs: {'count': calories.toStringAsFixed(0)}),
                   style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
@@ -504,12 +511,16 @@ class SelectedFoodPanel extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MacroChip('Protein', '${protein.toStringAsFixed(1)}g',
+                    MacroChip(
+                        'text_log_shared.macro_protein'.tr(),
+                        '${protein.toStringAsFixed(1)}g',
                         const Color(0xFFEF4444)),
-                    MacroChip('Carbs', '${carbs.toStringAsFixed(1)}g',
+                    MacroChip(
+                        'text_log_shared.macro_carbs'.tr(),
+                        '${carbs.toStringAsFixed(1)}g',
                         const Color(0xFFF59E0B)),
-                    MacroChip('Fats', '${fats.toStringAsFixed(1)}g',
-                        const Color(0xFF10B981)),
+                    MacroChip('text_log_shared.macro_fats'.tr(),
+                        '${fats.toStringAsFixed(1)}g', const Color(0xFF10B981)),
                   ],
                 ),
               ],
@@ -558,9 +569,12 @@ class ExerciseResultCard extends StatelessWidget {
                           color: Color(0xFF1A1A2E))),
                   const SizedBox(height: 3),
                   Text(
-                    '${exercise.primaryMuscleGroup} · ${exercise.exerciseType}',
-                    style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF9CA3AF)),
+                    'text_log_shared.muscle_type_separator'.tr(namedArgs: {
+                      'muscle': exercise.primaryMuscleGroup,
+                      'type': exercise.exerciseType,
+                    }),
+                    style:
+                        const TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
                   ),
                   if (exercise.equipmentRequired != null) ...[
                     const SizedBox(height: 2),
@@ -576,11 +590,11 @@ class ExerciseResultCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: _matchColor(exercise.similarityScore)
-                        .withOpacity(0.1),
+                    color:
+                        _matchColor(exercise.similarityScore).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -592,8 +606,7 @@ class ExerciseResultCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Icon(Icons.add_circle_outline_rounded,
-                    color: accent, size: 22),
+                Icon(Icons.add_circle_outline_rounded, color: accent, size: 22),
               ],
             ),
           ],
@@ -659,7 +672,10 @@ class SelectedExercisePanel extends StatelessWidget {
                             color: accent)),
                     const SizedBox(height: 2),
                     Text(
-                      '${exercise.primaryMuscleGroup} · ${exercise.exerciseType}',
+                      'text_log_shared.muscle_type_separator'.tr(namedArgs: {
+                        'muscle': exercise.primaryMuscleGroup,
+                        'type': exercise.exerciseType,
+                      }),
                       style: const TextStyle(
                           fontSize: 12, color: Color(0xFF9CA3AF)),
                     ),
@@ -697,7 +713,7 @@ class SelectedExercisePanel extends StatelessWidget {
             children: [
               Expanded(
                 child: IntStepper(
-                  label: 'Sets',
+                  label: 'text_log_shared.stepper_sets'.tr(),
                   value: sets,
                   min: 1,
                   max: 20,
@@ -712,7 +728,7 @@ class SelectedExercisePanel extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(horizontal: 16)),
               Expanded(
                 child: IntStepper(
-                  label: 'Reps',
+                  label: 'text_log_shared.stepper_reps'.tr(),
                   value: reps,
                   min: 1,
                   max: 100,
@@ -737,32 +753,30 @@ class SelectedExercisePanel extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.fitness_center_rounded,
-                  color: accent, size: 18),
+              Icon(Icons.fitness_center_rounded, color: accent, size: 18),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
                   controller: weightController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d+\.?\d{0,1}'))
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}'))
                   ],
-                  style: const TextStyle(
-                      fontSize: 14, color: Color(0xFF1A1A2E)),
-                  decoration: const InputDecoration(
-                    hintText: 'Weight (kg) — optional',
-                    hintStyle: TextStyle(
-                        fontSize: 14, color: Color(0xFFB0B7C3)),
+                  style:
+                      const TextStyle(fontSize: 14, color: Color(0xFF1A1A2E)),
+                  decoration: InputDecoration(
+                    hintText: 'text_log_shared.weight_hint'.tr(),
+                    hintStyle:
+                        const TextStyle(fontSize: 14, color: Color(0xFFB0B7C3)),
                     border: InputBorder.none,
                     isDense: true,
                   ),
                 ),
               ),
-              const Text('kg',
-                  style: TextStyle(
-                      fontSize: 13, color: Color(0xFF9CA3AF))),
+              Text('text_log_shared.weight_unit'.tr(),
+                  style:
+                      const TextStyle(fontSize: 13, color: Color(0xFF9CA3AF))),
             ],
           ),
         ),
@@ -785,12 +799,12 @@ class SelectedExercisePanel extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: notesController,
-                  style: const TextStyle(
-                      fontSize: 14, color: Color(0xFF1A1A2E)),
+                  style:
+                      const TextStyle(fontSize: 14, color: Color(0xFF1A1A2E)),
                   decoration: const InputDecoration(
                     hintText: 'Notes — optional',
-                    hintStyle: TextStyle(
-                        fontSize: 14, color: Color(0xFFB0B7C3)),
+                    hintStyle:
+                        TextStyle(fontSize: 14, color: Color(0xFFB0B7C3)),
                     border: InputBorder.none,
                     isDense: true,
                   ),
@@ -843,9 +857,7 @@ class IntStepper extends StatelessWidget {
             const SizedBox(width: 16),
             Text('$value',
                 style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: accent)),
+                    fontSize: 22, fontWeight: FontWeight.w800, color: accent)),
             const SizedBox(width: 16),
             StepButton(
               icon: Icons.add_rounded,
@@ -874,9 +886,8 @@ class StepButton extends StatelessWidget {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: onTap != null
-              ? const Color(0xFFF3F4F6)
-              : const Color(0xFFFAFAFA),
+          color:
+              onTap != null ? const Color(0xFFF3F4F6) : const Color(0xFFFAFAFA),
           borderRadius: BorderRadius.circular(9),
           border: Border.all(color: const Color(0xFFEAEAEA)),
         ),
@@ -912,13 +923,10 @@ class MacroChip extends StatelessWidget {
         children: [
           Text(value,
               style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: color)),
+                  fontSize: 14, fontWeight: FontWeight.w800, color: color)),
           const SizedBox(height: 2),
           Text(label,
-              style: const TextStyle(
-                  fontSize: 11, color: Color(0xFF9CA3AF))),
+              style: const TextStyle(fontSize: 11, color: Color(0xFF9CA3AF))),
         ],
       ),
     );

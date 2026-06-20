@@ -2,13 +2,14 @@ import 'package:fitmind/presentation/authentication/widgets/common_button.dart';
 import 'package:fitmind/presentation/plan/screens/workout_plan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/plan/nutrition_plan_generation_request.dart';
 import '../../../data/models/plan/nutrition_plan_model.dart';
 import '../../assessment/widgets/tag_input_widget.dart';
 import '../manager/plan_bloc.dart';
 import 'nutrition_plan_result_screen.dart';
+import 'dart:ui' as ui;
 
 class NutritionPlanScreen extends StatefulWidget {
   const NutritionPlanScreen({Key? key, required this.navigationStatus})
@@ -60,25 +61,21 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     }
 
     return displayValue.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
           (Match m) => '${m[1]},',
-    );
+        );
   }
 
   Widget build(BuildContext context) {
-    final isDark = Theme
-        .of(context)
-        .brightness == Brightness.dark;
-    final colorScheme = Theme
-        .of(context)
-        .colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return BlocConsumer<PlanBloc, PlanState>(
       listener: (context, state) {
         if (state is NutritionPreferencesSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Nutrition plan generated successfully!'),
+            SnackBar(
+              content: Text('nutrition.plan_generated_success'.tr()),
               backgroundColor: Colors.green,
             ),
           );
@@ -86,12 +83,11 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  NutritionPlanResultScreen(
-                    plan: state.plan,
-                    navigationStatus: widget.navigationStatus,
-                    request: _lastRequest,
-                  ),
+              builder: (_) => NutritionPlanResultScreen(
+                plan: state.plan,
+                navigationStatus: widget.navigationStatus,
+                request: _lastRequest,
+              ),
             ),
           );
         } else if (state is PlanError) {
@@ -130,7 +126,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            'Nutrition Plan',
+                            'nutrition.title'.tr(),
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w600,
@@ -148,7 +144,8 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              '${currentPage + 1} of 6',
+                              'nutrition.step_counter'.tr(
+                                  namedArgs: {'step': '${currentPage + 1}'}),
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
@@ -166,10 +163,11 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
 
                       const SizedBox(height: 20),
                       CommonButton(
-                        title: currentPage < 5 ? 'Continue' : 'Submit',
-                        onPressed: state is PlanLoading
-                            ? null
-                            : _onContinuePressed,
+                        title: currentPage < 5
+                            ? 'assessment.continue'.tr()
+                            : 'assessment.submit'.tr(),
+                        onPressed:
+                            state is PlanLoading ? null : _onContinuePressed,
                       ),
                     ],
                   ),
@@ -197,9 +195,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      const Text(
-                        "Creating your plan...",
-                        style: TextStyle(
+                      Text(
+                        'nutrition.creating_plan'.tr(),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontFamily: AppConstants.fontRegular,
@@ -232,9 +230,8 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       durationWeeks: _durationWeeks,
       nutritionPreferences: NutritionPreferences(
         caloriePreference: CaloriePreference.fromString(prefferedCalorieMethod),
-        customCalorieTarget: prefferedCalorieMethod == 'Custom'
-            ? _calorieTarget
-            : null,
+        customCalorieTarget:
+            prefferedCalorieMethod == 'Custom' ? _calorieTarget : null,
         mealsPerDay: int.parse(_selectedDays),
         mealComplexity: MealComplexity.fromString(_selectedComplexity),
         cuisinePreference: CuisinePreference.fromString(_selectedCuisine),
@@ -244,7 +241,6 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     _lastRequest = request; // 👈 store it
     context.read<PlanBloc>().add(SubmitNutritionPreferencesEvent(request));
   }
-
 
   Widget _getCurrentPage(bool isDark) {
     switch (currentPage) {
@@ -272,7 +268,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       children: [
         Text(
           textAlign: TextAlign.center,
-          'What is your daily calorie target?',
+          'nutrition.calorie_target_question'.tr(),
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -289,81 +285,85 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Stack(
-            children: [
-              // Animated background indicator
-              AnimatedAlign(
-                alignment: _selectedUnit == "Kcal"
-                    ? Alignment.centerLeft
-                    : Alignment.centerRight,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                child: Container(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 2 - 20,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Colors.black,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isDark ? Colors.white38 : Colors.grey,
-                      width: 2,
+          child: Directionality(
+            textDirection: ui.TextDirection.ltr,
+            child: Stack(
+              children: [
+                // Animated background indicator
+                AnimatedAlign(
+                  alignment: _selectedUnit == "Kcal"
+                      ? Alignment.centerLeft
+                      : Alignment.centerRight,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width / 2 - 20,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark ? Colors.white38 : Colors.grey,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              // Toggle buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() => _selectedUnit = "Kcal");
-                      },
-                      child: Container(
-                        height: 64,
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Kcal",
-                          style: TextStyle(
-                            color: _selectedUnit == "Kcal"
-                                ? (isDark ? Colors.black : Colors.white)
-                                : (isDark ? Colors.white60 : Colors.grey[600]),
-                            fontSize: 18,
-                            fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.w600,
+                // Toggle buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => _selectedUnit = "Kcal");
+                        },
+                        child: Container(
+                          height: 64,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'nutrition.unit_kcal'.tr(),
+                            style: TextStyle(
+                              color: _selectedUnit == "Kcal"
+                                  ? (isDark ? Colors.black : Colors.white)
+                                  : (isDark
+                                      ? Colors.white60
+                                      : Colors.grey[600]),
+                              fontSize: 18,
+                              fontFamily: AppConstants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() => _selectedUnit = "Joules");
-                      },
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Joules",
-                          style: TextStyle(
-                            fontFamily: AppConstants.fontRegular,
-                            color: _selectedUnit == "Joules"
-                                ? (isDark ? Colors.black : Colors.white)
-                                : (isDark ? Colors.white60 : Colors.grey[600]),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => _selectedUnit = "Joules");
+                        },
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'nutrition.unit_joules'.tr(),
+                            style: TextStyle(
+                              fontFamily: AppConstants.fontRegular,
+                              color: _selectedUnit == "Joules"
+                                  ? (isDark ? Colors.black : Colors.white)
+                                  : (isDark
+                                      ? Colors.white60
+                                      : Colors.grey[600]),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 48),
@@ -383,7 +383,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'calories daily',
+                'nutrition.calories_daily'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   color: isDark ? Colors.white60 : Colors.grey[600],
@@ -419,7 +419,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color:
-                    !_isIncrementing ? Colors.white54 : Colors.transparent,
+                        !_isIncrementing ? Colors.white54 : Colors.transparent,
                     width: 2,
                   ),
                 ),
@@ -456,7 +456,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color:
-                    _isIncrementing ? Colors.white54 : Colors.transparent,
+                        _isIncrementing ? Colors.white54 : Colors.transparent,
                     width: 2,
                   ),
                 ),
@@ -478,7 +478,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
         ),
         AppConstants.verticalSpaceL,
         CommonButton(
-            title: "Let the Ai Decide!",
+            title: 'nutrition.let_ai_decide'.tr(),
             onPressed: () {
               setState(() {
                 currentPage++;
@@ -496,7 +496,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       children: [
         Text(
           textAlign: TextAlign.center,
-          'How many Meals do you want to eat in a day?',
+          'nutrition.meals_per_day_question'.tr(),
           style: TextStyle(
             fontSize: 36,
             fontWeight: FontWeight.bold,
@@ -522,153 +522,150 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Stack(
-            children: [
-              // Animated background indicator
-              AnimatedPositioned(
-                left: _getLeftPosition(),
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                child: Container(
-                  width: (MediaQuery
-                      .of(context)
-                      .size
-                      .width - 40) / 4,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Color(0xFFB7C9E2), width: 2),
+          child: Directionality(
+            textDirection: ui.TextDirection.ltr,
+            child: Stack(
+              children: [
+                // Animated background indicator
+                AnimatedPositioned(
+                  left: _getLeftPosition(),
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  child: Container(
+                    width: (MediaQuery.of(context).size.width - 40) / 4,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Color(0xFFB7C9E2), width: 2),
+                    ),
                   ),
                 ),
-              ),
-              // Toggle buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() => _selectedDays = "3");
-                      },
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          "3",
-                          style: TextStyle(
-                            color: _selectedDays == "3"
-                                ? Colors.white
-                                : (isDark ? Colors.white60 : Colors.grey[600]),
-                            fontSize: 16,
-                            fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.w600,
+                // Toggle buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => _selectedDays = "3");
+                        },
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: Text(
+                            "3",
+                            style: TextStyle(
+                              color: _selectedDays == "3"
+                                  ? Colors.white
+                                  : (isDark
+                                      ? Colors.white60
+                                      : Colors.grey[600]),
+                              fontSize: 16,
+                              fontFamily: AppConstants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() => _selectedDays = "4");
-                      },
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          "4",
-                          style: TextStyle(
-                            fontFamily: AppConstants.fontRegular,
-                            color: _selectedDays == "4"
-                                ? Colors.white
-                                : (isDark ? Colors.white60 : Colors.grey[600]),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => _selectedDays = "4");
+                        },
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: Text(
+                            "4",
+                            style: TextStyle(
+                              fontFamily: AppConstants.fontRegular,
+                              color: _selectedDays == "4"
+                                  ? Colors.white
+                                  : (isDark
+                                      ? Colors.white60
+                                      : Colors.grey[600]),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() => _selectedDays = "5");
-                      },
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          "5",
-                          style: TextStyle(
-                            color: _selectedDays == "5"
-                                ? Colors.white
-                                : (isDark ? Colors.white60 : Colors.grey[600]),
-                            fontSize: 16,
-                            fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => _selectedDays = "5");
+                        },
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: Text(
+                            "5",
+                            style: TextStyle(
+                              color: _selectedDays == "5"
+                                  ? Colors.white
+                                  : (isDark
+                                      ? Colors.white60
+                                      : Colors.grey[600]),
+                              fontSize: 16,
+                              fontFamily: AppConstants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() => _selectedDays = "6");
-                      },
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          "6",
-                          style: TextStyle(
-                            color: _selectedDays == "6"
-                                ? Colors.white
-                                : (isDark ? Colors.white60 : Colors.grey[600]),
-                            fontSize: 16,
-                            fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => _selectedDays = "6");
+                        },
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: Text(
+                            "6",
+                            style: TextStyle(
+                              color: _selectedDays == "6"
+                                  ? Colors.white
+                                  : (isDark
+                                      ? Colors.white60
+                                      : Colors.grey[600]),
+                              fontSize: 16,
+                              fontFamily: AppConstants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         SizedBox(height: 32),
         Center(
-          child: RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 16,
-                fontFamily: AppConstants.fontRegular,
-                fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white : Colors.black,
-              ),
-              children: [
-                TextSpan(text: 'I want to eat '),
-                TextSpan(
-                  text: '${_selectedDays}',
-                  style: TextStyle(fontWeight: AppConstants.extraBold),
-                ),
-                TextSpan(text: ' meals Daily'),
-              ],
+          child: Text(
+            'nutrition.meals_daily_message'
+                .tr(namedArgs: {'count': _selectedDays}),
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: AppConstants.fontRegular,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white : Colors.black,
             ),
           ),
-        )
+        ),
       ],
     );
   }
 
 // Helper method to calculate the left position for the animated indicator
   double _getLeftPosition() {
-    double buttonWidth = (MediaQuery
-        .of(context)
-        .size
-        .width - 40) / 4;
+    double buttonWidth = (MediaQuery.of(context).size.width - 40) / 4;
     switch (_selectedDays) {
       case "3":
         return 0;
@@ -683,14 +680,13 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     }
   }
 
-
   // Page 3: Meal Complexity
   Widget _buildMealComplexityPage(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Cooking time and complexity preference',
+          'nutrition.complexity_question'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
@@ -710,28 +706,28 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           childAspectRatio: 1,
           children: [
             _buildComplexityOption(
-              title: 'Quick',
+              title: 'nutrition.complexity_quick'.tr(),
               icon: '⚡',
               isSelected: _selectedComplexity == 'Quick',
               isDark: isDark,
               onTap: () => setState(() => _selectedComplexity = 'Quick'),
             ),
             _buildComplexityOption(
-              title: 'Moderate',
+              title: 'nutrition.complexity_moderate'.tr(),
               icon: '🍳',
               isSelected: _selectedComplexity == 'Moderate',
               isDark: isDark,
               onTap: () => setState(() => _selectedComplexity = 'Moderate'),
             ),
             _buildComplexityOption(
-              title: 'Elaborate',
+              title: 'nutrition.complexity_elaborate'.tr(),
               icon: '👨‍🍳',
               isSelected: _selectedComplexity == 'Elaborate',
               isDark: isDark,
               onTap: () => setState(() => _selectedComplexity = 'Elaborate'),
             ),
             _buildComplexityOption(
-              title: 'Mixed',
+              title: 'nutrition.complexity_mixed'.tr(),
               icon: '🔀',
               isSelected: _selectedComplexity == 'Mixed',
               isDark: isDark,
@@ -767,12 +763,12 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ]
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ]
               : null,
         ),
         child: Stack(
@@ -822,7 +818,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Select your cuisine preference',
+          'nutrition.cuisine_question'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
@@ -842,56 +838,56 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           childAspectRatio: 0.90,
           children: [
             _buildCuisineOption(
-              title: 'Mediterranean',
+              title: 'nutrition.cuisine_mediterranean'.tr(),
               icon: '🫒',
               isSelected: _selectedCuisine == 'Mediterranean',
               isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Mediterranean'),
             ),
             _buildCuisineOption(
-              title: 'Asian',
+              title: 'nutrition.cuisine_asian'.tr(),
               icon: '🍜',
               isSelected: _selectedCuisine == 'Asian',
               isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Asian'),
             ),
             _buildCuisineOption(
-              title: 'Western',
+              title: 'nutrition.cuisine_western'.tr(),
               icon: '🍔',
               isSelected: _selectedCuisine == 'Western',
               isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Western'),
             ),
             _buildCuisineOption(
-              title: 'Middle Eastern',
+              title: 'nutrition.cuisine_middle_eastern'.tr(),
               icon: '🧆',
               isSelected: _selectedCuisine == 'Middle Eastern',
               isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Middle Eastern'),
             ),
             _buildCuisineOption(
-              title: 'Latin American',
+              title: 'nutrition.cuisine_latin_american'.tr(),
               icon: '🌮',
               isSelected: _selectedCuisine == 'Latin American',
               isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Latin American'),
             ),
             _buildCuisineOption(
-              title: 'Vegetarian',
+              title: 'nutrition.cuisine_vegetarian'.tr(),
               icon: '🥗',
               isSelected: _selectedCuisine == 'Vegetarian',
               isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Vegetarian'),
             ),
             _buildCuisineOption(
-              title: 'Vegan',
+              title: 'nutrition.cuisine_vegan'.tr(),
               icon: '🌱',
               isSelected: _selectedCuisine == 'Vegan',
               isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Vegan'),
             ),
             _buildCuisineOption(
-              title: 'Mixed',
+              title: 'nutrition.complexity_mixed'.tr(),
               icon: '🔀',
               isSelected: _selectedCuisine == 'Mixed',
               isDark: isDark,
@@ -927,12 +923,12 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ]
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
               : null,
         ),
         child: Column(
@@ -958,7 +954,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppConstants.fontRegular,
                     color: isSelected
@@ -997,7 +993,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       children: [
         Center(
           child: Text(
-            "Do you want to exclude any ingredients from your plan?",
+            'nutrition.exclude_ingredients_question'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
@@ -1015,11 +1011,12 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
           ),
-          child: isDark ?
-              null: Image.asset(
-            'assets/images/diet.jpg',
-            fit: BoxFit.contain,
-          ),
+          child: isDark
+              ? null
+              : Image.asset(
+                  'assets/images/diet.jpg',
+                  fit: BoxFit.contain,
+                ),
         ),
         TagInputWidget(
           initialValues: diets, // Add this line
@@ -1037,7 +1034,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'How many weeks do you want your plan to be?',
+          'nutrition.duration_question'.tr(),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
@@ -1056,12 +1053,12 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           mainAxisSpacing: 12,
           childAspectRatio: 0.85,
           children: [
-            _buildWeekCard(4, '1 Month', isDark),
-            _buildWeekCard(8, '2 Months', isDark),
-            _buildWeekCard(12, '3 Months', isDark),
-            _buildWeekCard(16, '4 Months', isDark),
-            _buildWeekCard(24, '6 Months', isDark),
-            _buildWeekCard(52, '1 Year', isDark),
+            _buildWeekCard(4, 'nutrition.month_1'.tr(), isDark),
+            _buildWeekCard(8, 'nutrition.months_2'.tr(), isDark),
+            _buildWeekCard(12, 'nutrition.months_3'.tr(), isDark),
+            _buildWeekCard(16, 'nutrition.months_4'.tr(), isDark),
+            _buildWeekCard(24, 'nutrition.months_6'.tr(), isDark),
+            _buildWeekCard(52, 'nutrition.year_1'.tr(), isDark),
           ],
         ),
         const SizedBox(height: 24),
@@ -1087,7 +1084,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Custom Duration',
+                      'nutrition.custom_duration'.tr(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -1111,8 +1108,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                         border: Border.all(
                           color: _isCustomWeeks
                               ? AppConstants.primaryColor
-                              : (isDark ? const Color(0xFF3A3A3A) : Colors
-                              .grey[300]!),
+                              : (isDark
+                                  ? const Color(0xFF3A3A3A)
+                                  : Colors.grey[300]!),
                           width: 2,
                         ),
                       ),
@@ -1156,8 +1154,8 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                                 });
                               }
                             },
-                            icon: const Icon(Icons.add_circle_outline,
-                                size: 28),
+                            icon:
+                                const Icon(Icons.add_circle_outline, size: 28),
                             color: AppConstants.primaryColor,
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
@@ -1171,7 +1169,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
               const SizedBox(height: 8),
               Center(
                 child: Text(
-                  _customWeeks == 1 ? 'week' : 'weeks',
+                  _customWeeks == 1 ? 'nutrition.week_singular'.tr() : 'nutrition.week_plural'.tr(),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -1214,19 +1212,19 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ]
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ]
               : [
-            BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            )
-          ],
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1256,8 +1254,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                     ? Colors.white70
                     : (isDark ? Colors.white60 : Colors.grey[600]),
               ),
-              child: Text(weeks == 1 ? 'week' : 'weeks'),
-            ),
+              child: Text(weeks == 1 ? 'nutrition.week_singular'.tr() : 'nutrition.week_plural'.tr()),            ),
             const SizedBox(height: 8),
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 300),
@@ -1275,6 +1272,4 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       ),
     );
   }
-
-
 }

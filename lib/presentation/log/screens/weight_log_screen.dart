@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/save_log_request.dart';
 import '../manager/log_bloc.dart';
@@ -57,7 +57,7 @@ class _WeightLogPageState extends State<WeightLogPage> {
     final kg = _weightInKg;
     if (kg == null || kg <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid weight')),
+        SnackBar(content: Text('weight_log.invalid_weight'.tr())),
       );
       return;
     }
@@ -86,7 +86,7 @@ class _WeightLogPageState extends State<WeightLogPage> {
       listener: (context, state) {
         if (state is LogSaveSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Weight logged successfully')),
+            SnackBar(content: Text('weight_log.log_success'.tr())),
           );
           Navigator.of(context).pop();
         } else if (state is LogError) {
@@ -105,7 +105,7 @@ class _WeightLogPageState extends State<WeightLogPage> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'Log Weight',
+            'weight_log.title'.tr(),
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w700,
               fontFamily: AppConstants.fontRegular,
@@ -146,12 +146,12 @@ class _WeightLogPageState extends State<WeightLogPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           _UnitToggleButton(
-                            label: 'kg',
+                            label: 'weight_log.unit_kg'.tr(),
                             selected: _isKg,
                             onTap: () => setState(() => _isKg = true),
                           ),
                           _UnitToggleButton(
-                            label: 'lbs',
+                            label: 'weight_log.unit_lbs'.tr(),
                             selected: !_isKg,
                             onTap: () => setState(() => _isKg = false),
                           ),
@@ -202,7 +202,7 @@ class _WeightLogPageState extends State<WeightLogPage> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 6),
                           child: Text(
-                            _isKg ? ' kg' : ' lbs',
+                            _isKg ? 'weight_log.weight_with_unit_kg'.tr() : 'weight_log.weight_with_unit_lbs'.tr(),
                             style: theme.textTheme.titleLarge?.copyWith(
                               color: AppConstants.primaryColor,
                               fontWeight: FontWeight.w700,
@@ -220,8 +220,8 @@ class _WeightLogPageState extends State<WeightLogPage> {
                         _weightInKg != null)
                       Text(
                         _isKg
-                            ? '≈ ${(_weightInKg! * 2.20462).toStringAsFixed(1)} lbs'
-                            : '≈ ${_weightInKg!.toStringAsFixed(1)} kg',
+                            ? 'weight_log.conversion_to_lbs'.tr(namedArgs: {'value': (_weightInKg! * 2.20462).toStringAsFixed(1)})
+                            : 'weight_log.conversion_to_kg'.tr(namedArgs: {'value': _weightInKg!.toStringAsFixed(1)}),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurface.withOpacity(0.4),
                           fontFamily: AppConstants.fontRegular,
@@ -258,7 +258,7 @@ class _WeightLogPageState extends State<WeightLogPage> {
                   maxLines: 3,
                   style: const TextStyle(fontFamily: AppConstants.fontRegular),
                   decoration: InputDecoration(
-                    hintText: 'Notes (optional)…',
+                    hintText: 'weight_log.notes_hint'.tr(),
                     hintStyle: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.35),
                       fontFamily: AppConstants.fontRegular,
@@ -296,9 +296,9 @@ class _WeightLogPageState extends State<WeightLogPage> {
                           strokeWidth: 2.5,
                         ),
                       )
-                          : const Text(
-                        'Save Weight',
-                        style: TextStyle(
+                          : Text(
+                        'weight_log.save_weight'.tr(),
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           fontFamily: AppConstants.fontRegular,
