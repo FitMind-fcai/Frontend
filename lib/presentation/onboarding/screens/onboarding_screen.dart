@@ -1,7 +1,8 @@
 import 'package:fitmind/presentation/authentication/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans, StringTranslateExtension;
+import 'package:easy_localization/easy_localization.dart';
 
 class OnboardingScreen extends StatefulWidget {
   @override
@@ -16,33 +17,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingItem(
       image:
           'assets/images/sporty fit latin woman boxing exercise making hit boxer isolated white background strength motivation generative ai.png',
-      title: "Personalized Fitness Plans",
-      subtitle: "Choose your own fitness journey with AI. 🏋️‍♀️",
+      title: "onboarding.plans.title",
+      subtitle: "onboarding.plans.subtitle",
     ),
     OnboardingItem(
       image:
           'assets/images/illustration fitness equipments design background.png',
-      title: "Extensive Workout Libraries",
-      subtitle: "Explore ~100K exercises made for you! 💪.",
+      title: "onboarding.library.title",
+      subtitle: "onboarding.library.subtitle",
     ),
     OnboardingItem(
       image: 'assets/images/heart beat is shown black background.png',
-      title: "Health Metrics &  Fitness Analytics",
-      subtitle: "Monitor your health profile with ease. 📈.",
+      title: "onboarding.analytics.title",
+      subtitle: "onboarding.analytics.subtitle",
     ),
     OnboardingItem(
       image:
           'assets/images/banner layout green fruits vegetables generative ai.png',
-      title: "Nutrition & Diet Guidance",
-      subtitle: "Lose weight and get fit with sandow! 🥒.",
+      title: "onboarding.nutrition.title",
+      subtitle: "onboarding.nutrition.subtitle",
     ),
     OnboardingItem(
       image:
           'assets/images/robot futuristic interpretation future virtual reality my collection illustration.png',
-      title: "Virtual AI Coach Mentoring",
-      subtitle: "Say goodbye to manual coaching! 👋.",
+      title: "onboarding.coach.title",
+      subtitle: "onboarding.coach.subtitle",
     ),
-  ]; // insert the list from above
+  ];
 
   void _nextPage() {
     if (currentPage < pages.length - 1) {
@@ -53,7 +54,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      Get.to(()=>SignInScreen()); // or HomeScreen()
+      Get.to(() => SignInScreen()); // or HomeScreen()
     }
   }
 
@@ -70,6 +71,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isRtl = context.locale.languageCode == 'ar'; // Check if the current locale is Arabic (RTL)
+
     return Scaffold(
       body: Stack(
         children: [
@@ -86,7 +90,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     height: double.infinity,
                     fit: BoxFit.cover,
                   ),
-
                   Center(
                     child: Container(
                       decoration: BoxDecoration(
@@ -109,7 +112,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          pages[index].title,
+                          pages[index].title.tr(),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.white,
@@ -120,7 +123,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          pages[index].subtitle,
+                          pages[index].subtitle.tr(),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.white,
@@ -169,25 +172,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             right: 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-
               children: [
                 Container(
                   width: 163,
                   height: 96,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? Colors.grey[800] : Colors.white,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: TextButton(
                     onPressed: currentPage == 0 ? null : _prevPage,
-                    child: SvgPicture.asset(
-                      'assets/images/Solid arrow right sm.svg',
-                      width: 24,
-                      height: 24,
-                      color: Colors.black,
+                    child: Transform.flip(
+                      flipX: isRtl,
+                      child: SvgPicture.asset(
+                        'assets/images/Solid arrow right sm.svg',
+                        width: 24,
+                        height: 24,
+                        color: isDark?Colors.white:Colors.black,
+                      ),
                     ),
-
-                    // space between icon and text
                   ),
                 ),
                 SizedBox(width: 16),
@@ -195,20 +198,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   width: 163,
                   height: 96,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? Colors.grey[800] : Colors.white,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: TextButton(
                     onPressed: _nextPage,
-                    child: Image.asset(
-                      'assets/images/Monotone arrow right.png',
-                      color: Colors.black,
-                      // replace with your icon path
-                      width: 24,
-                      height: 24,
+                    child: Transform.flip(
+                      flipX: isRtl,
+                      child: Image.asset(
+                        'assets/images/Monotone arrow right.png',
+                        color: isDark?Colors.white:Colors.black,
+                        width: 24,
+                        height: 24,
+                      ),
                     ),
-
-                    // space between icon and text
                   ),
                 ),
               ],

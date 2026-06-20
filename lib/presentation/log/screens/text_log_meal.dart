@@ -45,6 +45,8 @@ class _TextLogPageState extends State<TextLogPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return LogPageShell(
       type: widget.type,
       methodLabel: 'Text',

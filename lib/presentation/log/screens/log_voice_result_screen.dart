@@ -26,11 +26,6 @@ class VoiceMealResultPage extends StatefulWidget {
 
 class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
   static const _blue = Color(0xFF3B82F6);
-  static const _bgGrey = Color(0xFFF8F9FB);
-  static const _cardWhite = Colors.white;
-  static const _textDark = Color(0xFF1A1A2E);
-  static const _textMid = Color(0xFF6B7280);
-  static const _border = Color(0xFFEAEAEA);
 
   int? _selectedFoodId;
   double _servings = 1.0;
@@ -66,6 +61,14 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final bgColor = isDark ? colorScheme.surface : const Color(0xFFF8F9FB);
+    final cardColor = isDark ? colorScheme.surface : Colors.white;
+    final borderColor = isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA);
+    final textDark = isDark ? Colors.white : const Color(0xFF1A1A2E);
+    final textMid = isDark ? Colors.white60 : const Color(0xFF6B7280);
+
     return BlocListener<LogBloc, LogState>(
       listener: (context, state) {
         if (state is LogSaveSuccess) {
@@ -88,13 +91,12 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: _bgGrey,
+        backgroundColor: bgColor,
         appBar: AppBar(
-          backgroundColor: _cardWhite,
+          backgroundColor: cardColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                size: 18, color: _textDark),
+            icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: textDark),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
@@ -102,20 +104,19 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: _textDark,
+              color: textDark,
               fontFamily: AppConstants.fontRegular,
             ),
           ),
           centerTitle: true,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
-            child: Container(height: 1, color: _border),
+            child: Container(height: 1, color: borderColor),
           ),
         ),
         body: ListView(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
           children: [
-            // ── Transcription card ──────────────────────────────────────
             if (widget.result.rawText.isNotEmpty)
               _SectionCard(
                 child: Row(
@@ -128,8 +129,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                         color: _blue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.mic_none_rounded,
-                          color: _blue, size: 20),
+                      child: const Icon(Icons.mic_none_rounded, color: _blue, size: 20),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -140,7 +140,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                               style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: _textMid,
+                                  color: textMid,
                                   letterSpacing: 0.5,
                                   fontFamily: AppConstants.fontRegular)),
                           const SizedBox(height: 4),
@@ -148,7 +148,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                             widget.result.rawText,
                             style: TextStyle(
                                 fontSize: 14,
-                                color: _textDark,
+                                color: textDark,
                                 height: 1.5,
                                 fontFamily: AppConstants.fontRegular),
                           ),
@@ -161,19 +161,16 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
 
             const SizedBox(height: 14),
 
-            // ── Meal name + type row ────────────────────────────────────
             _SectionCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.result.mealName.isNotEmpty
-                        ? widget.result.mealName
-                        : 'Unnamed Meal',
+                    widget.result.mealName.isNotEmpty ? widget.result.mealName : 'Unnamed Meal',
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: _textDark,
+                        color: textDark,
                         fontFamily: AppConstants.fontRegular),
                   ),
                   const SizedBox(height: 12),
@@ -187,7 +184,6 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
 
             const SizedBox(height: 14),
 
-            // ── Macro overview ──────────────────────────────────────────
             _MacroRow(
               calories: widget.result.estimatedCalories,
               protein: widget.result.estimatedProteinG,
@@ -198,13 +194,12 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
 
             const SizedBox(height: 14),
 
-            // ── Food items detected ─────────────────────────────────────
             if (widget.result.foodItems.isNotEmpty)
               _SectionCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _Label('Items Detected'),
+                    const _Label('Items Detected'),
                     const SizedBox(height: 10),
                     Wrap(
                       spacing: 8,
@@ -226,7 +221,6 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
 
             if (widget.result.foodItems.isNotEmpty) const SizedBox(height: 14),
 
-            // ── Matched foods ───────────────────────────────────────────
             if (widget.result.matchedFoods.isNotEmpty) ...[
               _SectionCard(
                 child: Column(
@@ -234,15 +228,13 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                   children: [
                     Row(
                       children: [
-                        _Label('Best Matches'),
+                        const _Label('Best Matches'),
                         const Spacer(),
-                        Text(
-                          'Tap to select',
-                          style: TextStyle(
-                              fontSize: 11,
-                              color: _textMid,
-                              fontFamily: AppConstants.fontRegular),
-                        ),
+                        Text('Tap to select',
+                            style: TextStyle(
+                                fontSize: 11,
+                                color: textMid,
+                                fontFamily: AppConstants.fontRegular)),
                       ],
                     ),
                     const SizedBox(height: 2),
@@ -250,17 +242,15 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
                       'Macros will be calculated from the selected food × servings.',
                       style: TextStyle(
                           fontSize: 12,
-                          color: _textMid,
+                          color: textMid,
                           fontFamily: AppConstants.fontRegular),
                     ),
                     const SizedBox(height: 14),
-                    ...widget.result.matchedFoods
-                        .map((food) => _MatchedFoodTile(
+                    ...widget.result.matchedFoods.map((food) => _MatchedFoodTile(
                       food: food,
                       isSelected: _selectedFoodId == food.id,
                       accent: _blue,
-                      onTap: () => setState(
-                              () => _selectedFoodId = food.id),
+                      onTap: () => setState(() => _selectedFoodId = food.id),
                     )),
                   ],
                 ),
@@ -268,18 +258,16 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
               const SizedBox(height: 14),
             ],
 
-            // ── Servings stepper ────────────────────────────────────────
             _SectionCard(
               child: Row(
                 children: [
-                  const Icon(Icons.restaurant_rounded,
-                      size: 18, color: _textMid),
+                  Icon(Icons.restaurant_rounded, size: 18, color: textMid),
                   const SizedBox(width: 10),
                   Text('Servings',
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: _textDark,
+                          color: textDark,
                           fontFamily: AppConstants.fontRegular)),
                   const Spacer(),
                   _ServingsStepper(
@@ -293,21 +281,19 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
 
             const SizedBox(height: 14),
 
-            // ── Notes ───────────────────────────────────────────────────
             if (widget.result.notes.isNotEmpty)
               _SectionCard(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.info_outline_rounded,
-                        size: 18, color: _textMid),
+                    Icon(Icons.info_outline_rounded, size: 18, color: textMid),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         widget.result.notes,
                         style: TextStyle(
                             fontSize: 13,
-                            color: _textMid,
+                            color: textMid,
                             height: 1.5,
                             fontFamily: AppConstants.fontRegular),
                       ),
@@ -317,7 +303,6 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
               ),
           ],
         ),
-        // ── Save button ──────────────────────────────────────────────────
         bottomSheet: _SaveBar(
           label: 'Save Meal',
           accent: _blue,
@@ -336,7 +321,6 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
 
 class VoiceWorkoutResultPage extends StatefulWidget {
   final VoiceWorkoutScanResult result;
-  // removed audioBase64 and audioFormat — not needed
   const VoiceWorkoutResultPage({super.key, required this.result});
 
   @override
@@ -345,11 +329,6 @@ class VoiceWorkoutResultPage extends StatefulWidget {
 
 class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
   static const _green = AppConstants.primaryColor;
-  static const _bgGrey = Color(0xFFF8F9FB);
-  static const _cardWhite = Colors.white;
-  static const _textDark = Color(0xFF1A1A2E);
-  static const _textMid = Color(0xFF6B7280);
-  static const _border = Color(0xFFEAEAEA);
 
   late List<int?> _selectedIds;
   late String _logDate;
@@ -369,7 +348,7 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
       return WorkoutLogEntry(
         centralExerciseId: _selectedIds[entry.key],
         setsCompleted: ex.sets > 0 ? ex.sets : 1,
-        repsCompleted: ex.reps > 0 ? ex.reps : 0,
+        repsCompleted: ex.reps > 0 ? ex.reps : 1,
         weightUsed: ex.weightKg > 0 ? ex.weightKg : null,
         durationSeconds: ex.durationSeconds > 0 ? ex.durationSeconds : null,
       );
@@ -385,6 +364,14 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final bgColor = isDark ? colorScheme.surface : const Color(0xFFF8F9FB);
+    final cardColor = isDark ? colorScheme.surfaceContainerHigh : Colors.white;
+    final borderColor = isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA);
+    final textDark = isDark ? Colors.white : const Color(0xFF1A1A2E);
+    final textMid = isDark ? Colors.white60 : const Color(0xFF6B7280);
+
     return BlocListener<LogBloc, LogState>(
       listener: (context, state) {
         if (state is LogSaveSuccess) {
@@ -407,13 +394,12 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: _bgGrey,
+        backgroundColor: bgColor,
         appBar: AppBar(
-          backgroundColor: _cardWhite,
+          backgroundColor: cardColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                size: 18, color: _textDark),
+            icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: textDark),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
@@ -421,14 +407,14 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: _textDark,
+              color: textDark,
               fontFamily: AppConstants.fontRegular,
             ),
           ),
           centerTitle: true,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
-            child: Container(height: 1, color: _border),
+            child: Container(height: 1, color: borderColor),
           ),
         ),
         body: ListView(
@@ -457,14 +443,14 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
                               style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: _textMid,
+                                  color: textMid,
                                   letterSpacing: 0.5,
                                   fontFamily: AppConstants.fontRegular)),
                           const SizedBox(height: 4),
                           Text(widget.result.rawText,
                               style: TextStyle(
                                   fontSize: 14,
-                                  color: _textDark,
+                                  color: textDark,
                                   height: 1.5,
                                   fontFamily: AppConstants.fontRegular)),
                         ],
@@ -492,8 +478,7 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
                   exercise: entry.value,
                   selectedId: _selectedIds[entry.key],
                   accent: _green,
-                  onSelectMatch: (id) =>
-                      setState(() => _selectedIds[entry.key] = id),
+                  onSelectMatch: (id) => setState(() => _selectedIds[entry.key] = id),
                 ),
               );
             }),
@@ -503,7 +488,7 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _Label('Tags'),
+                    const _Label('Tags'),
                     const SizedBox(height: 10),
                     Wrap(
                       spacing: 8,
@@ -523,14 +508,13 @@ class _VoiceWorkoutResultPageState extends State<VoiceWorkoutResultPage> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.info_outline_rounded,
-                        size: 18, color: _textMid),
+                    Icon(Icons.info_outline_rounded, size: 18, color: textMid),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(widget.result.notes,
                           style: TextStyle(
                               fontSize: 13,
-                              color: _textMid,
+                              color: textMid,
                               height: 1.5,
                               fontFamily: AppConstants.fontRegular)),
                     ),
@@ -559,18 +543,24 @@ class _SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? colorScheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(
+          color: isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA),
+        ),
       ),
       child: child,
     );
   }
 }
+
+// ── Label ─────────────────────────────────────────────────────────────────────
 
 class _Label extends StatelessWidget {
   final String text;
@@ -578,12 +568,13 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       text,
       style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF6B7280),
+          color: isDark ? Colors.white54 : const Color(0xFF6B7280),
           letterSpacing: 0.6,
           fontFamily: AppConstants.fontRegular),
     );
@@ -605,82 +596,60 @@ class _MacroRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final borderColor = isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? colorScheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(color: borderColor),
       ),
       child: Row(
         children: [
-          _MacroTile(
-              label: 'Calories',
-              value: calories.toStringAsFixed(0),
-              unit: 'kcal',
-              color: accent),
-          _divider(),
-          _MacroTile(
-              label: 'Protein',
-              value: protein.toStringAsFixed(1),
-              unit: 'g',
-              color: const Color(0xFFEF4444)),
-          _divider(),
-          _MacroTile(
-              label: 'Carbs',
-              value: carbs.toStringAsFixed(1),
-              unit: 'g',
-              color: const Color(0xFFF59E0B)),
-          _divider(),
-          _MacroTile(
-              label: 'Fats',
-              value: fats.toStringAsFixed(1),
-              unit: 'g',
-              color: const Color(0xFF8B5CF6)),
+          _MacroTile(label: 'Calories', value: calories.toStringAsFixed(0), unit: 'kcal', color: accent),
+          _divider(borderColor),
+          _MacroTile(label: 'Protein', value: protein.toStringAsFixed(1), unit: 'g', color: const Color(0xFFEF4444)),
+          _divider(borderColor),
+          _MacroTile(label: 'Carbs', value: carbs.toStringAsFixed(1), unit: 'g', color: const Color(0xFFF59E0B)),
+          _divider(borderColor),
+          _MacroTile(label: 'Fats', value: fats.toStringAsFixed(1), unit: 'g', color: const Color(0xFF8B5CF6)),
         ],
       ),
     );
   }
 
-  Widget _divider() => Container(
-    width: 1,
-    height: 36,
-    color: const Color(0xFFEAEAEA),
-  );
+  Widget _divider(Color color) => Container(width: 1, height: 36, color: color);
 }
 
 class _MacroTile extends StatelessWidget {
   final String label, value, unit;
   final Color color;
-  const _MacroTile(
-      {required this.label,
-        required this.value,
-        required this.unit,
-        required this.color});
+  const _MacroTile({required this.label, required this.value, required this.unit, required this.color});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: Column(
         children: [
           Text(value,
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                  fontFamily: AppConstants.fontRegular)),
+                  fontSize: 18, fontWeight: FontWeight.w800, color: color, fontFamily: AppConstants.fontRegular)),
           const SizedBox(height: 2),
           Text(unit,
               style: TextStyle(
                   fontSize: 11,
-                  color: const Color(0xFF6B7280),
+                  color: isDark ? Colors.white54 : const Color(0xFF6B7280),
                   fontFamily: AppConstants.fontRegular)),
           const SizedBox(height: 2),
           Text(label,
               style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1A1A2E),
+                  color: isDark ? Colors.white : const Color(0xFF1A1A2E),
                   fontFamily: AppConstants.fontRegular)),
         ],
       ),
@@ -695,11 +664,13 @@ const _mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
 class _MealTypeSelector extends StatelessWidget {
   final String selected;
   final ValueChanged<String> onChanged;
-  const _MealTypeSelector(
-      {required this.selected, required this.onChanged});
+  const _MealTypeSelector({required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       children: _mealTypes
           .map((type) => Padding(
@@ -708,11 +679,12 @@ class _MealTypeSelector extends StatelessWidget {
           onTap: () => onChanged(type),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(
-                horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: selected == type
                   ? const Color(0xFF3B82F6)
+                  : isDark
+                  ? colorScheme.surfaceContainerHighest
                   : const Color(0xFFF3F4F6),
               borderRadius: BorderRadius.circular(20),
             ),
@@ -723,6 +695,8 @@ class _MealTypeSelector extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   color: selected == type
                       ? Colors.white
+                      : isDark
+                      ? Colors.white60
                       : const Color(0xFF6B7280),
                   fontFamily: AppConstants.fontRegular),
             ),
@@ -733,8 +707,7 @@ class _MealTypeSelector extends StatelessWidget {
     );
   }
 
-  String _capitalize(String s) =>
-      s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
+  String _capitalize(String s) => s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 }
 
 // ── Food chip ─────────────────────────────────────────────────────────────────
@@ -746,18 +719,21 @@ class _FoodChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F7FF),
+        color: isDark ? const Color(0xFF1D4ED8).withOpacity(0.15) : const Color(0xFFF0F7FF),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFBFDBFE)),
+        border: Border.all(
+          color: isDark ? const Color(0xFF3B82F6).withOpacity(0.4) : const Color(0xFFBFDBFE),
+        ),
       ),
       child: Text(
         portion != null ? '$label · $portion' : label,
-        style: const TextStyle(
+        style: TextStyle(
             fontSize: 13,
-            color: Color(0xFF1D4ED8),
+            color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF1D4ED8),
             fontFamily: AppConstants.fontRegular),
       ),
     );
@@ -781,6 +757,14 @@ class _MatchedFoodTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final unselectedBg = isDark ? colorScheme.surface : const Color(0xFFF8F9FB);
+    final unselectedBorder = isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA);
+    final textDark = isDark ? Colors.white : const Color(0xFF1A1A2E);
+    final textMid = isDark ? Colors.white54 : const Color(0xFF6B7280);
+    final radioUnselected = isDark ? Colors.white30 : const Color(0xFFD1D5DB);
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -788,16 +772,15 @@ class _MatchedFoodTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? accent.withOpacity(0.06) : const Color(0xFFF8F9FB),
+          color: isSelected ? accent.withOpacity(0.06) : unselectedBg,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? accent : const Color(0xFFEAEAEA),
+            color: isSelected ? accent : unselectedBorder,
             width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Row(
           children: [
-            // Selection indicator
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: 20,
@@ -805,66 +788,47 @@ class _MatchedFoodTile extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected ? accent : Colors.transparent,
-                border: Border.all(
-                    color: isSelected ? accent : const Color(0xFFD1D5DB),
-                    width: 2),
+                border: Border.all(color: isSelected ? accent : radioUnselected, width: 2),
               ),
               child: isSelected
-                  ? const Icon(Icons.check_rounded,
-                  size: 12, color: Colors.white)
+                  ? const Icon(Icons.check_rounded, size: 12, color: Colors.white)
                   : null,
             ),
             const SizedBox(width: 12),
-            // Food info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    food.foodName,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF1A1A2E),
-                        fontFamily: AppConstants.fontRegular),
-                  ),
+                  Text(food.foodName,
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: textDark,
+                          fontFamily: AppConstants.fontRegular)),
                   const SizedBox(height: 2),
-                  Text(
-                    food.foodCategory,
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: const Color(0xFF6B7280),
-                        fontFamily: AppConstants.fontRegular),
-                  ),
+                  Text(food.foodCategory,
+                      style: TextStyle(
+                          fontSize: 12, color: textMid, fontFamily: AppConstants.fontRegular)),
                 ],
               ),
             ),
-            // Macro summary
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  '${food.caloriesPer100g.toStringAsFixed(0)} kcal',
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: accent,
-                      fontFamily: AppConstants.fontRegular),
-                ),
-                Text(
-                  'per 100g',
-                  style: TextStyle(
-                      fontSize: 11,
-                      color: const Color(0xFF6B7280),
-                      fontFamily: AppConstants.fontRegular),
-                ),
+                Text('${food.caloriesPer100g.toStringAsFixed(0)} kcal',
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: accent,
+                        fontFamily: AppConstants.fontRegular)),
+                Text('per 100g',
+                    style: TextStyle(
+                        fontSize: 11, color: textMid, fontFamily: AppConstants.fontRegular)),
               ],
             ),
             const SizedBox(width: 8),
-            // Match score
             Container(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
               decoration: BoxDecoration(
                 color: _matchColor(food.similarityScore).withOpacity(0.12),
                 borderRadius: BorderRadius.circular(6),
@@ -897,35 +861,25 @@ class _ServingsStepper extends StatelessWidget {
   final double value;
   final Color accent;
   final ValueChanged<double> onChanged;
-  const _ServingsStepper(
-      {required this.value, required this.accent, required this.onChanged});
+  const _ServingsStepper({required this.value, required this.accent, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        _StepBtn(
-          icon: Icons.remove,
-          accent: accent,
-          onTap: value > 0.5 ? () => onChanged((value - 0.5)) : null,
-        ),
+        _StepBtn(icon: Icons.remove, accent: accent, onTap: value > 0.5 ? () => onChanged(value - 0.5) : null),
         const SizedBox(width: 12),
         Text(
-          value == value.truncateToDouble()
-              ? value.toStringAsFixed(0)
-              : value.toStringAsFixed(1),
+          value == value.truncateToDouble() ? value.toStringAsFixed(0) : value.toStringAsFixed(1),
           style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF1A1A2E),
+              color: isDark ? Colors.white : const Color(0xFF1A1A2E),
               fontFamily: AppConstants.fontRegular),
         ),
         const SizedBox(width: 12),
-        _StepBtn(
-          icon: Icons.add,
-          accent: accent,
-          onTap: () => onChanged(value + 0.5),
-        ),
+        _StepBtn(icon: Icons.add, accent: accent, onTap: () => onChanged(value + 0.5)),
       ],
     );
   }
@@ -935,11 +889,11 @@ class _StepBtn extends StatelessWidget {
   final IconData icon;
   final Color accent;
   final VoidCallback? onTap;
-  const _StepBtn(
-      {required this.icon, required this.accent, required this.onTap});
+  const _StepBtn({required this.icon, required this.accent, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -949,11 +903,13 @@ class _StepBtn extends StatelessWidget {
           shape: BoxShape.circle,
           color: onTap != null
               ? accent.withOpacity(0.1)
+              : isDark
+              ? Colors.white12
               : const Color(0xFFF3F4F6),
         ),
         child: Icon(icon,
             size: 16,
-            color: onTap != null ? accent : const Color(0xFFD1D5DB)),
+            color: onTap != null ? accent : isDark ? Colors.white24 : const Color(0xFFD1D5DB)),
       ),
     );
   }
@@ -965,35 +921,30 @@ class _WorkoutStatsRow extends StatelessWidget {
   final int exerciseCount;
   final String duration;
   final Color accent;
-  const _WorkoutStatsRow(
-      {required this.exerciseCount,
-        required this.duration,
-        required this.accent});
+  const _WorkoutStatsRow({required this.exerciseCount, required this.duration, required this.accent});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final borderColor = isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA);
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? colorScheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(color: borderColor),
       ),
       child: Row(
         children: [
+          _StatTile(value: '$exerciseCount', label: 'Exercises', icon: Icons.fitness_center_rounded, color: accent),
+          Container(width: 1, height: 36, color: borderColor),
           _StatTile(
-            value: '$exerciseCount',
-            label: 'Exercises',
-            icon: Icons.fitness_center_rounded,
-            color: accent,
-          ),
-          Container(width: 1, height: 36, color: const Color(0xFFEAEAEA)),
-          _StatTile(
-            value: duration.isNotEmpty ? duration : '—',
-            label: 'Duration',
-            icon: Icons.timer_outlined,
-            color: const Color(0xFF8B5CF6),
-          ),
+              value: duration.isNotEmpty ? duration : '—',
+              label: 'Duration',
+              icon: Icons.timer_outlined,
+              color: const Color(0xFF8B5CF6)),
         ],
       ),
     );
@@ -1004,14 +955,11 @@ class _StatTile extends StatelessWidget {
   final String value, label;
   final IconData icon;
   final Color color;
-  const _StatTile(
-      {required this.value,
-        required this.label,
-        required this.icon,
-        required this.color});
+  const _StatTile({required this.value, required this.label, required this.icon, required this.color});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: Column(
         children: [
@@ -1019,16 +967,13 @@ class _StatTile extends StatelessWidget {
           const SizedBox(height: 6),
           Text(value,
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                  fontFamily: AppConstants.fontRegular)),
+                  fontSize: 18, fontWeight: FontWeight.w800, color: color, fontFamily: AppConstants.fontRegular)),
           const SizedBox(height: 2),
           Text(label,
               style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF6B7280),
+                  color: isDark ? Colors.white54 : const Color(0xFF6B7280),
                   fontFamily: AppConstants.fontRegular)),
         ],
       ),
@@ -1062,18 +1007,24 @@ class _ExerciseCardState extends State<_ExerciseCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final borderColor = isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA);
+    final textDark = isDark ? Colors.white : const Color(0xFF1A1A2E);
+    final textMid = isDark ? Colors.white54 : const Color(0xFF6B7280);
+    final toggleBg = isDark ? colorScheme.surface : const Color(0xFFF3F4F6);
+
     final ex = widget.exercise;
     final hasMatches = ex.matchedExercises.isNotEmpty;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? colorScheme.surfaceContainerHigh : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(color: borderColor),
       ),
       child: Column(
         children: [
-          // ── Header ────────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -1086,14 +1037,12 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                    child: Text(
-                      '${widget.index + 1}',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: widget.accent,
-                          fontFamily: AppConstants.fontRegular),
-                    ),
+                    child: Text('${widget.index + 1}',
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: widget.accent,
+                            fontFamily: AppConstants.fontRegular)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -1101,14 +1050,12 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        ex.name.isNotEmpty ? ex.name : 'Unknown Exercise',
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF1A1A2E),
-                            fontFamily: AppConstants.fontRegular),
-                      ),
+                      Text(ex.name.isNotEmpty ? ex.name : 'Unknown Exercise',
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: textDark,
+                              fontFamily: AppConstants.fontRegular)),
                       const SizedBox(height: 4),
                       _ExerciseMetaRow(exercise: ex),
                     ],
@@ -1118,27 +1065,21 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                   GestureDetector(
                     onTap: () => setState(() => _expanded = !_expanded),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3F4F6),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(color: toggleBg, borderRadius: BorderRadius.circular(8)),
                       child: Row(
                         children: [
                           Text('Match',
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF6B7280),
+                                  color: textMid,
                                   fontFamily: AppConstants.fontRegular)),
                           const SizedBox(width: 4),
                           Icon(
-                            _expanded
-                                ? Icons.keyboard_arrow_up_rounded
-                                : Icons.keyboard_arrow_down_rounded,
+                            _expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
                             size: 16,
-                            color: const Color(0xFF6B7280),
+                            color: textMid,
                           ),
                         ],
                       ),
@@ -1147,10 +1088,8 @@ class _ExerciseCardState extends State<_ExerciseCard> {
               ],
             ),
           ),
-
-          // ── Matched exercises (expandable) ────────────────────────────
           if (_expanded && hasMatches) ...[
-            Container(height: 1, color: const Color(0xFFEAEAEA)),
+            Container(height: 1, color: borderColor),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
               child: Column(
@@ -1160,7 +1099,7 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                       style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF6B7280),
+                          color: textMid,
                           fontFamily: AppConstants.fontRegular)),
                   const SizedBox(height: 10),
                   ...ex.matchedExercises.map((m) => _MatchedExerciseTile(
@@ -1188,6 +1127,7 @@ class _ExerciseMetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final parts = <String>[];
     if (exercise.sets > 0) parts.add('${exercise.sets} sets');
     if (exercise.reps > 0) parts.add('${exercise.reps} reps');
@@ -1197,16 +1137,12 @@ class _ExerciseMetaRow extends StatelessWidget {
       final secs = exercise.durationSeconds % 60;
       parts.add(mins > 0 ? '${mins}m ${secs}s' : '${secs}s');
     }
-
     if (parts.isEmpty) return const SizedBox.shrink();
-
-    return Text(
-      parts.join(' · '),
-      style: TextStyle(
-          fontSize: 13,
-          color: const Color(0xFF6B7280),
-          fontFamily: AppConstants.fontRegular),
-    );
+    return Text(parts.join(' · '),
+        style: TextStyle(
+            fontSize: 13,
+            color: isDark ? Colors.white54 : const Color(0xFF6B7280),
+            fontFamily: AppConstants.fontRegular));
   }
 }
 
@@ -1225,6 +1161,14 @@ class _MatchedExerciseTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final unselectedBg = isDark ? colorScheme.surfaceContainerHighest : const Color(0xFFF8F9FB);
+    final unselectedBorder = isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA);
+    final textDark = isDark ? Colors.white : const Color(0xFF1A1A2E);
+    final textMid = isDark ? Colors.white54 : const Color(0xFF6B7280);
+    final radioUnselected = isDark ? Colors.white30 : const Color(0xFFD1D5DB);
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -1232,14 +1176,9 @@ class _MatchedExerciseTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected
-              ? accent.withOpacity(0.06)
-              : const Color(0xFFF8F9FB),
+          color: isSelected ? accent.withOpacity(0.06) : unselectedBg,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isSelected ? accent : const Color(0xFFEAEAEA),
-            width: isSelected ? 1.5 : 1,
-          ),
+          border: Border.all(color: isSelected ? accent : unselectedBorder, width: isSelected ? 1.5 : 1),
         ),
         child: Row(
           children: [
@@ -1250,14 +1189,9 @@ class _MatchedExerciseTile extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected ? accent : Colors.transparent,
-                border: Border.all(
-                    color: isSelected ? accent : const Color(0xFFD1D5DB),
-                    width: 2),
+                border: Border.all(color: isSelected ? accent : radioUnselected, width: 2),
               ),
-              child: isSelected
-                  ? const Icon(Icons.check_rounded,
-                  size: 10, color: Colors.white)
-                  : null,
+              child: isSelected ? const Icon(Icons.check_rounded, size: 10, color: Colors.white) : null,
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -1268,19 +1202,15 @@ class _MatchedExerciseTile extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF1A1A2E),
+                          color: textDark,
                           fontFamily: AppConstants.fontRegular)),
                   const SizedBox(height: 2),
                   Text(
-                    [
-                      match.primaryMuscleGroup,
-                      match.equipmentRequired,
-                      match.difficultyLevel,
-                    ].where((s) => s.isNotEmpty).join(' · '),
+                    [match.primaryMuscleGroup, match.equipmentRequired, match.difficultyLevel]
+                        .where((s) => s.isNotEmpty)
+                        .join(' · '),
                     style: TextStyle(
-                        fontSize: 11,
-                        color: const Color(0xFF6B7280),
-                        fontFamily: AppConstants.fontRegular),
+                        fontSize: 11, color: textMid, fontFamily: AppConstants.fontRegular),
                   ),
                 ],
               ),
@@ -1291,14 +1221,12 @@ class _MatchedExerciseTile extends StatelessWidget {
                 color: _matchColor(match.similarityScore).withOpacity(0.12),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Text(
-                '${(match.similarityScore * 100).toStringAsFixed(0)}%',
-                style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: _matchColor(match.similarityScore),
-                    fontFamily: AppConstants.fontRegular),
-              ),
+              child: Text('${(match.similarityScore * 100).toStringAsFixed(0)}%',
+                  style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: _matchColor(match.similarityScore),
+                      fontFamily: AppConstants.fontRegular)),
             ),
           ],
         ),
@@ -1328,14 +1256,12 @@ class _TagChip extends StatelessWidget {
         color: accent.withOpacity(0.08),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: accent,
-            fontFamily: AppConstants.fontRegular),
-      ),
+      child: Text(label,
+          style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: accent,
+              fontFamily: AppConstants.fontRegular)),
     );
   }
 }
@@ -1346,19 +1272,22 @@ class _SaveBar extends StatelessWidget {
   final String label;
   final Color accent;
   final VoidCallback onSave;
-  const _SaveBar(
-      {required this.label, required this.accent, required this.onSave});
+  const _SaveBar({required this.label, required this.accent, required this.onSave});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final borderColor = isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA);
+
     return BlocBuilder<LogBloc, LogState>(
       builder: (context, state) {
         final isSaving = state is LogLoading && state.isSaving;
         return Container(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            border: Border(top: BorderSide(color: Color(0xFFEAEAEA))),
+          decoration: BoxDecoration(
+            color: isDark ? colorScheme.surface : Colors.white,
+            border: Border(top: BorderSide(color: borderColor)),
           ),
           child: SizedBox(
             width: double.infinity,
@@ -1369,16 +1298,14 @@ class _SaveBar extends StatelessWidget {
                 backgroundColor: accent,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               child: isSaving
                   ? SizedBox(
                 width: 22,
                 height: 22,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    color: Colors.white.withOpacity(0.8)),
+                    strokeWidth: 2.5, color: Colors.white.withOpacity(0.8)),
               )
                   : Text(label,
                   style: TextStyle(

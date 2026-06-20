@@ -1,13 +1,14 @@
 import 'package:fitmind/presentation/authentication/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
 import 'package:get/get_core/src/get_main.dart';
 import '../../../core/constants/app_constants.dart';
 import '../manager/auth_bloc.dart';
 import '../widgets/app_form_field.dart';
 import '../widgets/common_button.dart';
 import 'forget_password_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String email;
@@ -61,9 +62,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final password = passwordController.text.trim();
     setState(() {
       if (password.isEmpty) {
-        passwordError = 'Please enter your password';
+        passwordError = 'auth.password_required'.tr();
       } else if (password.length < 6) {
-        passwordError = 'Password must be at least 6 characters';
+        passwordError = 'auth.password_min_length'.tr();
       } else {
         passwordError = null;
       }
@@ -76,9 +77,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final confirm = confirmPasswordController.text.trim();
     setState(() {
       if (confirm.isEmpty) {
-        confirmPasswordError = 'Please confirm your password';
+        confirmPasswordError = 'auth.confirm_password_required'.tr();
       } else if (confirm != passwordController.text.trim()) {
-        confirmPasswordError = 'Passwords do not match';
+        confirmPasswordError = 'auth.passwords_no_match'.tr();
       } else {
         confirmPasswordError = null;
       }
@@ -89,17 +90,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   void validateMismatch() {
     setState(() {
-      showPasswordMismatch =
-          confirmPasswordController.text.isNotEmpty &&
-              confirmPasswordController.text != passwordController.text;
+      showPasswordMismatch = confirmPasswordController.text.isNotEmpty &&
+          confirmPasswordController.text != passwordController.text;
     });
     validateForm();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? colorScheme.surface : Colors.white,
       body: Stack(
         children: [
           Image.asset(
@@ -107,6 +110,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             width: double.infinity,
             height: double.infinity,
             fit: BoxFit.cover,
+            color: isDark ? Colors.black.withOpacity(0.55) : null,
+            colorBlendMode: isDark ? BlendMode.darken : null,
           ),
           Center(
             child: Container(
@@ -116,7 +121,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.white.withAlpha(200),
+                    isDark
+                        ? colorScheme.surface.withAlpha(200)
+                        : Colors.white.withAlpha(200),
                   ],
                 ),
               ),
@@ -131,7 +138,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 if (state is PasswordSuccess &&
                     state.message == "Password reset successful") {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Password reset successful")),
+                    SnackBar(content: Text('auth.password_reset_success'.tr())),
                   );
                   Get.offAll(() => SignInScreen());
                 } else if (state is PasswordFailure) {
@@ -144,11 +151,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 return Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? Colors.black : Colors.white,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
+                        color: isDark
+                            ? Colors.black.withOpacity(0.4)
+                            : Colors.grey.withOpacity(0.4),
                         spreadRadius: 2,
                         blurRadius: 6,
                         offset: const Offset(0, 3),
@@ -158,72 +167,85 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text("Reset Password", style: AppConstants.heading1),
+                      Text(
+                        'auth.reset_password'.tr(),
+                        style: AppConstants.heading1.copyWith(
+                          color: isDark ? Colors.white : null,
+                        ),
+                      ),
                       const SizedBox(height: 6),
                       Text(
-                        "Enter your new password below.",
+                        'auth.reset_password_subtitle'.tr(),
                         textAlign: TextAlign.center,
-                        style: AppConstants.bodyText,
+                        style: AppConstants.bodyText.copyWith(
+                          color: isDark ? Colors.white60 : null,
+                        ),
                       ),
                       const SizedBox(height: 20),
                       AppTextField(
-                        label: 'New Password',
+                        label: 'auth.new_password_label'.tr(),
                         controller: passwordController,
                         onChanged: (_) => validatePassword(),
                         errorText: passwordError,
                         obscureText: obscurePassword,
                         toggleObscureText: () =>
                             setState(() => obscurePassword = !obscurePassword),
-                        prefixIconPath: 'assets/images/Monotone lock password.png',
+                        prefixIconPath:
+                            'assets/images/Monotone lock password.png',
                         focusNode: passwordFocus,
                       ),
                       const SizedBox(height: 16),
                       AppTextField(
-                        label: 'Confirm Password',
+                        label: 'auth.confirm_password_label'.tr(),
                         controller: confirmPasswordController,
                         onChanged: (_) => validateConfirmPassword(),
                         errorText: confirmPasswordError,
                         obscureText: obscureConfirmPassword,
-                        toggleObscureText: () => setState(
-                                () => obscureConfirmPassword = !obscureConfirmPassword),
-                        prefixIconPath: 'assets/images/Monotone lock password.png',
+                        toggleObscureText: () => setState(() =>
+                            obscureConfirmPassword = !obscureConfirmPassword),
+                        prefixIconPath:
+                            'assets/images/Monotone lock password.png',
                         focusNode: confirmFocus,
                       ),
                       const SizedBox(height: 24),
                       isLoading
-                          ? const Center(child: CircularProgressIndicator(color: AppConstants.primaryColor))
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                  color: AppConstants.primaryColor))
                           : Container(
-                        width: double.infinity,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: isFormValid
-                              ? AppConstants.secondaryColor
-                              : Colors.grey.shade400,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: TextButton(
-                          onPressed: isFormValid
-                              ? () {
-                            context.read<AuthBloc>().add(
-                              ResetPasswordEvent(
-                                widget.email,
-                                 widget.otp,
-                                passwordController.text.trim(),
+                              width: double.infinity,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: isFormValid
+                                    ? isDark
+                                        ? AppConstants.primaryColor
+                                        : AppConstants.secondaryColor
+                                    : Colors.grey.shade400,
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                            );
-                          }
-                              : null,
-                          child: const Text(
-                            "Reset Password",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: AppConstants.fontRegular,
+                              child: TextButton(
+                                onPressed: isFormValid
+                                    ? () {
+                                        context.read<AuthBloc>().add(
+                                              ResetPasswordEvent(
+                                                widget.email,
+                                                widget.otp,
+                                                passwordController.text.trim(),
+                                              ),
+                                            );
+                                      }
+                                    : null,
+                                child: Text(
+                                  'auth.reset_password'.tr(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: AppConstants.fontRegular,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 );

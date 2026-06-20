@@ -7,18 +7,25 @@ class ScorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: isDark ? Colors.white : Colors.black87,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Fitmind Score',
           style: TextStyle(
-            color: Colors.black87,
+            color: isDark ? Colors.white : Colors.black87,
             fontWeight: FontWeight.w600,
             fontFamily: AppConstants.fontRegular,
             fontSize: 18,
@@ -26,7 +33,7 @@ class ScorePage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? colorScheme.surface : Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -35,50 +42,43 @@ class ScorePage extends StatelessWidget {
               children: [
                 AppConstants.verticalSpaceXL,
 
-                /// RADAR CHART (Static - No Changes)
+                /// RADAR CHART
                 SizedBox(
                   height: 400,
                   child: RadarChart(
                     RadarChartData(
                       radarShape: RadarShape.polygon,
                       tickCount: 5,
-                      ticksTextStyle: const TextStyle(
-                        color: Colors.transparent,
-                      ),
-                      gridBorderData: const BorderSide(
-                        color: Colors.grey,
+                      ticksTextStyle: const TextStyle(color: Colors.transparent),
+                      gridBorderData: BorderSide(
+                        color: isDark ? Colors.white24 : Colors.grey,
                         width: 1,
                       ),
-                      titleTextStyle: const TextStyle(
+                      titleTextStyle: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: isDark ? Colors.white54 : Colors.grey,
                         fontFamily: AppConstants.fontRegular,
                         fontWeight: FontWeight.w800,
                       ),
                       getTitle: (index, angle) {
                         const titles = [
-                          "Calorie",
-                          "BMI",
-                          "BPM",
-                          "Hydration",
-                          "Sleep",
-                          "Steps",
+                          "Calorie", "BMI", "BPM",
+                          "Hydration", "Sleep", "Steps",
                         ];
                         return RadarChartTitle(text: titles[index]);
                       },
                       dataSets: [
                         RadarDataSet(
-                          fillColor: Colors.black.withOpacity(0.08),
-                          borderColor: Colors.black,
+                          fillColor: isDark
+                              ? Colors.white.withOpacity(0.06)
+                              : Colors.black.withOpacity(0.08),
+                          borderColor: isDark ? Colors.white70 : Colors.black,
                           borderWidth: 2.5,
                           entryRadius: 0,
                           dataEntries: const [
-                            RadarEntry(value: 85),
-                            RadarEntry(value: 70),
-                            RadarEntry(value: 50),
-                            RadarEntry(value: 60),
-                            RadarEntry(value: 75),
-                            RadarEntry(value: 80),
+                            RadarEntry(value: 85), RadarEntry(value: 70),
+                            RadarEntry(value: 50), RadarEntry(value: 60),
+                            RadarEntry(value: 75), RadarEntry(value: 80),
                           ],
                         ),
                         RadarDataSet(
@@ -87,12 +87,9 @@ class ScorePage extends StatelessWidget {
                           borderWidth: 2.5,
                           entryRadius: 0,
                           dataEntries: const [
-                            RadarEntry(value: 60),
-                            RadarEntry(value: 30),
-                            RadarEntry(value: 80),
-                            RadarEntry(value: 95),
-                            RadarEntry(value: 85),
-                            RadarEntry(value: 70),
+                            RadarEntry(value: 60), RadarEntry(value: 30),
+                            RadarEntry(value: 80), RadarEntry(value: 95),
+                            RadarEntry(value: 85), RadarEntry(value: 70),
                           ],
                         ),
                         RadarDataSet(
@@ -101,12 +98,9 @@ class ScorePage extends StatelessWidget {
                           borderWidth: 2.5,
                           entryRadius: 0,
                           dataEntries: const [
-                            RadarEntry(value: 55),
-                            RadarEntry(value: 45),
-                            RadarEntry(value: 35),
-                            RadarEntry(value: 30),
-                            RadarEntry(value: 40),
-                            RadarEntry(value: 50),
+                            RadarEntry(value: 55), RadarEntry(value: 45),
+                            RadarEntry(value: 35), RadarEntry(value: 30),
+                            RadarEntry(value: 40), RadarEntry(value: 50),
                           ],
                         ),
                       ],
@@ -126,11 +120,12 @@ class ScorePage extends StatelessWidget {
                   builder: (context, value, child) {
                     return Text(
                       value.toInt().toString(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 96,
                         fontWeight: FontWeight.w900,
                         fontFamily: AppConstants.fontRegular,
                         height: 1,
+                        color: isDark ? Colors.white : null,
                       ),
                     );
                   },
@@ -143,20 +138,20 @@ class ScorePage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontFamily: AppConstants.fontRegular,
-                    color: Colors.grey[700],
+                    color: isDark ? Colors.white54 : Colors.grey[700],
                   ),
                 ),
 
                 const SizedBox(height: 28),
 
                 /// LEGEND
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       LegendItem(Colors.orange, "STRENGTH"),
-                      LegendItem(Colors.black, "AGILITY"),
+                      LegendItem(isDark ? Colors.white70 : Colors.black, "AGILITY"),
                       LegendItem(Colors.blue, "ENDURANCE"),
                     ],
                   ),
@@ -180,6 +175,8 @@ class LegendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       children: [
         Container(
@@ -193,9 +190,9 @@ class LegendItem extends StatelessWidget {
         const SizedBox(width: 10),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: Colors.black87,
+            color: isDark ? Colors.white70 : Colors.black87,
             fontFamily: AppConstants.fontRegular,
           ),
         ),

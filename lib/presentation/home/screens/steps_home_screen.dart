@@ -37,26 +37,35 @@ class _StepsTakenPageState extends State<StepsTakenPage>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      // CHANGED: was Colors.white — now follows the active theme's surface.
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            // CHANGED: was Colors.black87 — now onSurface.
+            color: colorScheme.onSurface,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Steps Taken',
           style: TextStyle(
-            color: Colors.black87,
+            // CHANGED: was Colors.black87 — now onSurface.
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.w600,
             fontFamily: AppConstants.fontRegular,
             fontSize: 18,
           ),
         ),
         centerTitle: true,
-
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -72,9 +81,27 @@ class _StepsTakenPageState extends State<StepsTakenPage>
                   width: 320,
                   height: 320,
                   child: CustomPaint(
-                    painter: StepsRingPainter(progress: _animation.value),
+                    painter: StepsRingPainter(
+                      progress: _animation.value,
+                      // CHANGED: passing theme-derived colors into the
+                      // painter, since CustomPainter has no BuildContext
+                      // of its own to call Theme.of() with.
+                      trackColor: colorScheme.surfaceContainerHighest,
+                      // CHANGED: the middle ring (0xFF374151, a dark slate)
+                      // reads as a muted neutral on white but would blend
+                      // into a near-black background. Flip to a light gray
+                      // in dark mode so it stays legible against the track.
+                      middleRingColor: isDark
+                          ? const Color(0xFF9CA3AF)
+                          : const Color(0xFF374151),
+                    ),
                     child: Center(
-                      child: Icon(Icons.directions_walk, size: 40, color: Colors.black87),
+                      child: Icon(
+                        Icons.directions_walk,
+                        size: 40,
+                        // CHANGED: was Colors.black87 — now onSurface.
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
                 );
@@ -85,12 +112,14 @@ class _StepsTakenPageState extends State<StepsTakenPage>
 
             // Step count
             Text(
-              '${totalSteps.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
-              style: const TextStyle(
+              totalSteps.toString().replaceAllMapped(
+                  RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},'),
+              style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.w800,
                 fontFamily: AppConstants.fontRegular,
-                color: Colors.black87,
+                // CHANGED: was Colors.black87 — now onSurface.
+                color: colorScheme.onSurface,
                 letterSpacing: -1,
               ),
             ),
@@ -99,15 +128,20 @@ class _StepsTakenPageState extends State<StepsTakenPage>
               'total steps',
               style: TextStyle(
                 fontSize: 20,
-                color: Colors.grey[700],
+                // CHANGED: was Colors.grey[700] — now onSurfaceVariant.
+                color: colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w700,
-                fontFamily: AppConstants.fontRegular
+                fontFamily: AppConstants.fontRegular,
               ),
             ),
 
             const SizedBox(height: 48),
 
             // Stats row
+            // NOTE: the three accent colors below (orange/gray/blue) are
+            // left as-is — each sits behind a white icon on its own
+            // colored chip, never directly on the page background, so they
+            // read fine in both themes.
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: const [
@@ -140,6 +174,8 @@ class _StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Container(
@@ -154,19 +190,21 @@ class _StatItem extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.w700,
-            color: Colors.black87,
+            // CHANGED: was Colors.black87 — now onSurface.
+            color: colorScheme.onSurface,
             fontFamily: AppConstants.fontRegular,
           ),
         ),
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
-            color: Colors.grey,
+            // CHANGED: was Colors.grey — now onSurfaceVariant.
+            color: colorScheme.onSurfaceVariant,
             fontFamily: AppConstants.fontRegular,
           ),
         ),
@@ -179,8 +217,14 @@ class _StatItem extends StatelessWidget {
 
 class StepsRingPainter extends CustomPainter {
   final double progress;
+  final Color trackColor;
+  final Color middleRingColor;
 
-  StepsRingPainter({required this.progress});
+  StepsRingPainter({
+    required this.progress,
+    required this.trackColor,
+    required this.middleRingColor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -189,7 +233,7 @@ class StepsRingPainter extends CustomPainter {
 
     final rings = [
       _RingConfig(0,                       0.70, const Color(0xFFFF6B00)),
-      _RingConfig((strokeWidth + gap),     0.45, const Color(0xFF374151)),
+      _RingConfig((strokeWidth + gap),     0.45, middleRingColor),
       _RingConfig((strokeWidth + gap) * 2, 0.15, const Color(0xFF3B82F6)),
     ];
 
@@ -214,7 +258,10 @@ class StepsRingPainter extends CustomPainter {
 
       // ── Background track ──
       final trackPaint = Paint()
-        ..color = Colors.grey.shade200
+      // CHANGED: was Colors.grey.shade200 — now a theme-derived color so
+      // the unfilled track stays visible (and visually distinct from the
+      // page background) in dark mode too.
+        ..color = trackColor
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth
         ..strokeCap = StrokeCap.butt
@@ -255,7 +302,10 @@ class StepsRingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(StepsRingPainter old) => old.progress != progress;
+  bool shouldRepaint(StepsRingPainter old) =>
+      old.progress != progress ||
+          old.trackColor != trackColor ||
+          old.middleRingColor != middleRingColor;
 }
 
 class _RingConfig {

@@ -20,8 +20,11 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? colorScheme.surface : Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -38,13 +41,14 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                           IconButton(
                             icon: const Icon(Icons.arrow_back_ios, size: 20),
                             onPressed: () {},
-                            color: Colors.grey,
+                            color: isDark ? Colors.white60 : Colors.grey,
                           ),
-                          const Text(
+                          Text(
                             'Create Plan',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black,
                             ),
                           ),
 
@@ -54,7 +58,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
 
                       // Question
                       Center(
-                        child: const Text(
+                        child: Text(
                           'What type of plan\ndo you want to\ncreate?',
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -62,6 +66,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                             fontFamily: AppConstants.fontRegular,
                             fontWeight: FontWeight.bold,
                             height: 1.2,
+                            color: isDark ? Colors.white : Colors.black,
                           ),
                         ),
                       ),
@@ -76,7 +81,12 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
-                              colors: [
+                              colors: isDark
+                                  ? [
+                                Colors.blue.shade900.withOpacity(0.3),
+                                Colors.purple.shade900.withOpacity(0.3),
+                              ]
+                                  : [
                                 Colors.blue.shade50,
                                 Colors.purple.shade50,
                               ],
@@ -89,13 +99,17 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                               Icon(
                                 Icons.fitness_center,
                                 size: 80,
-                                color: Colors.blue.shade600,
+                                color: isDark
+                                    ? Colors.blue.shade300
+                                    : Colors.blue.shade600,
                               ),
                               const SizedBox(width: 40),
                               Icon(
                                 Icons.restaurant,
                                 size: 80,
-                                color: Colors.green.shade600,
+                                color: isDark
+                                    ? Colors.green.shade300
+                                    : Colors.green.shade600,
                               ),
                             ],
                           ),
@@ -109,6 +123,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                         icon: Icons.fitness_center,
                         label: 'Workout Plan',
                         isSelected: isWorkoutSelected,
+                        isDark: isDark,
                         onTap: () {
                           setState(() {
                             isWorkoutSelected = !isWorkoutSelected;
@@ -121,6 +136,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                         icon: Icons.restaurant,
                         label: 'Nutrition Plan',
                         isSelected: isNutritionSelected,
+                        isDark: isDark,
                         onTap: () {
                           setState(() {
                             isNutritionSelected = !isNutritionSelected;
@@ -176,8 +192,10 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                   }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    disabledBackgroundColor: Colors.grey.shade300,
+                    backgroundColor: isDark ? Colors.white : Colors.black,
+                    disabledBackgroundColor: isDark
+                        ? Colors.white12
+                        : Colors.grey.shade300,
                     elevation: hasSelection ? 2 : 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -189,7 +207,9 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       fontFamily: AppConstants.fontRegular,
-                      color: hasSelection ? Colors.white : Colors.grey.shade500,
+                      color: hasSelection
+                          ? (isDark ? Colors.black : Colors.white)
+                          : (isDark ? Colors.white38 : Colors.grey.shade500),
                     ),
                   ),
                 ),
@@ -205,6 +225,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
     required IconData icon,
     required String label,
     required bool isSelected,
+    required bool isDark,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -218,7 +239,9 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
           curve: Curves.easeOut,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFFF6B35) : const Color(0xFFF5F5F5),
+            color: isSelected
+                ? const Color(0xFFFF6B35)
+                : (isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF5F5F5)),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected ? Colors.white54 : Colors.transparent,
@@ -229,7 +252,9 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
             children: [
               Icon(
                 icon,
-                color: isSelected ? Colors.white : Colors.grey[700],
+                color: isSelected
+                    ? Colors.white
+                    : (isDark ? Colors.white70 : Colors.grey[700]),
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -240,7 +265,9 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     fontFamily: AppConstants.fontRegular,
-                    color: isSelected ? Colors.white : Colors.black87,
+                    color: isSelected
+                        ? Colors.white
+                        : (isDark ? Colors.white : Colors.black87),
                   ),
                 ),
               ),
@@ -255,7 +282,9 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                   shape: BoxShape.circle,
                   color: isSelected ? Colors.white : Colors.transparent,
                   border: Border.all(
-                    color: isSelected ? Colors.white : Colors.grey[400]!,
+                    color: isSelected
+                        ? Colors.white
+                        : (isDark ? Colors.white38 : Colors.grey[400]!),
                     width: 2,
                   ),
                 ),

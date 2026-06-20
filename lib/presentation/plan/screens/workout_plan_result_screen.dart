@@ -19,8 +19,11 @@ class WorkoutPlanResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? colorScheme.surface : Colors.white,
       body: BlocListener<PlanBloc, PlanState>(
         listener: (context, state) {
           if (state is WorkoutPreferencesSuccess) {
@@ -63,15 +66,20 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                           children: [
                             GestureDetector(
                               onTap: () => Navigator.pop(context),
-                              child: const Icon(Icons.arrow_back_ios, size: 20),
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                size: 20,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
                             ),
                             const SizedBox(width: 10),
-                            const Text(
+                            Text(
                               'Your Workout Plan Summary',
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: AppConstants.fontRegular,
+                                color: isDark ? Colors.white : Colors.black,
                               ),
                             ),
 
@@ -84,11 +92,12 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                         // ── Plan name & description ──────────────────────
                         Text(
                           plan.planName,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w900,
                             fontFamily: AppConstants.fontRegular,
                             height: 1.2,
+                            color: isDark ? Colors.white : Colors.black,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -96,7 +105,7 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                           plan.description,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[500],
+                            color: isDark ? Colors.white60 : Colors.grey[500],
                             fontFamily: AppConstants.fontRegular,
                             height: 1.5,
                           ),
@@ -105,13 +114,14 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                         Row(
                           children: [
                             Icon(Icons.calendar_today_outlined,
-                                size: 14, color: Colors.grey[400]),
+                                size: 14,
+                                color: isDark ? Colors.white38 : Colors.grey[400]),
                             const SizedBox(width: 6),
                             Text(
                               '${plan.startDate}  →  ${plan.endDate}',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.grey[500],
+                                color: isDark ? Colors.white60 : Colors.grey[500],
                                 fontFamily: AppConstants.fontRegular,
                               ),
                             ),
@@ -181,13 +191,13 @@ class WorkoutPlanResultScreen extends StatelessWidget {
 
                         const SizedBox(height: 20),
 
-                        const Text(
+                        Text(
                           'PLAN OVERVIEW',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.2,
-                            color: Color(0xFF9CA3AF),
+                            color: isDark ? Colors.white60 : const Color(0xFF9CA3AF),
                             fontFamily: AppConstants.fontRegular,
                           ),
                         ),
@@ -203,8 +213,13 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                                 sublabel: 'per week',
                                 value: plan.frequency,
                                 emoji: '📅',
-                                color: const Color(0xFFFFF3E0),
-                                borderColor: const Color(0xFFFFCC80),
+                                color: isDark
+                                    ? const Color(0xFF3D2E1A)
+                                    : const Color(0xFFFFF3E0),
+                                borderColor: isDark
+                                    ? const Color(0xFF8A6D3B)
+                                    : const Color(0xFFFFCC80),
+                                isDark: isDark,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -214,8 +229,13 @@ class WorkoutPlanResultScreen extends StatelessWidget {
                                 sublabel: 'level',
                                 value: plan.difficultyLevel,
                                 emoji: '🔥',
-                                color: const Color(0xFFFFEBEE),
-                                borderColor: const Color(0xFFEF9A9A),
+                                color: isDark
+                                    ? const Color(0xFF3D1F22)
+                                    : const Color(0xFFFFEBEE),
+                                borderColor: isDark
+                                    ? const Color(0xFF8A4A4F)
+                                    : const Color(0xFFEF9A9A),
+                                isDark: isDark,
                               ),
                             ),
                           ],
@@ -328,6 +348,7 @@ class _InfoCard extends StatelessWidget {
   final String emoji;
   final Color color;
   final Color borderColor;
+  final bool isDark;
 
   const _InfoCard({
     required this.label,
@@ -336,6 +357,7 @@ class _InfoCard extends StatelessWidget {
     required this.emoji,
     required this.color,
     required this.borderColor,
+    this.isDark = false,
   });
 
   @override
@@ -354,28 +376,29 @@ class _InfoCard extends StatelessWidget {
           Text(
             value,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w900,
               fontFamily: AppConstants.fontRegular,
+              color: isDark ? Colors.white : Colors.black,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               fontFamily: AppConstants.fontRegular,
-              color: Color(0xFF374151),
+              color: isDark ? Colors.white70 : const Color(0xFF374151),
             ),
           ),
           const SizedBox(height: 2),
           Text(
             sublabel,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
-              color: Color(0xFF9CA3AF),
+              color: isDark ? Colors.white38 : const Color(0xFF9CA3AF),
               fontFamily: AppConstants.fontRegular,
             ),
           ),

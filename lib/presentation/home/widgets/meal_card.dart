@@ -1,15 +1,12 @@
 // lib/presentation/home/widgets/meal_card.dart
 
 import 'package:flutter/material.dart';
-
 import '../../../core/constants/app_constants.dart';
 
 class MealCard extends StatelessWidget {
   final String title;
   final String kcal;
   final String time;
-
-  /// Optional — supplied when card is built from real API data.
   final double? proteinG;
   final double? fatsG;
 
@@ -24,10 +21,11 @@ class MealCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final proteinLabel =
-    proteinG != null ? '${proteinG!.toStringAsFixed(0)}g' : '25g';
-    final fatLabel =
-    fatsG != null ? '${fatsG!.toStringAsFixed(0)}g' : '17g';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final proteinLabel = proteinG != null ? '${proteinG!.toStringAsFixed(0)}g' : '25g';
+    final fatLabel = fatsG != null ? '${fatsG!.toStringAsFixed(0)}g' : '17g';
 
     return Container(
       width: 280,
@@ -35,14 +33,18 @@ class MealCard extends StatelessWidget {
       margin: const EdgeInsets.only(right: 15),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.05), blurRadius: 10)
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+          ),
         ],
-        image: const DecorationImage(
-          image: AssetImage('assets/images/meal_image.png'),
+        image:  DecorationImage(
+          image: isDark?const AssetImage('assets/images/darkmeal.png'):const AssetImage('assets/images/meal_image.png'),
           fit: BoxFit.cover,
         ),
       ),
@@ -51,39 +53,42 @@ class MealCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildMacroTag(proteinLabel, 'Protein'),
+              _buildMacroTag(proteinLabel, 'Protein', isDark),
               const SizedBox(height: 8),
-              _buildMacroTag(fatLabel, 'Fat'),
+              _buildMacroTag(fatLabel, 'Fat', isDark),
               const Spacer(),
               Text(
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   fontFamily: AppConstants.fontRegular,
+                  color: isDark ? Colors.white : null,
                 ),
               ),
               const SizedBox(height: 4),
               Row(
                 children: [
                   Icon(Icons.local_fire_department,
-                      size: 16, color: Colors.grey[600]),
+                      size: 16,
+                      color: isDark ? Colors.white60 : Colors.grey[600]),
                   Text(
                     ' $kcal  •  ',
                     style: TextStyle(
-                      color: Colors.grey[600],
+                      color: isDark ? Colors.white60 : Colors.grey[600],
                       fontWeight: FontWeight.w800,
                       fontFamily: AppConstants.fontRegular,
                     ),
                   ),
                   Icon(Icons.access_time,
-                      size: 16, color: Colors.grey[600]),
+                      size: 16,
+                      color: isDark ? Colors.white60 : Colors.grey[600]),
                   Text(
                     ' $time',
                     style: TextStyle(
-                      color: Colors.grey[600],
+                      color: isDark ? Colors.white60 : Colors.grey[600],
                       fontWeight: FontWeight.w800,
                       fontFamily: AppConstants.fontRegular,
                     ),
@@ -112,28 +117,29 @@ class MealCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMacroTag(String amount, String label) {
+  Widget _buildMacroTag(String amount, String label, bool isDark) {
     return Container(
       width: 56,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: isDark ? Colors.white.withOpacity(0.10) : Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
           Text(
             amount,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontFamily: AppConstants.fontRegular,
+              color: isDark ? Colors.white : null,
             ),
           ),
           Text(
             label,
             style: TextStyle(
               fontSize: 10,
-              color: Colors.grey[600],
+              color: isDark ? Colors.white54 : Colors.grey[600],
               fontFamily: AppConstants.fontRegular,
             ),
           ),

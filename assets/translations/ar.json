@@ -1,0 +1,102 @@
+{
+  "welcome": {
+    "title": "مرحبًا بك في FitMind",
+    "subtitle": " مساعدك الشخصي الذكي للياقة البدنية 🤖",
+    "get_started": "ابدأ الآن",
+    "already_have_account": "لديك حساب بالفعل؟ ",
+    "sign_in": "تسجيل الدخول"
+  },
+  "onboarding": {
+    "plans": {
+      "title": "خطط لياقة شخصية",
+      "subtitle": "اختر رحلتك الرياضية الخاصة بالذكاء الاصطناعي 🏋️‍♀️"
+    },
+    "library": {
+      "title": "مكتبة تمارين واسعة",
+      "subtitle": "استكشف حوالي 100 ألف تمرين مصمم لك! 💪"
+    },
+    "analytics": {
+      "title": "مقاييس صحية وتحليلات اللياقة",
+      "subtitle": "راقب ملفك الصحي بسهولة 📈"
+    },
+    "nutrition": {
+      "title": "إرشادات التغذية والنظام الغذائي",
+      "subtitle": "خسارة الوزن والوصول للياقة مع ساندو! 🥒"
+    },
+    "coach": {
+      "title": "مدرب افتراضي بالذكاء الاصطناعي",
+      "subtitle": "قل وداعًا للتدريب اليدوي! 👋"
+    }
+  },
+  "auth": {
+    "sign_in": "تسجيل الدخول",
+    "sign_in_title": "تسجيل الدخول إلى FitMind",
+    "sign_in_subtitle": "خصص لياقتك البدنية بالذكاء الاصطناعي",
+    "email_label": " البريد الإلكتروني",
+    "email_required": "يرجى إدخال بريدك الإلكتروني",
+    "email_invalid": "أدخل بريدًا إلكترونيًا صحيحًا",
+    "password_label": " كلمة المرور",
+    "password_required": "يرجى إدخال كلمة المرور",
+    "password_min_length": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+    "no_account": "ليس لديك حساب؟ ",
+    "sign_up": "إنشاء حساب",
+    "forget_password": "نسيت كلمة المرور",
+    "signing_in": "جارٍ تسجيل الدخول...",
+    "sign_up_title": "إنشاء حساب مجانًا",
+    "sign_up_subtitle": "أنشئ حسابك بسرعة خلال دقيقة واحدة",
+    "name_label": " الاسم",
+    "name_required": "يرجى إدخال اسمك",
+    "name_invalid": "الحروف والمسافات فقط مسموح بها",
+    "confirm_password_label": " تأكيد كلمة المرور",
+    "confirm_password_required": "يرجى تأكيد كلمة المرور",
+    "passwords_no_match": "كلمتا المرور غير متطابقتين",
+    "already_have_account": "لديك حساب بالفعل؟ ",
+    "enter_your_email": "أدخل بريدك الإلكتروني.",
+    "receive_otp": "استلام رمز التحقق",
+    "otp_title": "رمز التحقق",
+    "otp_subtitle": "لقد أرسلنا رمز تحقق إلى البريد الإلكتروني المُدخل.",
+    "otp_attempts": "المحاولات: {count}/4",
+    "otp_resend": "إعادة إرسال الرمز",
+    "otp_resend_countdown": "({count} ث)",
+    "otp_verify": "تحقق من الرمز",
+    "otp_resent_success": "تم إعادة إرسال الرمز بنجاح",
+    "otp_incomplete": "يرجى إدخال الرمز كاملاً",
+    "otp_max_attempts": "تم الوصول للحد الأقصى من المحاولات. حاول مرة أخرى لاحقًا.",
+    "reset_password": "إعادة تعيين كلمة المرور",
+    "reset_password_subtitle": "أدخل كلمة المرور الجديدة أدناه.",
+    "new_password_label": " كلمة المرور الجديدة",
+    "password_reset_success": "تم إعادة تعيين كلمة المرور بنجاح"
+  },
+  "assessment": {
+    "title": "التقييم",
+    "step_counter": "{step} من 11",
+    "continue": "متابعة",
+    "submit": "إرسال",
+    "goal_question": "ما هو هدفك الرياضي؟",
+    "goal_lose_weight": "خسارة الوزن",
+    "goal_ai_coach": "أرغب بتجربة المدرب الذكي",
+    "goal_bulk": "أرغب في زيادة الكتلة العضلية",
+    "goal_endurance": "أرغب في زيادة التحمل",
+    "goal_trying_app": "أجرب التطبيق فقط! 👍",
+    "activity_question": "ما هو مستوى لياقتك؟",
+    "activity_sedentary": "خامل (قليل الحركة)",
+    "activity_light": "نشاط خفيف",
+    "activity_moderate": "نشاط متوسط",
+    "activity_very": "نشاط عالٍ",
+    "gender_question": "ما هو جنسك؟",
+    "male": "ذكر",
+    "female": "أنثى",
+    "weight_question": "ما هو وزنك؟",
+    "unit_kg": "كجم",
+    "unit_lbs": "رطل",
+    "height_question": "ما هو طولك؟",
+    "unit_cm": "سم",
+    "unit_ft": "قدم",
+    "age_question": "كم عمرك؟",
+    "physical_limitations_question": "هل لديك أي قيود جسدية؟",
+    "medical_conditions_question": "هل لديك أي حالات طبية؟",
+    "allergies_question": "هل لديك أي حساسية؟",
+    "diet_question": "هل لديك أي تفضيلات غذائية؟",
+    "medications_question": "هل تتناول أي أدوية حاليًا؟"
+  }
+}

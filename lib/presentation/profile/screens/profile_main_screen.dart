@@ -12,11 +12,14 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     // Optionally trigger the profile fetch event if it hasn't been loaded globally yet
      context.read<ProfileBloc>().add(LoadProfileEvent());
 
     return Scaffold(
-      backgroundColor: Colors.white,
+
+      backgroundColor: isDark ? colorScheme.surface : Colors.white,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -99,11 +102,13 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
         decoration: BoxDecoration(
-          color: Colors.grey[200],
+          color: isDark?Colors.grey[600]:Colors.grey[200],
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
@@ -120,8 +125,9 @@ class _StatCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w800,
+                color: isDark?Colors.white:Colors.black87,
                 fontSize: 18, // Slightly dropped to avoid overflow with longer text strings
                 fontFamily: AppConstants.fontRegular,
               ),
@@ -133,7 +139,7 @@ class _StatCard extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[600],
+                color: isDark?Colors.white:Colors.grey[600],
                 fontFamily: AppConstants.fontRegular,
               ),
               maxLines: 1,

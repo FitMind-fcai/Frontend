@@ -22,8 +22,15 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // CHANGED: light mode keeps every original literal color exactly as
+    // given — isDark only branches where a value would actually break
+    // against a dark background.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      // CHANGED: was always const Color(0xFFF5F5F5).
+      backgroundColor: isDark ? colorScheme.surface : const Color(0xFFF5F5F5),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,12 +46,20 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        // CHANGED: was Colors.white.
+                        color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
                         borderRadius: BorderRadius.circular(13),
-                        border: Border.all(color: const Color(0xFFEAEAEA)),
+                        border: Border.all(
+                          // CHANGED: was const Color(0xFFEAEAEA).
+                          color: isDark ? colorScheme.outlineVariant : const Color(0xFFEAEAEA),
+                        ),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 16, color: Color(0xFF1A1A2E)),
+                      child: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 16,
+                        // CHANGED: was const Color(0xFF1A1A2E).
+                        color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -56,14 +71,17 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
                           day.dayName.isNotEmpty
                               ? day.dayName
                               : 'Day ${day.dayNumber}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1A1A2E),
+                            // CHANGED: was const Color(0xFF1A1A2E).
+                            color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                             letterSpacing: -0.5,
                             fontFamily: AppConstants.fontRegular,
                           ),
                         ),
+                        // NOTE: mid-tone gray, already reads fine on both
+                        // light and dark — left untouched.
                         if (date != null)
                           Text(
                             _formatDate(date!),
@@ -81,6 +99,12 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             // Summary strip
+            // NOTE: fixed dark-navy card regardless of theme — same
+            // reasoning as the meals screen's summary strip. Its tone is
+            // close enough to the elevated dark surface used elsewhere
+            // that it still reads as a raised card on a dark page, so
+            // nothing in this block (including white54 labels and the
+            // accent value colors) needs to change.
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -236,16 +260,22 @@ class _ExerciseCardState extends State<_ExerciseCard>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     final ex = widget.exercise;
+
     return GestureDetector(
       onTap: _toggle,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          // CHANGED: was Colors.white.
+          color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              // CHANGED: dropped entirely in dark mode — same smudge issue
+              // as every other card shadow fixed so far.
+              color: isDark ? Colors.transparent : Colors.black.withOpacity(0.05),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -258,6 +288,7 @@ class _ExerciseCardState extends State<_ExerciseCard>
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
+                  // NOTE: _muscleColor badge/icon — brand accent, untouched.
                   Container(
                     width: 54,
                     height: 54,
@@ -304,14 +335,16 @@ class _ExerciseCardState extends State<_ExerciseCard>
                       children: [
                         Text(
                           ex.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1A1A2E),
+                            // CHANGED: was const Color(0xFF1A1A2E).
+                            color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                             fontFamily: AppConstants.fontRegular,
                           ),
                         ),
                         const SizedBox(height: 3),
+                        // NOTE: _muscleColor chip — brand accent, untouched.
                         if (ex.muscleGroup != null)
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -333,6 +366,8 @@ class _ExerciseCardState extends State<_ExerciseCard>
                       ],
                     ),
                   ),
+                  // NOTE: light gray chevron — already reads fine on a
+                  // dark card too, untouched.
                   AnimatedRotation(
                     duration: const Duration(milliseconds: 300),
                     turns: _expanded ? 0.5 : 0,
@@ -343,6 +378,7 @@ class _ExerciseCardState extends State<_ExerciseCard>
               ),
             ),
             // Stats pills row
+            // NOTE: all _StatTag colors are brand/accent tints — untouched.
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
               child: Row(
@@ -436,34 +472,48 @@ class _ExerciseDetails extends StatelessWidget {
 
   const _ExerciseDetails({required this.exercise});
 
-  Widget _sectionTitle(String text) => Text(
+  // CHANGED: now takes isDark/colorScheme so the heading can avoid the
+  // navy-on-dark problem — same fix as every other section title so far.
+  Widget _sectionTitle(String text, bool isDark, ColorScheme colorScheme) => Text(
     text,
-    style: const TextStyle(
+    style: TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w700,
-      color: Color(0xFF1A1A2E),
+      color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
       fontFamily: AppConstants.fontRegular,
     ),
   );
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     final ex = exercise;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Divider(color: Color(0xFFF3F4F6), thickness: 1),
+          // CHANGED: was const Divider(color: Color(0xFFF3F4F6)) — that's
+          // a deliberately near-invisible hairline on a white card, but
+          // would glare against a dark one. outlineVariant keeps the same
+          // "barely there" effect on dark.
+          Divider(
+            color: isDark ? colorScheme.outlineVariant : const Color(0xFFF3F4F6),
+            thickness: 1,
+          ),
           const SizedBox(height: 10),
           if (ex.description != null && ex.description!.isNotEmpty) ...[
-            _sectionTitle('Description'),
+            _sectionTitle('Description', isDark, colorScheme),
             const SizedBox(height: 6),
             Text(
               ex.description!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Color(0xFF6B7280),
+                // CHANGED: was const Color(0xFF6B7280) — too low-contrast
+                // against a dark card, swapped to onSurfaceVariant.
+                color: isDark ? colorScheme.onSurfaceVariant : const Color(0xFF6B7280),
                 height: 1.5,
                 fontFamily: AppConstants.fontRegular,
               ),
@@ -471,27 +521,39 @@ class _ExerciseDetails extends StatelessWidget {
             const SizedBox(height: 14),
           ],
           if (ex.equipment != null && ex.equipment!.isNotEmpty) ...[
-            _sectionTitle('Equipment'),
+            _sectionTitle('Equipment', isDark, colorScheme),
             const SizedBox(height: 6),
             Container(
               padding:
               const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xFFF9FAFB),
+                // CHANGED: was const Color(0xFFF9FAFB) — same near-white
+                // tile issue fixed on the ingredient row in the meals
+                // screen. A faint white overlay keeps the same "one step
+                // lighter than the card" effect on dark.
+                color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFF9FAFB),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFFE5E7EB)),
+                border: Border.all(
+                  // CHANGED: was const Color(0xFFE5E7EB).
+                  color: isDark ? colorScheme.outlineVariant : const Color(0xFFE5E7EB),
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.fitness_center_rounded,
-                      size: 14, color: Color(0xFF6B7280)),
+                  Icon(
+                    Icons.fitness_center_rounded,
+                    size: 14,
+                    // CHANGED: was const Color(0xFF6B7280).
+                    color: isDark ? colorScheme.onSurfaceVariant : const Color(0xFF6B7280),
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     ex.equipment!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: Color(0xFF6B7280),
+                      // CHANGED: was const Color(0xFF6B7280).
+                      color: isDark ? colorScheme.onSurfaceVariant : const Color(0xFF6B7280),
                       fontFamily: AppConstants.fontRegular,
                     ),
                   ),
@@ -501,7 +563,7 @@ class _ExerciseDetails extends StatelessWidget {
             const SizedBox(height: 14),
           ],
           if (ex.difficulty != null && ex.difficulty!.isNotEmpty) ...[
-            _sectionTitle('Difficulty'),
+            _sectionTitle('Difficulty', isDark, colorScheme),
             const SizedBox(height: 6),
             _DifficultyBadge(level: ex.difficulty!),
           ],
@@ -516,6 +578,12 @@ class _DifficultyBadge extends StatelessWidget {
 
   const _DifficultyBadge({required this.level});
 
+  // NOTE: every branch here — including the 0xFF6B7280 fallback for an
+  // unrecognized level string — is a mid-to-vivid tone used as a tinted
+  // background/border/text combo, the same pattern left untouched
+  // elsewhere (e.g. the workout day card's exercise-count chip text).
+  // These already have adequate contrast against a dark card, so this
+  // widget doesn't need any theme-aware changes.
   Color get _color {
     switch (level.toLowerCase()) {
       case 'easy':

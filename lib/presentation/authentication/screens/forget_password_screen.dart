@@ -2,8 +2,8 @@ import 'package:fitmind/presentation/authentication/widgets/app_form_field.dart'
 import 'package:fitmind/presentation/authentication/widgets/common_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
-
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../manager/auth_bloc.dart';
 import 'otp_screen.dart';
@@ -21,8 +21,11 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? colorScheme.surface : Colors.white,
       body: Stack(
         children: [
           Image.asset(
@@ -30,6 +33,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             width: double.infinity,
             height: double.infinity,
             fit: BoxFit.cover,
+            color: isDark ? Colors.black.withOpacity(0.55) : null,
+            colorBlendMode: isDark ? BlendMode.darken : null,
           ),
           Center(
             child: Container(
@@ -37,7 +42,12 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.center,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.white.withAlpha(200)],
+                  colors: [
+                    Colors.transparent,
+                    isDark
+                        ? colorScheme.surface.withAlpha(200)
+                        : Colors.white.withAlpha(200),
+                  ],
                 ),
               ),
             ),
@@ -51,11 +61,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               width: 324,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
+                    color: isDark
+                        ? Colors.black.withOpacity(0.4)
+                        : Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 5,
                     offset: const Offset(0, 3),
@@ -80,12 +92,19 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text("Forget Password", style: AppConstants.heading1),
+                        Text(
+                          'auth.forget_password'.tr(),
+                          style: AppConstants.heading1.copyWith(
+                            color: isDark ? Colors.white : null,
+                          ),
+                        ),
                         const SizedBox(height: 10),
                         Text(
-                          "Enter your Email.",
+                          'auth.enter_your_email'.tr(),
                           textAlign: TextAlign.center,
-                          style: AppConstants.bodyText,
+                          style: AppConstants.bodyText.copyWith(
+                            color: isDark ? Colors.white60 : null,
+                          ),
                         ),
                         const SizedBox(height: 10),
                         AppTextField(
@@ -96,14 +115,17 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                         ),
                         const SizedBox(height: 20),
                         isLoading
-                            ? const CircularProgressIndicator(color: AppConstants.primaryColor,)
+                            ? const CircularProgressIndicator(
+                                color: AppConstants.primaryColor,
+                              )
                             : CommonButton(
-                                title: "Receive OTP",
+                                title: 'auth.receive_otp'.tr(),
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
                                     context.read<AuthBloc>().add(
-                                      ForgotPasswordEvent(emailController.text),
-                                    );
+                                          ForgotPasswordEvent(
+                                              emailController.text),
+                                        );
                                   }
                                 },
                               ),

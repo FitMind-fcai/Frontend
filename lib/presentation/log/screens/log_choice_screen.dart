@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:fitmind/presentation/log/screens/text_log_meal.dart';
-import 'package:fitmind/presentation/log/screens/voice_log_meal.dart';
+import 'package:fitmind/presentation/log/screens/voice_log.dart';
 import 'package:fitmind/presentation/log/screens/workout_log_text_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ import 'image_log_meal.dart';
 import 'meal_text_log_screen.dart';
 
 enum LogType { workout, meal }
+
 enum LogMethod { voice, image, text }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,8 +39,7 @@ class _LogEntryPageState extends State<LogEntryPage>
     super.initState();
     _methodCtrl = AnimationController(
         duration: const Duration(milliseconds: 400), vsync: this);
-    _methodFade =
-        CurvedAnimation(parent: _methodCtrl, curve: Curves.easeOut);
+    _methodFade = CurvedAnimation(parent: _methodCtrl, curve: Curves.easeOut);
     _methodSlide = Tween<Offset>(
       begin: const Offset(0, 0.12),
       end: Offset.zero,
@@ -82,9 +82,12 @@ class _LogEntryPageState extends State<LogEntryPage>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      body: SafeArea(
+      backgroundColor:
+      isDark ? colorScheme.surface : const Color(0xFFF5F5F5),      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -129,68 +132,95 @@ class _LogEntryPageState extends State<LogEntryPage>
     );
   }
 
-  Widget _buildHeader(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-    child: Row(
-      children: [
-        GestureDetector(
-          onTap: () => Navigator.maybePop(context),
-          child: Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(13),
-              border:
-              Border.all(color: const Color(0xFFEAEAEA)),
-            ),
-            child: const Icon(Icons.arrow_back_ios_new_rounded,
-                size: 16, color: Color(0xFF1A1A2E)),
-          ),
-        ),
-        const SizedBox(width: 14),
-        const Text('Log',
-            style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1A1A2E),
-                letterSpacing: -0.5,
-                fontFamily: AppConstants.fontRegular)),
-      ],
-    ),
-  );
+  Widget _buildHeader(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
-  Widget _sectionLabel(String text) => Text(text,
-      style: const TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF1A1A2E),
-          fontFamily: AppConstants.fontRegular));
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.maybePop(context),
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color:
+                    isDark ? colorScheme.surfaceContainerHighest : Colors.white,
+                borderRadius: BorderRadius.circular(13),
+                border: Border.all(
+                  color: isDark ? Colors.white24 : const Color(0xFFEAEAEA),
+                ),
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 16,
+                color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+              ),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Text(
+            'Log',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+              letterSpacing: -0.5,
+              fontFamily: AppConstants.fontRegular,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionLabel(String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 17,
+        fontWeight: FontWeight.w700,
+        color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+        fontFamily: AppConstants.fontRegular,
+      ),
+    );
+  }
 
   Widget _buildTypeCards() => Column(children: [
-    _ImageLogCard(
-      label: 'Workout',
-      subtitle: 'Log your exercise & sets',
-      imagePath: 'assets/images/workout_card.png',
-      accentColor: AppConstants.primaryColor,
-      isSelected: _selectedType == LogType.workout,
-      onTap: () => _selectType(LogType.workout),
-    ),
-    const SizedBox(height: 14),
-    _ImageLogCard(
-      label: 'Meal',
-      subtitle: 'Log your food & calories',
-      imagePath: 'assets/images/meal_image.png',
-      accentColor: const Color(0xFF3B82F6),
-      isSelected: _selectedType == LogType.meal,
-      onTap: () => _selectType(LogType.meal),
-    ),
-  ]);
+        _ImageLogCard(
+          label: 'Workout',
+          subtitle: 'Log your exercise & sets',
+          imagePath: 'assets/images/workout_card.png',
+          accentColor: AppConstants.primaryColor,
+          isSelected: _selectedType == LogType.workout,
+          onTap: () => _selectType(LogType.workout),
+        ),
+        const SizedBox(height: 14),
+        _ImageLogCard(
+          label: 'Meal',
+          subtitle: 'Log your food & calories',
+          imagePath: 'assets/images/meal_image.png',
+          accentColor: const Color(0xFF3B82F6),
+          isSelected: _selectedType == LogType.meal,
+          onTap: () => _selectType(LogType.meal),
+        ),
+      ]);
 
   Widget _buildMethodCards() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     final methods = [
       (LogMethod.voice, Icons.mic_rounded, 'Voice', 'Speak your log naturally'),
-      (LogMethod.image, Icons.camera_alt_rounded, 'Image', 'Snap a photo to log'),
+      (
+        LogMethod.image,
+        Icons.camera_alt_rounded,
+        'Image',
+        'Snap a photo to log'
+      ),
       (LogMethod.text, Icons.edit_rounded, 'Text', 'Type in your details'),
     ];
     return Column(
@@ -205,10 +235,16 @@ class _LogEntryPageState extends State<LogEntryPage>
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
               decoration: BoxDecoration(
-                color: isSelected ? _accent.withOpacity(0.06) : Colors.white,
+                color: isSelected
+                    ? _accent.withOpacity(0.06)
+                    : (isDark
+                        ? colorScheme.surfaceContainerHighest
+                        : Colors.white),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isSelected ? _accent : const Color(0xFFEAEAEA),
+                  color: isSelected
+                      ? _accent
+                      : (isDark ? Colors.white24 : const Color(0xFFEAEAEA)),
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -219,12 +255,17 @@ class _LogEntryPageState extends State<LogEntryPage>
                   decoration: BoxDecoration(
                     color: isSelected
                         ? _accent.withOpacity(0.12)
-                        : const Color(0xFFF5F5F5),
+                        : (isDark
+                            ? colorScheme.surface
+                            : const Color(0xFFF5F5F5)),
                     borderRadius: BorderRadius.circular(13),
                   ),
                   child: Icon(icon,
-                      color: isSelected ? _accent : const Color(0xFF9CA3AF),
-                      size: 22),
+                      color: isSelected
+                          ? _accent
+                          : (isDark
+                          ? Colors.white60
+                          : const Color(0xFF9CA3AF)),                      size: 22),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -237,12 +278,18 @@ class _LogEntryPageState extends State<LogEntryPage>
                               fontWeight: FontWeight.w700,
                               color: isSelected
                                   ? _accent
-                                  : const Color(0xFF1A1A2E),
-                              fontFamily: AppConstants.fontRegular)),
+                                  : (isDark
+                                  ? Colors.white
+                                  : const Color(0xFF1A1A2E)),                              fontFamily: AppConstants.fontRegular)),
                       const SizedBox(height: 3),
                       Text(subtitle,
-                          style: const TextStyle(
-                              fontSize: 12, color: Color(0xFF9CA3AF))),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark
+                              ? Colors.white60
+                              : const Color(0xFF9CA3AF),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -254,8 +301,11 @@ class _LogEntryPageState extends State<LogEntryPage>
                     shape: BoxShape.circle,
                     color: isSelected ? _accent : Colors.transparent,
                     border: Border.all(
-                        color: isSelected ? _accent : const Color(0xFFD1D5DB),
-                        width: 2),
+                        color: isSelected
+                            ? _accent
+                            : (isDark
+                            ? Colors.white24
+                            : const Color(0xFFD1D5DB)),                        width: 2),
                   ),
                   child: isSelected
                       ? const Icon(Icons.check, color: Colors.white, size: 13)
@@ -270,8 +320,7 @@ class _LogEntryPageState extends State<LogEntryPage>
   }
 
   Widget _buildContinueButton() {
-    final typeLabel =
-    _selectedType == LogType.workout ? 'Workout' : 'Meal';
+    final typeLabel = _selectedType == LogType.workout ? 'Workout' : 'Meal';
     final methodLabel = _selectedMethod!.name[0].toUpperCase() +
         _selectedMethod!.name.substring(1);
     return SizedBox(
@@ -284,7 +333,7 @@ class _LogEntryPageState extends State<LogEntryPage>
           foregroundColor: Colors.white,
           elevation: 0,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -309,6 +358,7 @@ class _LogEntryPageState extends State<LogEntryPage>
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ImageLogCard extends StatelessWidget {
+
   final String label, subtitle, imagePath;
   final Color accentColor;
   final bool isSelected;
@@ -325,6 +375,8 @@ class _ImageLogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -333,16 +385,17 @@ class _ImageLogCard extends StatelessWidget {
         height: 200,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.black87,
-          borderRadius: BorderRadius.circular(25),
-          border: isSelected
-              ? Border.all(color: accentColor, width: 3)
-              : null,
+          color: isDark
+              ? colorScheme.surfaceContainerHighest
+              : Colors.black87,          borderRadius: BorderRadius.circular(25),
+          border: isSelected ? Border.all(color: accentColor, width: 3) : null,
           boxShadow: [
             BoxShadow(
               color: isSelected
                   ? accentColor.withOpacity(0.35)
-                  : Colors.black.withOpacity(0.10),
+                  : (isDark
+                  ? Colors.black.withOpacity(0.30)
+                  : Colors.black.withOpacity(0.10)),
               blurRadius: isSelected ? 20 : 10,
               offset: const Offset(0, 6),
             )
@@ -364,9 +417,8 @@ class _ImageLogCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(6),
                 decoration:
-                BoxDecoration(color: accentColor, shape: BoxShape.circle),
-                child:
-                const Icon(Icons.check, color: Colors.white, size: 16),
+                    BoxDecoration(color: accentColor, shape: BoxShape.circle),
+                child: const Icon(Icons.check, color: Colors.white, size: 16),
               ),
             ),
           Align(
@@ -411,5 +463,3 @@ class _ImageLogCard extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 //  Shared Page Shell
 // ─────────────────────────────────────────────────────────────────────────────
-
-

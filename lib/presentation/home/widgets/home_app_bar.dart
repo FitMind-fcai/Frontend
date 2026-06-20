@@ -1,4 +1,5 @@
 import 'package:fitmind/core/constants/app_constants.dart';
+import 'package:fitmind/presentation/assessment/screens/assessment_screen.dart';
 import 'package:fitmind/presentation/plan/screens/plan_screen.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
@@ -181,7 +182,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const PlanSelectionScreen()),
+                                  MaterialPageRoute(builder: (_) => const AssessmentScreen()),
                                 );
                               },
                               child: SizedBox(

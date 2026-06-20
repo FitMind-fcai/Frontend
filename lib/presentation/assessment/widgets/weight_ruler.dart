@@ -45,6 +45,8 @@ class _WeightPickerState extends State<WeightPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -54,10 +56,10 @@ class _WeightPickerState extends State<WeightPicker> {
           children: [
             Text(
               '${displayWeight.toInt()}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 80,
                 fontWeight: FontWeight.w900,
-                color: Colors.black,
+                color: isDark?Colors.white:Colors.black,
                 height: 1,
               ),
             ),

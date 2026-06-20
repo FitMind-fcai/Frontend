@@ -44,6 +44,8 @@ class _HeightPickerState extends State<HeightPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     int itemCount = (maxCm - minCm + 1).toInt();
 
     return Row(
@@ -148,10 +150,10 @@ class _HeightPickerState extends State<HeightPicker> {
                 }
                 return "$ft' $inch\"";
               })(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 80,
                 fontWeight: FontWeight.w800,
-                color: Colors.black,
+                color: isDark?Colors.white:Colors.black,
                 fontFamily: AppConstants.fontRegular,
                 height: 1,
               ),

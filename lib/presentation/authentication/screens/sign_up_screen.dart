@@ -6,6 +6,7 @@ import 'package:fitmind/core/constants/app_constants.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../manager/auth_bloc.dart';
 import '../widgets/app_form_field.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -27,7 +28,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
-
   bool showPasswordError = false;
 
   String? nameError;
@@ -60,9 +60,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final name = nameController.text.trim();
     setState(() {
       if (name.isEmpty) {
-        nameError = 'Please enter your name';
+        nameError = 'auth.name_required'.tr();
       } else if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(name)) {
-        nameError = 'Only letters and spaces allowed';
+        nameError = 'auth.name_invalid'.tr();
       } else {
         nameError = null;
       }
@@ -74,9 +74,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final email = emailController.text.trim();
     setState(() {
       if (email.isEmpty) {
-        emailError = 'Please enter your email';
+        emailError = 'auth.email_required'.tr();
+        ;
       } else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(email)) {
-        emailError = 'Enter a valid email';
+        emailError = 'auth.email_invalid'.tr();
       } else {
         emailError = null;
       }
@@ -88,9 +89,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final password = passwordController.text;
     setState(() {
       if (password.isEmpty) {
-        passwordError = 'Please enter your password';
+        passwordError = 'auth.password_required'.tr();
       } else if (password.length < 6) {
-        passwordError = 'Password must be at least 6 characters';
+        passwordError = 'auth.password_min_length'.tr();
       } else {
         passwordError = null;
       }
@@ -102,9 +103,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final confirm = confirmPasswordController.text;
     setState(() {
       if (confirm.isEmpty) {
-        confirmPasswordError = 'Please confirm your password';
+        confirmPasswordError = 'auth.confirm_password_required'.tr();
       } else if (confirm != passwordController.text) {
-        confirmPasswordError = 'Passwords do not match';
+        confirmPasswordError = 'auth.passwords_no_match'.tr();
       } else {
         confirmPasswordError = null;
       }
@@ -114,8 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void validatePasswordMismatchContainer() {
     setState(() {
-      showPasswordError =
-          confirmPasswordController.text.isNotEmpty &&
+      showPasswordError = confirmPasswordController.text.isNotEmpty &&
           confirmPasswordController.text != passwordController.text;
     });
   }
@@ -131,6 +131,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final isRtl = context.locale.languageCode == 'ar'; // Check if the current locale is Arabic (RTL)
+
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthSignUpSuccess) {
@@ -145,256 +150,266 @@ class _SignUpScreenState extends State<SignUpScreen> {
           );
         }
       },
-  child: Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top Image and Logo
-            Stack(
-              children: [
-                Image.asset(
-                  width: double.infinity,
-                  'assets/images/chest press machine full solid white background.png',
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 300,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withOpacity(0.0),
-                        Colors.white.withOpacity(0.95),
-                        Colors.white,
-                      ],
-                      stops: const [0.0, 0.6, 1.0],
+      child: Scaffold(
+        backgroundColor: isDark ? colorScheme.surface : Colors.white,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top Image and Logo
+              Stack(
+                children: [
+                  Image.asset(
+                    width: double.infinity,
+                    'assets/images/chest press machine full solid white background.png',
+                    fit: BoxFit.cover,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 300,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          isDark
+                              ? colorScheme.surface.withOpacity(0.95)
+                              : Colors.white.withOpacity(0.95),
+                          isDark ? colorScheme.surface : Colors.white,
+                        ],
+                        stops: const [0.0, 0.6, 1.0],
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 80,
-                  left: 0,
-                  right: 0,
-                  child: Column(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/MainLogoOrange.svg',
-                        width: 100,
-                        height: 100,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Sign Up For Free',
-                        style: TextStyle(
-                          fontFamily: AppConstants.fontRegular,
-                          fontWeight: FontWeight.w800,
-                          fontSize: AppConstants.fontSizeXXL,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Quickly make your account in 1 minute',
-                        style: TextStyle(
-                          fontFamily: AppConstants.fontRegular,
-                          fontSize: AppConstants.fontSizeL,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    AppTextField(
-                      label: 'Name',
-                      controller: nameController,
-                      onChanged: (_) => validateName(),
-                      errorText: nameError,
-                      prefixIconPath: 'assets/images/user.png',
-                      focusNode: nameFocusNode,
-                    ),
-                    const SizedBox(width: 16),
-
-                    AppConstants.verticalSpaceL,
-
-                    AppTextField(
-                      label: 'Email Address',
-                      controller: emailController,
-                      onChanged: (_) => validateEmail(),
-                      errorText: emailError,
-                      keyboardType: TextInputType.emailAddress,
-                      prefixIconPath: 'assets/images/Monotone email.png',
-                      focusNode: emailFocusNode,
-                    ),
-                    AppConstants.verticalSpaceL,
-
-                    AppTextField(
-                      label: 'Password',
-                      controller: passwordController,
-                      onChanged: (_) {
-                        validatePassword();
-                        validatePasswordMismatchContainer();
-                      },
-                      errorText: passwordError,
-                      obscureText: obscurePassword,
-                      toggleObscureText: () =>
-                          setState(() => obscurePassword = !obscurePassword),
-                      prefixIconPath:
-                          'assets/images/Monotone lock password.png',
-                      focusNode: passwordFocusNode,
-                    ),
-                    AppConstants.verticalSpaceL,
-
-                    AppTextField(
-                      label: 'Confirm Password',
-                      controller: confirmPasswordController,
-                      onChanged: (_) {
-                        validateConfirmPassword();
-                        validatePasswordMismatchContainer();
-                      },
-                      obscureText: obscureConfirmPassword,
-                      toggleObscureText: () => setState(
-                        () => obscureConfirmPassword = !obscureConfirmPassword,
-                      ),
-                      prefixIconPath:
-                          'assets/images/Monotone lock password.png',
-                      focusNode: confirmFocusNode,
-                    ),
-
-                    if (showPasswordError) ...[
-                      AppConstants.verticalSpaceS,
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(top: 6),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.red),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.warning_amber_rounded,
-                              color: Colors.red,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              "Passwords don't match",
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 14,
-                                fontWeight: AppConstants.bold,
-                                fontFamily: AppConstants.fontRegular,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    AppConstants.verticalSpaceL,
-
-                    // Sign Up Button
-                    Container(
-                      width: double.infinity,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: isFormValid
-                            ? AppConstants.secondaryColor
-                            : Colors.grey.shade400,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: TextButton(
-                        onPressed: isFormValid
-                            ? () {
-                                if (_formKey.currentState!.validate()) {
-                                  context.read<AuthBloc>().add(
-                                    SignUpEvent(
-                                      UserEntity(
-                                        name: nameController.text.trim(),
-                                        email: emailController.text.trim(),
-                                        password: passwordController.text
-                                            .trim(),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            : null,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: AppConstants.fontRegular,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Image.asset(
-                              'assets/images/Monotone arrow right.png',
-                              width: 24,
-                              height: 24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    AppConstants.horizontalSpaceXXL,
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  Positioned(
+                    top: 80,
+                    left: 0,
+                    right: 0,
+                    child: Column(
                       children: [
+                        SvgPicture.asset(
+                          'assets/images/MainLogoOrange.svg',
+                          width: 100,
+                          height: 100,
+                        ),
+                        const SizedBox(height: 8),
                         Text(
-                          'Already have an account? ',
+                          'auth.sign_up_title'.tr(),
                           style: TextStyle(
-                            color: AppConstants.lightTextColor,
-                            fontSize: AppConstants.fontSizeL,
-                            fontWeight: AppConstants.mediumBold,
                             fontFamily: AppConstants.fontRegular,
+                            fontWeight: FontWeight.w800,
+                            fontSize: AppConstants.fontSizeXXL,
+                            color: isDark ? Colors.white : Colors.black,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            'Sign In',
+                        const SizedBox(height: 4),
+                        Text(
+                          'auth.sign_up_subtitle'.tr(),
+                          style: TextStyle(
+                            fontFamily: AppConstants.fontRegular,
+                            fontSize: AppConstants.fontSizeL,
+                            color: isDark ? Colors.white60 : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      AppTextField(
+                        label: 'auth.name_label'.tr(),
+                        controller: nameController,
+                        onChanged: (_) => validateName(),
+                        errorText: nameError,
+                        prefixIconPath: 'assets/images/user.png',
+                        focusNode: nameFocusNode,
+                      ),
+                      AppConstants.verticalSpaceL,
+
+                      AppTextField(
+                        label: 'auth.email_label'.tr(),
+                        controller: emailController,
+                        onChanged: (_) => validateEmail(),
+                        errorText: emailError,
+                        keyboardType: TextInputType.emailAddress,
+                        prefixIconPath: 'assets/images/Monotone email.png',
+                        focusNode: emailFocusNode,
+                      ),
+                      AppConstants.verticalSpaceL,
+
+                      AppTextField(
+                        label: 'auth.password_label'.tr(),
+                        controller: passwordController,
+                        onChanged: (_) {
+                          validatePassword();
+                          validatePasswordMismatchContainer();
+                        },
+                        errorText: passwordError,
+                        obscureText: obscurePassword,
+                        toggleObscureText: () =>
+                            setState(() => obscurePassword = !obscurePassword),
+                        prefixIconPath:
+                            'assets/images/Monotone lock password.png',
+                        focusNode: passwordFocusNode,
+                      ),
+                      AppConstants.verticalSpaceL,
+
+                      AppTextField(
+                        label: 'auth.confirm_password_label'.tr(),
+                        controller: confirmPasswordController,
+                        onChanged: (_) {
+                          validateConfirmPassword();
+                          validatePasswordMismatchContainer();
+                        },
+                        obscureText: obscureConfirmPassword,
+                        toggleObscureText: () => setState(
+                          () =>
+                              obscureConfirmPassword = !obscureConfirmPassword,
+                        ),
+                        prefixIconPath:
+                            'assets/images/Monotone lock password.png',
+                        focusNode: confirmFocusNode,
+                      ),
+
+                      if (showPasswordError) ...[
+                        AppConstants.verticalSpaceS,
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(top: 6),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.red),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.warning_amber_rounded,
+                                color: Colors.red,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'auth.passwords_no_match'.tr(),
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 14,
+                                  fontWeight: AppConstants.bold,
+                                  fontFamily: AppConstants.fontRegular,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      AppConstants.verticalSpaceL,
+
+                      // Sign Up Button
+                      Container(
+                        width: double.infinity,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: isFormValid
+                              ? isDark
+                                  ? AppConstants.primaryColor
+                                  : AppConstants.secondaryColor
+                              : isDark
+                                  ? Colors.white12
+                                  : Colors.grey.shade400,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: TextButton(
+                          onPressed: isFormValid
+                              ? () {
+                                  if (_formKey.currentState!.validate()) {
+                                    context.read<AuthBloc>().add(
+                                          SignUpEvent(
+                                            UserEntity(
+                                              name: nameController.text.trim(),
+                                              email:
+                                                  emailController.text.trim(),
+                                              password: passwordController.text
+                                                  .trim(),
+                                            ),
+                                          ),
+                                        );
+                                  }
+                                }
+                              : null,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'auth.sign_up'.tr(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppConstants.fontRegular,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Transform.flip(
+                                flipX: isRtl, // Flip the arrow horizontally if the locale is RTL
+                                child: Image.asset(
+                                  'assets/images/Monotone arrow right.png',
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      AppConstants.horizontalSpaceXXL,
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'auth.already_have_account'.tr(),
                             style: TextStyle(
-                              color: AppConstants.primaryColor,
-                              fontSize: 16,
-                              decoration: TextDecoration.underline,
-                              decorationColor: AppConstants.primaryColor,
+                              color: isDark
+                                  ? Colors.white60
+                                  : AppConstants.lightTextColor,
+                              fontSize: AppConstants.fontSizeL,
+                              fontWeight: AppConstants.mediumBold,
                               fontFamily: AppConstants.fontRegular,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    AppConstants.verticalSpaceM,
-                  ],
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Text(
+                              'auth.sign_in'.tr(),
+                              style: TextStyle(
+                                color: AppConstants.primaryColor,
+                                fontSize: 16,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppConstants.primaryColor,
+                                fontFamily: AppConstants.fontRegular,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      AppConstants.verticalSpaceM,
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-);
+    );
   }
 }

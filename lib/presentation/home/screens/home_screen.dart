@@ -46,9 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;    return Scaffold(
       extendBody: true,
-      backgroundColor: Colors.grey[100],
+      backgroundColor: isDark ? colorScheme.surface : Colors.grey[100],
       body: _pages[_selectedIndex],
       bottomNavigationBar: HomeBottomNavBar(
         selectedIndex: _selectedIndex,
@@ -79,6 +80,9 @@ class _HomePage extends StatelessWidget {
                     AppConstants.verticalSpaceM,
 
                     // ── Fitness Metrics header ──────────────────────────────
+                    // NOTE: this Text and the "See All" label below have no
+                    // explicit color, so they already inherit from the active
+                    // theme's textTheme — no change needed here.
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -156,7 +160,10 @@ class _HomePage extends StatelessWidget {
                             child: MetricCard(
                               title: 'Calories',
                               value: state is HomeLoaded ? '15' : '--',
-                              color: Colors.grey,
+                              // CHANGED: was a flat Colors.grey, which has no
+                              // dark-mode equivalent. outline reads as a
+                              // neutral accent in both themes.
+                              color: Theme.of(context).colorScheme.outline,
                               icon: Icons.local_fire_department,
                               fallbackIcon: Icons.local_fire_department_outlined,
                             ),
@@ -187,7 +194,7 @@ class _HomePage extends StatelessWidget {
                     ),
 
                     if (state is HomeLoading)
-                      _ShimmerBox(height: 240, radius: 25)
+                      const _ShimmerBox(height: 240, radius: 25)
                     else if (state is HomeLoaded)
                       WorkoutHighlightCard(workout:state.workout)
                     else if (state is HomeError)
@@ -218,7 +225,7 @@ class _HomePage extends StatelessWidget {
                     ),
 
                     if (state is HomeLoading)
-                      _ShimmerBox(height: 220, radius: 30)
+                      const _ShimmerBox(height: 220, radius: 30)
                     else if (state is HomeError)
                       _ErrorTile(message: state.message)
                     else
@@ -325,16 +332,25 @@ class _MiscLogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
-          color: Colors.white,
+          // CHANGED: was Colors.white — now follows the theme's card surface.
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              // CHANGED: a black shadow at 4% opacity is invisible on a dark
+              // background and can look like a smudge. Drop it out entirely
+              // in dark mode rather than trying to tune the opacity.
+              color: isDark
+                  ? Colors.transparent
+                  : Colors.black.withOpacity(0.04),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -355,10 +371,12 @@ class _MiscLogCard extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                // CHANGED: was Colors.black87 — now follows the theme's
+                // primary text color (light text on dark surfaces).
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 4),
@@ -393,11 +411,15 @@ class _MealCardRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final meal = nextMeal.recommendedMeal;
     if (meal == null) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Text(
           'No meal plan found. Generate a nutrition plan to get started.',
-          style: TextStyle(color: Colors.grey),
+          // CHANGED: was Colors.grey — onSurfaceVariant gives a muted but
+          // theme-correct tone in both light and dark.
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
@@ -434,7 +456,10 @@ class _ShimmerBox extends StatelessWidget {
       width: double.infinity,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        // CHANGED: was Colors.grey[200] — surfaceContainerHighest is the
+        // Material 3 token meant for exactly this "elevated neutral surface"
+        // use case, and it's defined for both brightness modes.
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(radius),
       ),
     );
@@ -448,21 +473,26 @@ class _ErrorTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.red[50],
+        // CHANGED: was Colors.red[50], a pastel that washes out on dark
+        // backgrounds. errorContainer is Material 3's purpose-built token
+        // for this and adapts correctly.
+        color: colorScheme.errorContainer,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: Colors.red),
+          Icon(Icons.error_outline, color: colorScheme.error),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(color: colorScheme.onErrorContainer),
             ),
           ),
           TextButton(

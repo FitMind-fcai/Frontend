@@ -14,6 +14,7 @@ import 'log_voice_result_screen.dart';
 
 class VoiceLogPage extends StatefulWidget {
   final LogType type;
+
   const VoiceLogPage({super.key, required this.type});
 
   @override
@@ -115,13 +116,16 @@ class _VoiceLogPageState extends State<VoiceLogPage>
   Future<void> _onAnalyse() async {
     if (_recordedPath == null) return;
 
-
     const audioFormat = 'm4a';
 
     if (widget.type == LogType.meal) {
-      context.read<LogBloc>().add(ScanMealVoiceEvent(_recordedPath!, audioFormat));
+      context
+          .read<LogBloc>()
+          .add(ScanMealVoiceEvent(_recordedPath!, audioFormat));
     } else {
-      context.read<LogBloc>().add(ScanWorkoutVoiceEvent(_recordedPath!, audioFormat));
+      context
+          .read<LogBloc>()
+          .add(ScanWorkoutVoiceEvent(_recordedPath!, audioFormat));
     }
   }
 
@@ -133,6 +137,8 @@ class _VoiceLogPageState extends State<VoiceLogPage>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return BlocListener<LogBloc, LogState>(
       listener: (context, state) {
         if (state is VoiceMealScanSuccess) {
@@ -173,21 +179,18 @@ class _VoiceLogPageState extends State<VoiceLogPage>
               const SizedBox(height: 32),
               _HintCard(accent: accent, type: widget.type),
               const Spacer(),
-
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 300),
                 opacity: _isRecording ? 1.0 : 0.0,
                 child: Text(_timerText,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 38,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF1A1A2E),
+                        color: isDark ? Colors.white : const Color(0xFF1A1A2E),
                         letterSpacing: 2,
                         fontFamily: AppConstants.fontRegular)),
               ),
-
               const SizedBox(height: 28),
-
               SizedBox(
                 width: 180,
                 height: 180,
@@ -203,8 +206,8 @@ class _VoiceLogPageState extends State<VoiceLogPage>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                                color: accent.withOpacity(
-                                    0.4 * (1 - _ringAnim.value)),
+                                color: accent
+                                    .withOpacity(0.4 * (1 - _ringAnim.value)),
                                 width: 2),
                           ),
                         ),
@@ -236,13 +239,11 @@ class _VoiceLogPageState extends State<VoiceLogPage>
                         color: _isDone
                             ? const Color(0xFF22C55E)
                             : _isRecording
-                            ? accent
-                            : Colors.white,
+                                ? accent
+                                : Colors.white,
                         boxShadow: [
                           BoxShadow(
-                            color: (_isDone
-                                ? const Color(0xFF22C55E)
-                                : accent)
+                            color: (_isDone ? const Color(0xFF22C55E) : accent)
                                 .withOpacity(0.35),
                             blurRadius: 28,
                             offset: const Offset(0, 8),
@@ -253,26 +254,22 @@ class _VoiceLogPageState extends State<VoiceLogPage>
                         _isDone
                             ? Icons.check_rounded
                             : _isRecording
-                            ? Icons.stop_rounded
-                            : Icons.mic_rounded,
-                        color: _isRecording || _isDone
-                            ? Colors.white
-                            : accent,
+                                ? Icons.stop_rounded
+                                : Icons.mic_rounded,
+                        color: _isRecording || _isDone ? Colors.white : accent,
                         size: 48,
                       ),
                     ),
                   ),
                 ]),
               ),
-
               const SizedBox(height: 24),
-
               Text(
                 _isDone
                     ? 'Recording ready!'
                     : _isRecording
-                    ? 'Tap to stop recording'
-                    : 'Tap the mic to start',
+                        ? 'Tap to stop recording'
+                        : 'Tap the mic to start',
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -281,7 +278,6 @@ class _VoiceLogPageState extends State<VoiceLogPage>
                         : const Color(0xFF6B7280),
                     fontFamily: AppConstants.fontRegular),
               ),
-
               const Spacer(),
               if (_isDone)
                 Padding(
@@ -297,7 +293,10 @@ class _VoiceLogPageState extends State<VoiceLogPage>
                           );
                         }
                       },
-                      child: const Text('Play Recording'),
+                      child: const Text(
+                        'Play Recording',
+                        style: TextStyle(fontFamily: AppConstants.fontRegular),
+                      ),
                     ),
                   ),
                 ),
@@ -321,23 +320,22 @@ class _VoiceLogPageState extends State<VoiceLogPage>
                         ),
                         child: isLoading
                             ? SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: Colors.white.withOpacity(0.8)),
-                        )
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Colors.white.withOpacity(0.8)),
+                              )
                             : const Text('Analyse',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: AppConstants.fontRegular)),
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: AppConstants.fontRegular)),
                       ),
                     ),
                   );
                 },
               ),
-
               const SizedBox(height: 28),
             ],
           ),
@@ -350,6 +348,7 @@ class _VoiceLogPageState extends State<VoiceLogPage>
 class _HintCard extends StatelessWidget {
   final Color accent;
   final LogType type;
+
   const _HintCard({required this.accent, required this.type});
 
   @override

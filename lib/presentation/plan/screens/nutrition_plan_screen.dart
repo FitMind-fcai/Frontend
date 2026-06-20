@@ -11,7 +11,8 @@ import '../manager/plan_bloc.dart';
 import 'nutrition_plan_result_screen.dart';
 
 class NutritionPlanScreen extends StatefulWidget {
-  const NutritionPlanScreen({Key? key,required this.navigationStatus}) : super(key: key);
+  const NutritionPlanScreen({Key? key, required this.navigationStatus})
+      : super(key: key);
 
   final String navigationStatus;
 
@@ -65,6 +66,13 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   }
 
   Widget build(BuildContext context) {
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+    final colorScheme = Theme
+        .of(context)
+        .colorScheme;
+
     return BlocConsumer<PlanBloc, PlanState>(
       listener: (context, state) {
         if (state is NutritionPreferencesSuccess) {
@@ -78,14 +86,15 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => NutritionPlanResultScreen(
-                plan: state.plan,
-                navigationStatus: widget.navigationStatus,
-                request: _lastRequest,
-              ),
+              builder: (_) =>
+                  NutritionPlanResultScreen(
+                    plan: state.plan,
+                    navigationStatus: widget.navigationStatus,
+                    request: _lastRequest,
+                  ),
             ),
           );
-        }else if (state is PlanError) {
+        } else if (state is PlanError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
@@ -95,7 +104,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
         return Stack(
           children: [
             Scaffold(
-              backgroundColor: Colors.white,
+              backgroundColor: isDark ? colorScheme.surface : Colors.white,
               body: SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -113,26 +122,39 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                                 Navigator.pop(context);
                               }
                             },
-                            child: const Icon(Icons.arrow_back_ios, size: 20),
+                            child: Icon(
+                              Icons.arrow_back_ios,
+                              size: 20,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
                           ),
                           const SizedBox(width: 10),
-                          const Text(
+                          Text(
                             'Nutrition Plan',
-                            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
                           ),
                           const Spacer(),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE3F2FD),
+                              color: isDark
+                                  ? const Color(0xFF1E3A5F)
+                                  : const Color(0xFFE3F2FD),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               '${currentPage + 1} of 6',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF2563EB),
+                                color: isDark
+                                    ? const Color(0xFF90CAF9)
+                                    : const Color(0xFF2563EB),
                               ),
                             ),
                           ),
@@ -140,12 +162,14 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                       ),
                       const SizedBox(height: 40),
 
-                      Expanded(child: _getCurrentPage()),
+                      Expanded(child: _getCurrentPage(isDark)),
 
                       const SizedBox(height: 20),
                       CommonButton(
                         title: currentPage < 5 ? 'Continue' : 'Submit',
-                        onPressed: state is PlanLoading ? null : _onContinuePressed,
+                        onPressed: state is PlanLoading
+                            ? null
+                            : _onContinuePressed,
                       ),
                     ],
                   ),
@@ -208,7 +232,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
       durationWeeks: _durationWeeks,
       nutritionPreferences: NutritionPreferences(
         caloriePreference: CaloriePreference.fromString(prefferedCalorieMethod),
-        customCalorieTarget: prefferedCalorieMethod == 'Custom' ? _calorieTarget : null,
+        customCalorieTarget: prefferedCalorieMethod == 'Custom'
+            ? _calorieTarget
+            : null,
         mealsPerDay: int.parse(_selectedDays),
         mealComplexity: MealComplexity.fromString(_selectedComplexity),
         cuisinePreference: CuisinePreference.fromString(_selectedCuisine),
@@ -220,31 +246,31 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   }
 
 
-  Widget _getCurrentPage() {
+  Widget _getCurrentPage(bool isDark) {
     switch (currentPage) {
       case 0:
-        return _buildDurationWeeksPage();
+        return _buildDurationWeeksPage(isDark);
       case 1:
-        return _buildCalorieTargetPage();
+        return _buildCalorieTargetPage(isDark);
       case 2:
-        return _buildMealsPerDayPage();
+        return _buildMealsPerDayPage(isDark);
       case 3:
-        return _buildMealComplexityPage();
+        return _buildMealComplexityPage(isDark);
       case 4:
-        return _buildCuisinePreferencePage();
+        return _buildCuisinePreferencePage(isDark);
       case 5:
-        return _buildExcludeIngredientsPage();
+        return _buildExcludeIngredientsPage(isDark);
       default:
         return const SizedBox.shrink();
     }
   }
 
   // Page 1: Custom Calorie Target
-  Widget _buildCalorieTargetPage() {
+  Widget _buildCalorieTargetPage(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           textAlign: TextAlign.center,
           'What is your daily calorie target?',
           style: TextStyle(
@@ -252,6 +278,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             fontWeight: FontWeight.bold,
             fontFamily: AppConstants.fontRegular,
             height: 1.2,
+            color: isDark ? Colors.white : Colors.black,
           ),
         ),
         const SizedBox(height: 32),
@@ -259,7 +286,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           height: 64,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
             borderRadius: BorderRadius.circular(16),
           ),
           child: Stack(
@@ -278,9 +305,12 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                       .width / 2 - 20,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey, width: 2),
+                    border: Border.all(
+                      color: isDark ? Colors.white38 : Colors.grey,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
@@ -299,8 +329,8 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                           "Kcal",
                           style: TextStyle(
                             color: _selectedUnit == "Kcal"
-                                ? Colors.white
-                                : Colors.grey[600],
+                                ? (isDark ? Colors.black : Colors.white)
+                                : (isDark ? Colors.white60 : Colors.grey[600]),
                             fontSize: 18,
                             fontFamily: AppConstants.fontRegular,
                             fontWeight: FontWeight.w600,
@@ -322,8 +352,8 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                           style: TextStyle(
                             fontFamily: AppConstants.fontRegular,
                             color: _selectedUnit == "Joules"
-                                ? Colors.white
-                                : Colors.grey[600],
+                                ? (isDark ? Colors.black : Colors.white)
+                                : (isDark ? Colors.white60 : Colors.grey[600]),
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -343,11 +373,12 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             children: [
               Text(
                 _getDisplayValue(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 72,
                   fontWeight: FontWeight.bold,
                   fontFamily: AppConstants.fontRegular,
                   height: 1,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
               ),
               const SizedBox(height: 8),
@@ -355,7 +386,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 'calories daily',
                 style: TextStyle(
                   fontSize: 18,
-                  color: Colors.grey[600],
+                  color: isDark ? Colors.white60 : Colors.grey[600],
                   fontFamily: AppConstants.fontRegular,
                   fontWeight: FontWeight.w500,
                 ),
@@ -384,7 +415,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 decoration: BoxDecoration(
                   color: !_isIncrementing
                       ? AppConstants.primaryColor
-                      : Colors.grey[200],
+                      : (isDark ? const Color(0xFF2A2A2A) : Colors.grey[200]),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color:
@@ -398,7 +429,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w300,
-                      color: !_isIncrementing ? Colors.white : Colors.black54,
+                      color: !_isIncrementing
+                          ? Colors.white
+                          : (isDark ? Colors.white54 : Colors.black54),
                     ),
                   ),
                 ),
@@ -419,7 +452,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 decoration: BoxDecoration(
                   color: _isIncrementing
                       ? AppConstants.primaryColor
-                      : Colors.grey[200],
+                      : (isDark ? const Color(0xFF2A2A2A) : Colors.grey[200]),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color:
@@ -433,7 +466,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
-                      color: _isIncrementing ? Colors.white : Colors.black54,
+                      color: _isIncrementing
+                          ? Colors.white
+                          : (isDark ? Colors.white54 : Colors.black54),
                     ),
                   ),
                 ),
@@ -455,11 +490,11 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   }
 
   // Page 2: Meals Per Day
-  Widget _buildMealsPerDayPage() {
+  Widget _buildMealsPerDayPage(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           textAlign: TextAlign.center,
           'How many Meals do you want to eat in a day?',
           style: TextStyle(
@@ -467,15 +502,16 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             fontWeight: FontWeight.bold,
             fontFamily: AppConstants.fontRegular,
             height: 1.2,
+            color: isDark ? Colors.white : Colors.black,
           ),
         ),
         Center(
           child: Text('${_selectedDays}x',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 256,
                 fontFamily: AppConstants.fontRegular,
                 fontWeight: FontWeight.w900,
-                color: Colors.black,
+                color: isDark ? Colors.white : Colors.black,
               )),
         ),
         const SizedBox(height: 30),
@@ -483,7 +519,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           height: 50,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
             borderRadius: BorderRadius.circular(16),
           ),
           child: Stack(
@@ -522,7 +558,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                           style: TextStyle(
                             color: _selectedDays == "3"
                                 ? Colors.white
-                                : Colors.grey[600],
+                                : (isDark ? Colors.white60 : Colors.grey[600]),
                             fontSize: 16,
                             fontFamily: AppConstants.fontRegular,
                             fontWeight: FontWeight.w600,
@@ -545,7 +581,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                             fontFamily: AppConstants.fontRegular,
                             color: _selectedDays == "4"
                                 ? Colors.white
-                                : Colors.grey[600],
+                                : (isDark ? Colors.white60 : Colors.grey[600]),
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -566,7 +602,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                           style: TextStyle(
                             color: _selectedDays == "5"
                                 ? Colors.white
-                                : Colors.grey[600],
+                                : (isDark ? Colors.white60 : Colors.grey[600]),
                             fontSize: 16,
                             fontFamily: AppConstants.fontRegular,
                             fontWeight: FontWeight.w600,
@@ -588,7 +624,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                           style: TextStyle(
                             color: _selectedDays == "6"
                                 ? Colors.white
-                                : Colors.grey[600],
+                                : (isDark ? Colors.white60 : Colors.grey[600]),
                             fontSize: 16,
                             fontFamily: AppConstants.fontRegular,
                             fontWeight: FontWeight.w600,
@@ -610,12 +646,12 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 fontSize: 16,
                 fontFamily: AppConstants.fontRegular,
                 fontWeight: FontWeight.w500,
-                color: Colors.black,
+                color: isDark ? Colors.white : Colors.black,
               ),
               children: [
                 TextSpan(text: 'I want to eat '),
                 TextSpan(
-                text: '${_selectedDays}',
+                  text: '${_selectedDays}',
                   style: TextStyle(fontWeight: AppConstants.extraBold),
                 ),
                 TextSpan(text: ' meals Daily'),
@@ -649,11 +685,11 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
 
 
   // Page 3: Meal Complexity
-  Widget _buildMealComplexityPage() {
+  Widget _buildMealComplexityPage(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Cooking time and complexity preference',
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -661,6 +697,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             fontWeight: FontWeight.bold,
             fontFamily: AppConstants.fontRegular,
             height: 1.2,
+            color: isDark ? Colors.white : Colors.black,
           ),
         ),
         const SizedBox(height: 32),
@@ -676,24 +713,28 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
               title: 'Quick',
               icon: '⚡',
               isSelected: _selectedComplexity == 'Quick',
+              isDark: isDark,
               onTap: () => setState(() => _selectedComplexity = 'Quick'),
             ),
             _buildComplexityOption(
               title: 'Moderate',
               icon: '🍳',
               isSelected: _selectedComplexity == 'Moderate',
+              isDark: isDark,
               onTap: () => setState(() => _selectedComplexity = 'Moderate'),
             ),
             _buildComplexityOption(
               title: 'Elaborate',
               icon: '👨‍🍳',
               isSelected: _selectedComplexity == 'Elaborate',
+              isDark: isDark,
               onTap: () => setState(() => _selectedComplexity = 'Elaborate'),
             ),
             _buildComplexityOption(
               title: 'Mixed',
               icon: '🔀',
               isSelected: _selectedComplexity == 'Mixed',
+              isDark: isDark,
               onTap: () => setState(() => _selectedComplexity = 'Mixed'),
             ),
           ],
@@ -706,6 +747,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     required String title,
     required String icon,
     required bool isSelected,
+    required bool isDark,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -715,7 +757,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected ? AppConstants.primaryColor : Colors.grey[200],
+          color: isSelected
+              ? AppConstants.primaryColor
+              : (isDark ? const Color(0xFF2A2A2A) : Colors.grey[200]),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? Colors.white54 : Colors.transparent,
@@ -742,7 +786,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   fontFamily: AppConstants.fontRegular,
-                  color: isSelected ? Colors.white : Colors.black,
+                  color: isSelected
+                      ? Colors.white
+                      : (isDark ? Colors.white : Colors.black),
                 ),
                 child: Text(title),
               ),
@@ -771,11 +817,11 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   }
 
   // Page 4: Cuisine Preference
-  Widget _buildCuisinePreferencePage() {
+  Widget _buildCuisinePreferencePage(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Select your cuisine preference',
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -783,6 +829,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             fontWeight: FontWeight.bold,
             fontFamily: AppConstants.fontRegular,
             height: 1.2,
+            color: isDark ? Colors.white : Colors.black,
           ),
         ),
         const SizedBox(height: 32),
@@ -798,48 +845,56 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
               title: 'Mediterranean',
               icon: '🫒',
               isSelected: _selectedCuisine == 'Mediterranean',
+              isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Mediterranean'),
             ),
             _buildCuisineOption(
               title: 'Asian',
               icon: '🍜',
               isSelected: _selectedCuisine == 'Asian',
+              isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Asian'),
             ),
             _buildCuisineOption(
               title: 'Western',
               icon: '🍔',
               isSelected: _selectedCuisine == 'Western',
+              isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Western'),
             ),
             _buildCuisineOption(
               title: 'Middle Eastern',
               icon: '🧆',
               isSelected: _selectedCuisine == 'Middle Eastern',
+              isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Middle Eastern'),
             ),
             _buildCuisineOption(
               title: 'Latin American',
               icon: '🌮',
               isSelected: _selectedCuisine == 'Latin American',
+              isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Latin American'),
             ),
             _buildCuisineOption(
               title: 'Vegetarian',
               icon: '🥗',
               isSelected: _selectedCuisine == 'Vegetarian',
+              isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Vegetarian'),
             ),
             _buildCuisineOption(
               title: 'Vegan',
               icon: '🌱',
               isSelected: _selectedCuisine == 'Vegan',
+              isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Vegan'),
             ),
             _buildCuisineOption(
               title: 'Mixed',
               icon: '🔀',
               isSelected: _selectedCuisine == 'Mixed',
+              isDark: isDark,
               onTap: () => setState(() => _selectedCuisine = 'Mixed'),
             ),
           ],
@@ -852,6 +907,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     required String title,
     required String icon,
     required bool isSelected,
+    required bool isDark,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -861,7 +917,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? AppConstants.primaryColor : Colors.grey[200],
+          color: isSelected
+              ? AppConstants.primaryColor
+              : (isDark ? const Color(0xFF2A2A2A) : Colors.grey[200]),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? Colors.white54 : Colors.transparent,
@@ -885,7 +943,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
               curve: Curves.easeInOut,
               style: TextStyle(
                 fontSize: isSelected ? 44 : 40,
-                color: isSelected ? Colors.white : Colors.grey[400],
+                color: isSelected
+                    ? Colors.white
+                    : (isDark ? Colors.white38 : Colors.grey[400]),
               ),
               child: Text(icon),
             ),
@@ -901,19 +961,23 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppConstants.fontRegular,
-                    color: isSelected ? Colors.white : Colors.grey[600],
+                    color: isSelected
+                        ? Colors.white
+                        : (isDark ? Colors.white60 : Colors.grey[600]),
                   ),
                   child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: AppConstants.fontRegular,
-                    color: isSelected ? Colors.white : Colors.grey[600],
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: AppConstants.fontRegular,
+                      color: isSelected
+                          ? Colors.white
+                          : (isDark ? Colors.white60 : Colors.grey[600]),
+                    ),
                   ),
-                ),
                 ),
               ),
             ),
@@ -926,50 +990,53 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
 // Add this to your state class
 
   // Page 5: Exclude Ingredients
-  Widget _buildExcludeIngredientsPage() {
+  Widget _buildExcludeIngredientsPage(bool isDark) {
     return Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      const Center(
-        child: Text(
-          "Do you want to exclude any ingredients from your plan?",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 32,
-            fontFamily: AppConstants.fontRegular,
-            // Uncomment when you have this
-            fontWeight: FontWeight.bold,
-            height: 1.2,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Center(
+          child: Text(
+            "Do you want to exclude any ingredients from your plan?",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 32,
+              fontFamily: AppConstants.fontRegular,
+              // Uncomment when you have this
+              fontWeight: FontWeight.bold,
+              height: 1.2,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
         ),
-      ),
-      Container(
-        height: 196,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+        Container(
+          height: 196,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: isDark ?
+              null: Image.asset(
+            'assets/images/diet.jpg',
+            fit: BoxFit.contain,
+          ),
         ),
-        child: Image.asset(
-          'assets/images/diet.jpg',
-          fit: BoxFit.contain,
+        TagInputWidget(
+          initialValues: diets, // Add this line
+          onChanged: (values) {
+            diets = values;
+          },
         ),
-      ),
-      TagInputWidget(
-        initialValues: diets, // Add this line
-        onChanged: (values) {
-          diets = values;
-        },
-      ),
-      const SizedBox(height: 16),
-    ],
+        const SizedBox(height: 16),
+      ],
     );
   }
-  Widget _buildDurationWeeksPage() {
+
+  Widget _buildDurationWeeksPage(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'How many weeks do you want your plan to be?',
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -977,6 +1044,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             fontWeight: FontWeight.bold,
             fontFamily: AppConstants.fontRegular,
             height: 1.2,
+            color: isDark ? Colors.white : Colors.black,
           ),
         ),
         const SizedBox(height: 32),
@@ -988,22 +1056,22 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           mainAxisSpacing: 12,
           childAspectRatio: 0.85,
           children: [
-            _buildWeekCard(4, '1 Month'),
-            _buildWeekCard(8, '2 Months'),
-            _buildWeekCard(12, '3 Months'),
-            _buildWeekCard(16, '4 Months'),
-            _buildWeekCard(24, '6 Months'),
-            _buildWeekCard(52, '1 Year'),
+            _buildWeekCard(4, '1 Month', isDark),
+            _buildWeekCard(8, '2 Months', isDark),
+            _buildWeekCard(12, '3 Months', isDark),
+            _buildWeekCard(16, '4 Months', isDark),
+            _buildWeekCard(24, '6 Months', isDark),
+            _buildWeekCard(52, '1 Year', isDark),
           ],
         ),
         const SizedBox(height: 24),
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[100],
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.grey[300]!,
+              color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[300]!,
               width: 1,
             ),
           ),
@@ -1017,13 +1085,14 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                     style: TextStyle(fontSize: 24),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       'Custom Duration',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         fontFamily: AppConstants.fontRegular,
+                        color: isDark ? Colors.white : Colors.black,
                       ),
                     ),
                   ),
@@ -1034,12 +1103,16 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 children: [
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: _isCustomWeeks ? AppConstants.primaryColor : Colors.grey[300]!,
+                          color: _isCustomWeeks
+                              ? AppConstants.primaryColor
+                              : (isDark ? const Color(0xFF3A3A3A) : Colors
+                              .grey[300]!),
                           width: 2,
                         ),
                       ),
@@ -1056,7 +1129,8 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                                 });
                               }
                             },
-                            icon: const Icon(Icons.remove_circle_outline, size: 28),
+                            icon: const Icon(Icons.remove_circle_outline,
+                                size: 28),
                             color: AppConstants.primaryColor,
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
@@ -1064,10 +1138,11 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                           const SizedBox(width: 20),
                           Text(
                             '$_customWeeks',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
                               fontFamily: AppConstants.fontRegular,
+                              color: isDark ? Colors.white : Colors.black,
                             ),
                           ),
                           const SizedBox(width: 20),
@@ -1081,7 +1156,8 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                                 });
                               }
                             },
-                            icon: const Icon(Icons.add_circle_outline, size: 28),
+                            icon: const Icon(Icons.add_circle_outline,
+                                size: 28),
                             color: AppConstants.primaryColor,
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
@@ -1100,7 +1176,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     fontFamily: AppConstants.fontRegular,
-                    color: Colors.grey[600],
+                    color: isDark ? Colors.white60 : Colors.grey[600],
                   ),
                 ),
               ),
@@ -1111,7 +1187,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     );
   }
 
-  Widget _buildWeekCard(int weeks, String label) {
+  Widget _buildWeekCard(int weeks, String label, bool isDark) {
     final isSelected = _durationWeeks == weeks && !_isCustomWeeks;
 
     return GestureDetector(
@@ -1126,10 +1202,14 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
-          color: isSelected ? AppConstants.primaryColor : Colors.white,
+          color: isSelected
+              ? AppConstants.primaryColor
+              : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? Colors.white54 : Colors.grey[300]!,
+            color: isSelected
+                ? Colors.white54
+                : (isDark ? const Color(0xFF3A3A3A) : Colors.grey[300]!),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -1142,7 +1222,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
           ]
               : [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             )
@@ -1158,7 +1238,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
                 fontFamily: AppConstants.fontRegular,
-                color: isSelected ? Colors.white : Colors.black,
+                color: isSelected
+                    ? Colors.white
+                    : (isDark ? Colors.white : Colors.black),
               ),
               child: Text('$weeks'),
             ),
@@ -1170,7 +1252,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 fontFamily: AppConstants.fontRegular,
-                color: isSelected ? Colors.white70 : Colors.grey[600],
+                color: isSelected
+                    ? Colors.white70
+                    : (isDark ? Colors.white60 : Colors.grey[600]),
               ),
               child: Text(weeks == 1 ? 'week' : 'weeks'),
             ),

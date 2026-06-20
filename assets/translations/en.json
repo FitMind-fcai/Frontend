@@ -1,0 +1,102 @@
+{
+  "welcome": {
+    "title": "Welcome to FitMind",
+    "subtitle": " Your personal fitness AI Assistant 🤖",
+    "get_started": "Get Started",
+    "already_have_account": "Already have an account? ",
+    "sign_in": "Sign In"
+  },
+  "onboarding": {
+    "plans": {
+      "title": "Personalized Fitness Plans",
+      "subtitle": "Choose your own fitness journey with AI. 🏋️‍♀️"
+    },
+    "library": {
+      "title": "Extensive Workout Libraries",
+      "subtitle": "Explore ~100K exercises made for you! 💪."
+    },
+    "analytics": {
+      "title": "Health Metrics &  Fitness Analytics",
+      "subtitle": "Monitor your health profile with ease. 📈."
+    },
+    "nutrition": {
+      "title": "Nutrition & Diet Guidance",
+      "subtitle": "Lose weight and get fit with sandow! 🥒."
+    },
+    "coach": {
+      "title": "Virtual AI Coach Mentoring",
+      "subtitle": "Say goodbye to manual coaching! 👋."
+    }
+  },
+  "auth": {
+    "sign_in": "Sign In",
+    "sign_in_title": "Sign in to FitMind",
+    "sign_in_subtitle": "Let's personalize your fitness with AI",
+    "email_label": " Email Address",
+    "email_required": "Please enter your email",
+    "email_invalid": "Enter a valid email",
+    "password_label": " Password",
+    "password_required": "Please enter your password",
+    "password_min_length": "Password must be at least 6 characters",
+    "no_account": "Don't have an account? ",
+    "sign_up": "Sign Up",
+    "forget_password": "Forget Password",
+    "signing_in": "Signing in...",
+    "sign_up_title": "Sign Up For Free",
+    "sign_up_subtitle": "Quickly make your account in 1 minute",
+    "name_label": " Name",
+    "name_required": "Please enter your name",
+    "name_invalid": "Only letters and spaces allowed",
+    "confirm_password_label": " Confirm Password",
+    "confirm_password_required": "Please confirm your password",
+    "passwords_no_match": "Passwords don't match",
+    "already_have_account": "Already have an account? ",
+    "enter_your_email": "Enter your Email.",
+    "receive_otp": "Receive OTP",
+    "otp_title": "OTP Code",
+    "otp_subtitle": "We have sent an OTP to the email address provided.",
+    "otp_attempts": "Attempts: {count}/4",
+    "otp_resend": "Resend OTP",
+    "otp_resend_countdown": "({count} s)",
+    "otp_verify": "Verify OTP",
+    "otp_resent_success": "OTP resent successfully",
+    "otp_incomplete": "Please enter the full OTP",
+    "otp_max_attempts": "Maximum verification attempts reached. Please try again later.",
+    "reset_password": "Reset Password",
+    "reset_password_subtitle": "Enter your new password below.",
+    "new_password_label": " New Password",
+    "password_reset_success": "Password reset successful"
+  },
+  "assessment": {
+    "title": "Assessment",
+    "step_counter": "{step} of 11",
+    "continue": "Continue",
+    "submit": "Submit",
+    "goal_question": "What's your fitness goal/target?",
+    "goal_lose_weight": "Lose Weight",
+    "goal_ai_coach": "I wanna try AI Coach",
+    "goal_bulk": "I wanna get bulks",
+    "goal_endurance": "I wanna gain endurance",
+    "goal_trying_app": "Just trying out the app! 👍",
+    "activity_question": "What's your fitness Level",
+    "activity_sedentary": "Sedentary",
+    "activity_light": "Lightly Active",
+    "activity_moderate": "Moderately Active",
+    "activity_very": "Very Active",
+    "gender_question": "What is your gender?",
+    "male": "Male",
+    "female": "Female",
+    "weight_question": "What is your weight?",
+    "unit_kg": "kg",
+    "unit_lbs": "lbs",
+    "height_question": "What is your height?",
+    "unit_cm": "cm",
+    "unit_ft": "ft",
+    "age_question": "What is your Age?",
+    "physical_limitations_question": "Do you have any physical limitations?",
+    "medical_conditions_question": "Do you have any medical conditions?",
+    "allergies_question": "Do you have any Allergies?",
+    "diet_question": "Do you have any Dietary Preferences?",
+    "medications_question": "Are you currently on any medications?"
+  }
+}

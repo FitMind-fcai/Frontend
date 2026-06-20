@@ -10,7 +10,7 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final VoidCallback? toggleObscureText;
   final String prefixIconPath;
-  final String? errorText; // new
+  final String? errorText;
   final Color? iconColor;
 
   const AppTextField({
@@ -29,6 +29,9 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -38,7 +41,7 @@ class AppTextField extends StatelessWidget {
             fontFamily: AppConstants.fontRegular,
             fontSize: AppConstants.fontSizeM,
             fontWeight: FontWeight.w600,
-            color: AppConstants.secondaryColor,
+            color: isDark ? Colors.white : AppConstants.secondaryColor,
           ),
         ),
         const SizedBox(height: 4),
@@ -48,37 +51,46 @@ class AppTextField extends StatelessWidget {
           obscureText: obscureText,
           focusNode: focusNode,
           onChanged: onChanged,
-          style: const TextStyle(fontFamily: AppConstants.fontRegular),
+          style: TextStyle(
+            fontFamily: AppConstants.fontRegular,
+            color: isDark ? Colors.white : Colors.black,
+          ),
           decoration: InputDecoration(
             prefixIcon: ImageIcon(
               AssetImage(prefixIconPath),
-              color: iconColor ?? AppConstants.secondaryColor,
+              color: isDark ? Colors.white54 : (iconColor ?? AppConstants.secondaryColor),
             ),
             suffixIcon: toggleObscureText != null
                 ? IconButton(
               icon: Icon(
                 obscureText ? Icons.visibility_off : Icons.visibility,
+                color: isDark ? Colors.white38 : Colors.grey,
               ),
               onPressed: toggleObscureText,
             )
                 : null,
             filled: true,
-            fillColor: const Color(0xFFF5F5F5),
+            fillColor: isDark
+                ? colorScheme.surfaceContainerHighest
+                : const Color(0xFFF5F5F5),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: BorderSide(
-                  color: errorText != null ? Colors.red : Colors.transparent),
+                color: errorText != null ? Colors.red : Colors.transparent,
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: BorderSide(
-                  color: errorText != null ? Colors.red : Colors.transparent),
+                color: errorText != null ? Colors.red : Colors.transparent,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
               borderSide: BorderSide(
-                  color: errorText != null ? Colors.red : const Color(0xFFFF8C42),
-                  width: 2.5),
+                color: errorText != null ? Colors.red : const Color(0xFFFF8C42),
+                width: 2.5,
+              ),
             ),
             errorText: errorText,
             errorStyle: const TextStyle(color: Colors.red, fontSize: 12),

@@ -48,11 +48,12 @@ dependencies:
   fl_chart: ^0.68.0
   flutter_radar_chart: ^0.2.1
   image_picker: ^1.0.7
-  intl: ^0.19.0
+  intl: 0.20.2
   record: ^6.1.0
   path_provider: ^2.1.2
   permission_handler: ^11.3.1
   audioplayers: ^6.0.0
+  easy_localization: ^3.0.8
 
 
 dev_dependencies:
@@ -147,6 +148,15 @@ flutter:
     - assets/images/facebook.png
     - assets/images/youtube.png
     - assets/images/back_button.png
+    - assets/images/darkmeal.png
+    - assets/images/ingredientsdark.png
+    - assets/images/allergiesdark.jpg
+    - assets/images/chairdark.png
+    - assets/images/doctoreardark.png
+    - assets/images/fooddark.jpg
+    - assets/images/ingredientsdark.png
+    - assets/images/medicationsdark.jpg
+    - assets/translations/
 
 
 

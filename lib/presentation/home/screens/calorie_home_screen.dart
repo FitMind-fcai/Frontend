@@ -13,43 +13,59 @@ class _CalorieStatsPageState extends State<CalorieStatsPage>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  final List<_BarData> bars = const [
-    _BarData(
+  // CHANGED: bars/legends used to be static `const` fields. The "Fat" color
+  // (0xFF1A1A1A, near-black) reads fine on a white background but would
+  // nearly disappear against a dark scaffold. Turning these into methods
+  // that take BuildContext lets that one swatch flip to a light neutral in
+  // dark mode while every other accent color (orange/blue/green) stays the
+  // same in both themes — they're vivid enough to read against either.
+  List<_BarData> _buildBars(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return [
+      _BarData(
         label: 'Fat',
         percent: 0.20,
         value: '20%',
-        color: Color(0xFF1A1A1A),
-        icon: Icons.egg_alt),
-    _BarData(
+        color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF1A1A1A),
+        icon: Icons.egg_alt,
+      ),
+      _BarData(
         label: 'Protein',
         percent: 0.30,
         value: '30%',
-        color: Color(0xFFFF6B00),
-        icon: Icons.local_drink),
-    _BarData(
+        color: const Color(0xFFFF6B00),
+        icon: Icons.local_drink,
+      ),
+      _BarData(
         label: 'Carbs',
         percent: 0.40,
         value: '40%',
-        color: Color(0xFF3B82F6),
-        icon: Icons.restaurant),
-    _BarData(
+        color: const Color(0xFF3B82F6),
+        icon: Icons.restaurant,
+      ),
+      _BarData(
         label: 'Macro',
         percent: 0.10,
         value: '10%',
-        color: Color(0xFF84CC16),
-        icon: Icons.eco),
-  ];
-  // Logic to find the highest percent in the current list
-  double get maxVal => bars.map((e) => e.percent).reduce((a, b) => a > b ? a : b);
-  // Logic to find the lowest percent (to ensure 10% isn't too small)
-  double get minVal => bars.map((e) => e.percent).reduce((a, b) => a < b ? a : b);
+        color: const Color(0xFF84CC16),
+        icon: Icons.eco,
+      ),
+    ];
+  }
 
-  final List<_LegendData> legends = const [
-    _LegendData(label: 'Fat', amount: '201g', color: Color(0xFF1A1A1A)),
-    _LegendData(label: 'Protein', amount: '158g', color: Color(0xFFFF6B00)),
-    _LegendData(label: 'Carbs', amount: '11g', color: Color(0xFF3B82F6)),
-    _LegendData(label: 'Macro', amount: '5g', color: Color(0xFF84CC16)),
-  ];
+  List<_LegendData> _buildLegends(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return [
+      _LegendData(
+        label: 'Fat',
+        amount: '201g',
+        color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF1A1A1A),
+      ),
+      _LegendData(label: 'Protein', amount: '158g', color: const Color(0xFFFF6B00)),
+      _LegendData(label: 'Carbs', amount: '11g', color: const Color(0xFF3B82F6)),
+      _LegendData(label: 'Macro', amount: '5g', color: const Color(0xFF84CC16)),
+    ];
+  }
 
   @override
   void initState() {
@@ -71,14 +87,27 @@ class _CalorieStatsPageState extends State<CalorieStatsPage>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final bars = _buildBars(context);
+    final legends = _buildLegends(context);
+
+    // Logic to find the highest/lowest percent in the current list
+    final maxVal = bars.map((e) => e.percent).reduce((a, b) => a > b ? a : b);
+    final minVal = bars.map((e) => e.percent).reduce((a, b) => a < b ? a : b);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      // CHANGED: was Colors.white — now follows the active theme's surface.
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new,
-              color: Colors.black87, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            // CHANGED: was Colors.black87 — now onSurface.
+            color: colorScheme.onSurface,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -93,33 +122,46 @@ class _CalorieStatsPageState extends State<CalorieStatsPage>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Calorie Stats',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w800,
                     fontFamily: AppConstants.fontRegular,
-                    color: Colors.black87,
+                    // CHANGED: was Colors.black87 — now onSurface.
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 Container(
                   padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    // CHANGED: was Colors.grey.shade100 — now the M3 token
+                    // for an elevated neutral chip, defined for both themes.
+                    color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
-                    children: const [
-                      Icon(Icons.calendar_month,
-                          size: 16, color: Colors.black54),
-                      SizedBox(width: 4),
-                      Text('Jan',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500)),
-                      SizedBox(width: 4),
-                      Icon(Icons.keyboard_arrow_down,
-                          size: 16, color: Colors.black54),
+                    children: [
+                      Icon(
+                        Icons.calendar_month,
+                        size: 16,
+                        // CHANGED: was Colors.black54 — now onSurfaceVariant.
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 4),
+                      const Text(
+                        'Jan',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 16,
+                        // CHANGED: was Colors.black54 — now onSurfaceVariant.
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ],
                   ),
                 ),
@@ -138,8 +180,11 @@ class _CalorieStatsPageState extends State<CalorieStatsPage>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: bars
-                        .map((bar) =>
-                        _AnimatedBar(bar: bar, progress: _animation.value, maxInList: maxVal, minInList: minVal))
+                        .map((bar) => _AnimatedBar(
+                        bar: bar,
+                        progress: _animation.value,
+                        maxInList: maxVal,
+                        minInList: minVal))
                         .toList(),
                   ),
                 );
@@ -157,7 +202,11 @@ class _CalorieStatsPageState extends State<CalorieStatsPage>
                   _LegendRow(data: l),
                   if (i < legends.length - 1)
                     Divider(
-                        color: Colors.grey.shade400, height: 1, thickness: 1),
+                      // CHANGED: was Colors.grey.shade400 — now outlineVariant.
+                      color: colorScheme.outlineVariant,
+                      height: 1,
+                      thickness: 1,
+                    ),
                 ],
               );
             }),
@@ -184,6 +233,8 @@ class _AnimatedBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     const totalHeight = 300.0;
     const maxVisualHeight = 240.0; // The ceiling
     const minVisualHeight = 100.0; // The floor (ensure 10% is visible)
@@ -196,7 +247,9 @@ class _AnimatedBar extends StatelessWidget {
     } else {
       // Map the bar's value onto the scale between minVisualHeight and maxVisualHeight
       targetHeight = minVisualHeight +
-          (bar.percent - minInList) * (maxVisualHeight - minVisualHeight) / (maxInList - minInList);
+          (bar.percent - minInList) *
+              (maxVisualHeight - minVisualHeight) /
+              (maxInList - minInList);
     }
 
     final barHeight = targetHeight * progress;
@@ -210,13 +263,26 @@ class _AnimatedBar extends StatelessWidget {
           Container(
             width: 90,
             height: totalHeight,
-            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(16)),
+            decoration: BoxDecoration(
+              // CHANGED: was Colors.grey.shade100 — now the elevated
+              // neutral token, so the unfilled "track" still reads as a
+              // distinct layer against a dark scaffold.
+              color: colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
           Container(
             width: 90,
             height: barHeight,
-            decoration: BoxDecoration(color: bar.color, borderRadius: BorderRadius.circular(16)),
+            decoration: BoxDecoration(
+              color: bar.color,
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
+          // NOTE: this badge and the value text below sit on top of the
+          // colored bar fill itself (never on the page background), so a
+          // translucent white badge with a white icon/text reads fine in
+          // both themes — left as-is intentionally.
           Positioned(
             bottom: barHeight - 45,
             child: Container(
@@ -233,7 +299,10 @@ class _AnimatedBar extends StatelessWidget {
             bottom: 12,
             child: Text(
               bar.value,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13),
             ),
           ),
         ],
@@ -251,6 +320,8 @@ class _LegendRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Row(
@@ -266,9 +337,10 @@ class _LegendRow extends StatelessWidget {
           const SizedBox(width: 10),
           Text(
             data.label,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 18,
-                color: Colors.black87,
+                // CHANGED: was Colors.black87 — now onSurface.
+                color: colorScheme.onSurface,
                 fontFamily: AppConstants.fontRegular),
           ),
           const Spacer(),
@@ -278,7 +350,8 @@ class _LegendRow extends StatelessWidget {
               fontSize: 18,
               fontWeight: FontWeight.w400,
               fontFamily: AppConstants.fontRegular,
-              color: Colors.grey[700],
+              // CHANGED: was Colors.grey[700] — now onSurfaceVariant.
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ],

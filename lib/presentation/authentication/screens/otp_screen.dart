@@ -5,7 +5,9 @@ import 'package:fitmind/presentation/authentication/widgets/common_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
+import 'dart:ui' as ui;
 
 import '../../../core/constants/app_constants.dart';
 import '../manager/auth_bloc.dart';
@@ -34,7 +36,6 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void initState() {
     super.initState();
-    // Check OTP status when screen loads
     _checkOtpStatus();
   }
 
@@ -71,7 +72,6 @@ class _OtpScreenState extends State<OtpScreen> {
         _remainingSeconds--;
         if (_remainingSeconds <= 0) {
           timer.cancel();
-          // Reset attempts when timer ends
         }
       });
     });
@@ -82,9 +82,9 @@ class _OtpScreenState extends State<OtpScreen> {
 
     if (_verifyAttempts > 4) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Maximum verification attempts reached. Please try again later.'),
-          duration: Duration(seconds: 3),
+        SnackBar(
+          content: Text('auth.otp_max_attempts'.tr()),
+          duration: const Duration(seconds: 3),
         ),
       );
       return;
@@ -94,39 +94,41 @@ class _OtpScreenState extends State<OtpScreen> {
     String otp = num1 + num2 + num3 + num4 + num5;
     if (otp.length != 5) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter the full OTP")),
+        SnackBar(content: Text('auth.otp_incomplete'.tr())),
       );
       return;
     }
     context.read<AuthBloc>().add(
-      VerifyOtpEvent(widget.email, otp),
-    );
+          VerifyOtpEvent(widget.email, otp),
+        );
   }
 
   void _handleResendOtp() {
     _verifyAttempts = 0;
     context.read<AuthBloc>().add(
-      ForgotPasswordEvent(widget.email),
-    );
+          ForgotPasswordEvent(widget.email),
+        );
 
-    // Fetch OTP status after resending to get updated remaining seconds
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         _checkOtpStatus();
-
-    }});
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      backgroundColor: isDark ? colorScheme.surface : null,
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is OtpStatusState) {
-              // Check if OTP is ready - using correct field names from API
               final canRequest = state.status['can_request'] ?? false;
               final remainingSeconds = state.status['remaining_seconds'] ?? 0;
 
@@ -138,7 +140,8 @@ class _OtpScreenState extends State<OtpScreen> {
                 _startTimer(remainingSeconds);
                 _startResendTimer(remainingSeconds);
               }
-            } else if (state is PasswordSuccess && state.message == "OTP verified") {
+            } else if (state is PasswordSuccess &&
+                state.message == "OTP verified") {
               _timer?.cancel();
               _resendTimer?.cancel();
               Get.to(
@@ -147,8 +150,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   otp: num1 + num2 + num3 + num4 + num5,
                 ),
               );
-            } else if (state is PasswordSuccess && state.message == "Forgot password email sent") {
-              // Reset attempts when resend is successful
+            } else if (state is PasswordSuccess &&
+                state.message == "Forgot password email sent") {
               setState(() {
                 _verifyAttempts = 0;
                 num1 = '';
@@ -158,15 +161,13 @@ class _OtpScreenState extends State<OtpScreen> {
                 num5 = '';
               });
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('OTP resent successfully')),
+                SnackBar(content: Text('auth.otp_resent_success'.tr())),
               );
             } else if (state is PasswordFailure) {
               if (_lastShownError != state.error) {
                 _lastShownError = state.error;
 
-                // Check if error contains remaining_seconds (from daily limit or rate limit)
                 if (state.error.contains('remaining_seconds')) {
-                  // Extract remaining_seconds from error string
                   final regex = RegExp(r'remaining_seconds["\s:]*(\d+)');
                   final match = regex.firstMatch(state.error);
                   if (match != null) {
@@ -189,7 +190,6 @@ class _OtpScreenState extends State<OtpScreen> {
             bool isVerifyDisabled = _verifyAttempts >= 4 || isLoading;
             bool isResendDisabled = _remainingSeconds > 0;
 
-            // Show loading while checking OTP status
             if (_isChecking) {
               return const Center(
                 child: CircularProgressIndicator(
@@ -204,81 +204,96 @@ class _OtpScreenState extends State<OtpScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('OTP Code', style: AppConstants.heading1),
+                    Text(
+                      'auth.otp_title'.tr(),
+                      style: AppConstants.heading1.copyWith(
+                        color: isDark ? Colors.white : null,
+                      ),
+                    ),
                     AppConstants.verticalSpaceS,
                     Text(
-                      'We have sent an OTP to the email address provided.',
-                      style: AppConstants.bodyText,
+                      'auth.otp_subtitle'.tr(),
+                      style: AppConstants.bodyText.copyWith(
+                        color: isDark ? Colors.white60 : null,
+                      ),
                     ),
                     AppConstants.verticalSpaceXL,
                     Form(
                       key: _formKey,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(5, (index) {
-                          return SizedBox(
-                            height: 64,
-                            width: 68,
-                            child: TextFormField(
-                              onSaved: (val) {
-                                switch (index) {
-                                  case 0:
-                                    num1 = val ?? '';
-                                    break;
-                                  case 1:
-                                    num2 = val ?? '';
-                                    break;
-                                  case 2:
-                                    num3 = val ?? '';
-                                    break;
-                                  case 3:
-                                    num4 = val ?? '';
-                                    break;
-                                  case 4:
-                                    num5 = val ?? '';
-                                    break;
-                                }
-                              },
-                              onChanged: (value) {
-                                if (value.length == 1 && index < 4) {
-                                  FocusScope.of(context).nextFocus();
-                                }
-                              },
-                              textAlign: TextAlign.center,
-                              enabled: true,
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(1),
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(0xFFF5F5F5),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: AppConstants.primaryColor,
+                      child: Directionality(
+                        textDirection: ui.TextDirection.ltr,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: List.generate(5, (index) {
+                            return SizedBox(
+                              height: 64,
+                              width: 68,
+                              child: TextFormField(
+                                onSaved: (val) {
+                                  switch (index) {
+                                    case 0:
+                                      num1 = val ?? '';
+                                      break;
+                                    case 1:
+                                      num2 = val ?? '';
+                                      break;
+                                    case 2:
+                                      num3 = val ?? '';
+                                      break;
+                                    case 3:
+                                      num4 = val ?? '';
+                                      break;
+                                    case 4:
+                                      num5 = val ?? '';
+                                      break;
+                                  }
+                                },
+                                onChanged: (value) {
+                                  if (value.length == 1 && index < 4) {
+                                    FocusScope.of(context).nextFocus();
+                                  }
+                                },
+                                textAlign: TextAlign.center,
+                                enabled: true,
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: isDark
+                                      ? colorScheme.surfaceContainerHighest
+                                      : const Color(0xFFF5F5F5),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: AppConstants.primaryColor,
+                                    ),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
                                   ),
                                 ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
                               ),
-                            ),
-                          );
-                        }),
+                            );
+                          }),
+                        ),
                       ),
                     ),
                     AppConstants.verticalSpaceM,
-                    // Show attempts counter if user has tried
                     if (_verifyAttempts > 0)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Text(
-                          'Attempts: $_verifyAttempts/4',
+                          'auth.otp_attempts'.tr(namedArgs: {'count': '$_verifyAttempts'}),
                           style: TextStyle(
                             fontSize: 12,
-                            color: _verifyAttempts >= 3 ? Colors.red : Colors.grey,
+                            color:
+                                _verifyAttempts >= 3 ? Colors.red : Colors.grey,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -289,7 +304,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         GestureDetector(
                           onTap: isResendDisabled ? null : _handleResendOtp,
                           child: Text(
-                            'Resend OTP',
+                            'auth.otp_resend'.tr(),
                             style: TextStyle(
                               color: isResendDisabled
                                   ? Colors.grey
@@ -306,7 +321,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (_remainingSeconds > 0) ...[
                           const SizedBox(width: 8),
                           Text(
-                            '($_remainingSeconds s)',
+                            'auth.otp_resend_countdown'.tr(namedArgs: {'count': '$_remainingSeconds'}),
                             style: const TextStyle(
                               fontSize: 14,
                               color: Color(0xFFFF9800),
@@ -331,7 +346,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           bottom: AppConstants.paddingL,
                         ),
                         child: CommonButton(
-                          title: 'Verify OTP',
+                          title: 'auth.otp_verify'.tr(),
                           onPressed: isVerifyDisabled ? null : _handleVerifyOtp,
                         ),
                       ),
@@ -343,4 +358,3 @@ class _OtpScreenState extends State<OtpScreen> {
     );
   }
 }
-

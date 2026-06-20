@@ -41,8 +41,15 @@ class DayMealsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // CHANGED: light mode keeps every original literal color exactly as
+    // given — isDark only branches where a value would actually break
+    // against a dark background.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      // CHANGED: was always const Color(0xFFF5F5F5).
+      backgroundColor: isDark ? colorScheme.surface : const Color(0xFFF5F5F5),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,12 +65,20 @@ class DayMealsScreen extends StatelessWidget {
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        // CHANGED: was Colors.white.
+                        color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
                         borderRadius: BorderRadius.circular(13),
-                        border: Border.all(color: const Color(0xFFEAEAEA)),
+                        border: Border.all(
+                          // CHANGED: was const Color(0xFFEAEAEA).
+                          color: isDark ? colorScheme.outlineVariant : const Color(0xFFEAEAEA),
+                        ),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 16, color: Color(0xFF1A1A2E)),
+                      child: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 16,
+                        // CHANGED: was const Color(0xFF1A1A2E).
+                        color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -75,14 +90,17 @@ class DayMealsScreen extends StatelessWidget {
                           day.dayName.isNotEmpty
                               ? day.dayName
                               : 'Day ${day.dayNumber}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1A1A2E),
+                            // CHANGED: was const Color(0xFF1A1A2E).
+                            color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                             letterSpacing: -0.5,
                             fontFamily: AppConstants.fontRegular,
                           ),
                         ),
+                        // NOTE: mid-tone gray, already reads fine on both
+                        // light and dark — left untouched.
                         if (date != null)
                           Text(
                             _formatDate(date!),
@@ -100,11 +118,18 @@ class DayMealsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             // ── Daily summary strip ───────────────────────────────────
+            // NOTE: this entire card is intentionally a fixed dark-navy
+            // surface regardless of app theme — its color (0xFF1A1A2E) is
+            // close enough in tone to the elevated dark surface used
+            // elsewhere (0xFF1E1E26) that it still reads as a raised card
+            // against a dark page too. white54 labels and the accent
+            // value colors are designed for this fixed dark background, so
+            // none of this section needs to change.
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1A1A2E),
                   borderRadius: BorderRadius.circular(18),
@@ -151,10 +176,10 @@ class DayMealsScreen extends StatelessWidget {
   }
 
   Widget _divider() => Container(
-        width: 1,
-        height: 30,
-        color: Colors.white.withOpacity(0.1),
-      );
+    width: 1,
+    height: 30,
+    color: Colors.white.withOpacity(0.1),
+  );
 }
 
 class _SummaryItem extends StatelessWidget {
@@ -246,16 +271,22 @@ class _MealCardState extends State<_MealCard>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     final meal = widget.meal;
+
     return GestureDetector(
       onTap: _toggle,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          // CHANGED: was Colors.white.
+          color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              // CHANGED: dropped entirely in dark mode — same smudge issue
+              // as every other card shadow fixed so far.
+              color: isDark ? Colors.transparent : Colors.black.withOpacity(0.05),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -268,6 +299,8 @@ class _MealCardState extends State<_MealCard>
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
+                  // NOTE: this badge and its text use _mealColor, a brand
+                  // accent per meal type — untouched in both themes.
                   Container(
                     width: 54,
                     height: 54,
@@ -277,31 +310,31 @@ class _MealCardState extends State<_MealCard>
                     ),
                     child: Center(
                       child:Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${meal.calories}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: _mealColor,
-                            fontFamily: AppConstants.fontRegular,
-                            height: 1,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${meal.calories}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: _mealColor,
+                              fontFamily: AppConstants.fontRegular,
+                              height: 1,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'kcal',
-                          style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            color: _mealColor.withOpacity(0.6),
-                            fontFamily: AppConstants.fontRegular,
-                            letterSpacing: 0.3,
+                          const SizedBox(height: 2),
+                          Text(
+                            'kcal',
+                            style: TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w600,
+                              color: _mealColor.withOpacity(0.6),
+                              fontFamily: AppConstants.fontRegular,
+                              letterSpacing: 0.3,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -311,14 +344,16 @@ class _MealCardState extends State<_MealCard>
                       children: [
                         Text(
                           meal.mealName,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1A1A2E),
+                            // CHANGED: was const Color(0xFF1A1A2E).
+                            color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                             fontFamily: AppConstants.fontRegular,
                           ),
                         ),
                         const SizedBox(height: 3),
+                        // NOTE: _mealColor accent tint — untouched.
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 7, vertical: 2),
@@ -339,6 +374,8 @@ class _MealCardState extends State<_MealCard>
                       ],
                     ),
                   ),
+                  // NOTE: light gray chevron — already reads fine on a
+                  // dark card too, same reasoning as the workout day card.
                   AnimatedRotation(
                     duration: const Duration(milliseconds: 300),
                     turns: _expanded ? 0.5 : 0,
@@ -349,6 +386,7 @@ class _MealCardState extends State<_MealCard>
               ),
             ),
             // ── Macro pills row ───────────────────────────────────────
+            // NOTE: all _MacroTag colors are brand/accent tints — untouched.
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
               child: Row(
@@ -442,21 +480,33 @@ class _ExpandedDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Divider(color: Color(0xFFF3F4F6), thickness: 1),
+          // CHANGED: was const Divider(color: Color(0xFFF3F4F6)) — that's
+          // a deliberately near-invisible hairline against a white card,
+          // but would turn into a glaring bright line against a dark one.
+          // outlineVariant gives the same "barely there" effect on dark.
+          Divider(
+            color: isDark ? colorScheme.outlineVariant : const Color(0xFFF3F4F6),
+            thickness: 1,
+          ),
           const SizedBox(height: 10),
           if (meal.description != null && meal.description!.isNotEmpty) ...[
-            _sectionTitle('Description'),
+            _sectionTitle('Description', isDark, colorScheme),
             const SizedBox(height: 6),
             Text(
               meal.description!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Color(0xFF6B7280),
+                // CHANGED: was const Color(0xFF6B7280) — too low-contrast
+                // against a dark card, swapped to onSurfaceVariant.
+                color: isDark ? colorScheme.onSurfaceVariant : const Color(0xFF6B7280),
                 height: 1.5,
                 fontFamily: AppConstants.fontRegular,
               ),
@@ -464,18 +514,19 @@ class _ExpandedDetails extends StatelessWidget {
             const SizedBox(height: 14),
           ],
           if (meal.ingredients.isNotEmpty) ...[
-            _sectionTitle('Ingredients'),
+            _sectionTitle('Ingredients', isDark, colorScheme),
             const SizedBox(height: 10),
             ...meal.ingredients.map((ing) => _IngredientRow(ingredient: ing)),
           ],
           if (meal.instructions != null && meal.instructions!.isNotEmpty) ...[
-            _sectionTitle('Instructions'),
+            _sectionTitle('Instructions', isDark, colorScheme),
             const SizedBox(height: 6),
             Text(
               meal.instructions!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Color(0xFF6B7280),
+                // CHANGED: same as the description text above.
+                color: isDark ? colorScheme.onSurfaceVariant : const Color(0xFF6B7280),
                 height: 1.6,
                 fontFamily: AppConstants.fontRegular,
               ),
@@ -486,15 +537,17 @@ class _ExpandedDetails extends StatelessWidget {
     );
   }
 
-  Widget _sectionTitle(String text) => Text(
-        text,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF1A1A2E),
-          fontFamily: AppConstants.fontRegular,
-        ),
-      );
+  // CHANGED: now takes isDark/colorScheme so the heading can swap away
+  // from the navy-on-dark problem, same as every section title elsewhere.
+  Widget _sectionTitle(String text, bool isDark, ColorScheme colorScheme) => Text(
+    text,
+    style: TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
+      fontFamily: AppConstants.fontRegular,
+    ),
+  );
 }
 class _IngredientRow extends StatelessWidget {
   final Ingredient ingredient;
@@ -502,13 +555,23 @@ class _IngredientRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        // CHANGED: was const Color(0xFFF9FAFB) — a near-white tile that
+        // would look like a stray pale patch on a dark card. A faint white
+        // overlay keeps the same "one step lighter than the card" effect
+        // without a hardcoded dark hex.
+        color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFF9FAFB),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(
+          // CHANGED: was const Color(0xFFE5E7EB).
+          color: isDark ? colorScheme.outlineVariant : const Color(0xFFE5E7EB),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,10 +582,11 @@ class _IngredientRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   ingredient.foodName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A2E),
+                    // CHANGED: was const Color(0xFF1A1A2E).
+                    color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                     fontFamily: AppConstants.fontRegular,
                   ),
                 ),
@@ -531,21 +595,31 @@ class _IngredientRow extends StatelessWidget {
                 padding:
                 const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A1A2E).withOpacity(0.06),
+                  // CHANGED: was Color(0xFF1A1A2E).withOpacity(0.06) — a
+                  // near-black tint at 6% opacity is meant to read as a
+                  // faint badge against a *white* card. Tinting with the
+                  // same near-black color on an already-dark card would
+                  // make the badge disappear completely rather than stay
+                  // subtle, so dark mode needs a light tint instead.
+                  color: isDark
+                      ? Colors.white.withOpacity(0.08)
+                      : const Color(0xFF1A1A2E).withOpacity(0.06),
                   borderRadius: BorderRadius.circular(7),
                 ),
                 child: Text(
                   '${ingredient.amountG.toStringAsFixed(ingredient.amountG % 1 == 0 ? 0 : 1)}g',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A2E),
+                    // CHANGED: was const Color(0xFF1A1A2E).
+                    color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                     fontFamily: AppConstants.fontRegular,
                   ),
                 ),
               ),
             ],
           ),
+          // NOTE: mid-tone gray, already reads fine on both — untouched.
           if (ingredient.foodCategory != null) ...[
             const SizedBox(height: 3),
             Text(
@@ -559,6 +633,7 @@ class _IngredientRow extends StatelessWidget {
           ],
           const SizedBox(height: 8),
           // ── Macro row ───────────────────────────────────────────
+          // NOTE: all _IngMacro colors are brand/accent tints — untouched.
           Row(
             children: [
               _IngMacro(

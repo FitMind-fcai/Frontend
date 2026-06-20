@@ -23,8 +23,10 @@ class LogPageShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: isDark ? colorScheme.surface : const Color(0xFFF5F5F5),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,17 +35,23 @@ class LogPageShell extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Row(children: [
                 GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () => Navigator.maybePop(context),
                   child: Container(
                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color:
+                      isDark ? colorScheme.surfaceContainerHighest : Colors.white,
                       borderRadius: BorderRadius.circular(13),
-                      border: Border.all(color: const Color(0xFFEAEAEA)),
+                      border: Border.all(
+                        color: isDark ? Colors.white24 : const Color(0xFFEAEAEA),
+                      ),
                     ),
-                    child: const Icon(Icons.arrow_back_ios_new_rounded,
-                        size: 16, color: Color(0xFF1A1A2E)),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 16,
+                      color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -51,10 +59,10 @@ class LogPageShell extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Log $typeLabel',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1A1A2E),
+                            color: isDark?Colors.white:const Color(0xFF1A1A2E),
                             letterSpacing: -0.4,
                             fontFamily: AppConstants.fontRegular)),
                     Text('via $methodLabel',
