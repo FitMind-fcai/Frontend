@@ -21,6 +21,8 @@ abstract class PlanRemoteDataSource {
   Future<WorkoutPlanResult> getWorkoutPlanById(int planId);
   Future<void> deleteNutritionPlan(int planId);
   Future<void> deleteWorkoutPlan(int planId);
+  Future<List<Exercise>> getWorkoutDayExercises(int planId, int dayId);
+
 
 
 
@@ -203,6 +205,16 @@ class PlanRemoteDataSourceImpl implements PlanRemoteDataSource {
   Future<void> deleteWorkoutPlan(int planId) async {
     try {
       await apiService.deleteWorkoutPlan(planId);
+    } on DioException catch (e) {
+      throw Exception(_extractError(e));
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+  @override
+  Future<List<Exercise>> getWorkoutDayExercises(int planId, int dayId) async {
+    try {
+      return await apiService.getWorkoutDayExercises(planId, dayId);
     } on DioException catch (e) {
       throw Exception(_extractError(e));
     } catch (e) {

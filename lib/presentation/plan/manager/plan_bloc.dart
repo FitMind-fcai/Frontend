@@ -22,6 +22,7 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
   final GetWorkoutPlanByIdUseCase getWorkoutPlanByIdUseCase;
   final DeleteNutritionPlanUseCase deleteNutritionPlanUseCase;
   final DeleteWorkoutPlanUseCase deleteWorkoutPlanUseCase;
+  final GetWorkoutDayExercisesUseCase getWorkoutDayExercisesUseCase;
 
   PlanBloc(
       this.createNutritionPreferences,
@@ -34,6 +35,7 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
       this.getWorkoutPlanByIdUseCase,
       this.deleteNutritionPlanUseCase,
       this.deleteWorkoutPlanUseCase,
+      this.getWorkoutDayExercisesUseCase
       ) : super(PlanInitial()) {
     on<SubmitNutritionPreferencesEvent>(_onSubmitNutritionPreferences);
     on<SubmitWorkoutPreferencesEvent>(_onSubmitWorkoutPreferences);
@@ -45,6 +47,7 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
     on<LoadWorkoutPlanByIdEvent>(_onLoadWorkoutPlanById);
     on<DeleteNutritionPlanEvent>(_onDeleteNutritionPlan);
     on<DeleteWorkoutPlanEvent>(_onDeleteWorkoutPlan);
+    on<LoadWorkoutDayExercisesEvent>(_onLoadWorkoutDayExercises);
   }
 
   Future<void> _onSubmitNutritionPreferences(
@@ -169,6 +172,19 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
     try {
       await deleteWorkoutPlanUseCase(event.planId);
       emit(const PlanDeleteSuccess("Workout plan deleted successfully"));
+    } catch (e) {
+      emit(PlanError(e.toString().replaceFirst('Exception: ', '')));
+    }
+  }
+  Future<void> _onLoadWorkoutDayExercises(
+      LoadWorkoutDayExercisesEvent event,
+      Emitter<PlanState> emit,
+      ) async {
+    emit(MyPlansLoading());
+    try {
+      final exercises =
+      await getWorkoutDayExercisesUseCase(event.planId, event.dayId);
+      emit(WorkoutDayExercisesLoaded(exercises));
     } catch (e) {
       emit(PlanError(e.toString().replaceFirst('Exception: ', '')));
     }

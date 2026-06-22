@@ -63,6 +63,7 @@ class _ImageLogPageState extends State<ImageLogPage> {
       filePath: _pickedFile!.path,
       imageFormat: format,
       mealType: _selectedMealType,
+      language:  context.locale.languageCode == 'ar'?'ar':"en",
     );
 
     context.read<LogBloc>().add(ScanMealLogEvent(request));

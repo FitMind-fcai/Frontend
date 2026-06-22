@@ -59,7 +59,7 @@ class _TextLogMealPageState extends State<TextLogMealPage> {
     if (_selectedFood == null) return;
     final request = SaveLogRequest(
       category: 'meal',
-      logDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      logDate: DateFormat('yyyy-MM-dd',"en").format(DateTime.now()),
       logMethod: 'TEXT',
       mealEntries: [
         MealLogEntry(

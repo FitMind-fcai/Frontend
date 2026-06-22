@@ -86,7 +86,7 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
   // ── Save ───────────────────────────────────────────────────────────────────
 
   void _onSave() {
-    final logDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final logDate = DateFormat('yyyy-MM-dd',"en").format(DateTime.now());
     final mealType = widget.scanResult.mealType.isNotEmpty
         ? widget.scanResult.mealType
         : 'LUNCH';

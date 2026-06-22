@@ -97,21 +97,7 @@ class MealCard extends StatelessWidget {
               ),
             ],
           ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppConstants.primaryColor,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: const ImageIcon(
-                AssetImage("assets/images/Monotone arrow right.png"),
-                color: Colors.white,
-              ),
-            ),
-          ),
+
         ],
       ),
     );

@@ -268,7 +268,6 @@
     "weekday_sunday": "Sunday",
     "date_label": "{weekday}, {day} {month}",
     "exercises_count": "{count} exercises"
-
   },
   "day_meals": {
     "day_label": "Day {number}",
@@ -356,7 +355,6 @@
     "stepper_reps": "Reps",
     "muscle_type_separator": "{muscle} · {type}",
     "per_serving_value": "{description} · {calories} kcal/serving"
-
   },
   "log_page_shell": {
     "title": "Log {type}",
@@ -560,15 +558,103 @@
   },
   "score": {
     "title": "Fitmind Score",
+    "radar_nutrition": "Nutrition",
+    "radar_strength": "Strength",
+    "radar_agility": "Agility",
+    "radar_endurance": "Endurance",
     "radar_calorie": "Calorie",
-    "radar_bmi": "BMI",
-    "radar_bpm": "BPM",
     "radar_hydration": "Hydration",
     "radar_sleep": "Sleep",
-    "radar_steps": "Steps",
     "summary_healthy": "You are a healthy individual.",
     "legend_strength": "STRENGTH",
     "legend_agility": "AGILITY",
-    "legend_endurance": "ENDURANCE"
+    "legend_endurance": "ENDURANCE",
+    "no_score": "Your score isn't available yet. Log some activity and check back."
+  },
+  "today_meals": {
+    "title": "Today's Meals",
+    "no_plan_today": "No meals scheduled for today. Check or generate your nutrition plan."
+  },
+  "log_detail": {
+    "entry_deleted": "Entry deleted",
+    "no_logs_yet": "No {category} logs yet",
+    "delete_confirm_title": "Delete entry?",
+    "delete_confirm_body": "This cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "retry": "Retry",
+    "chip_meal": "Meal",
+    "chip_cal": "Cal",
+    "chip_protein": "P",
+    "chip_carbs": "C",
+    "chip_fats": "F",
+    "chip_sets": "Sets",
+    "chip_reps": "Reps",
+    "chip_weight": "Weight",
+    "chip_time": "Time",
+    "chip_hours": "Hours",
+    "chip_quality": "Quality",
+    "title_workout": "Workout",
+    "title_sleep": "Sleep",
+    "weight_value": "{value} kg",
+    "water_value": "{value} ml",
+    "weight_chip_value": "{value}kg",
+    "time_chip_value": "{value}min",
+    "quality_chip_value": "{value}/10",
+    "category_meal": "meal",
+    "category_workout": "workout",
+    "category_weight": "weight",
+    "category_sleep": "sleep",
+    "category_hydration": "hydration"
+  },
+  "about_us": {
+    "title": "About Us",
+    "app_tagline": "AI Fitness & Training Solution",
+    "address": "Address",
+    "telephone": "Telephone"
+  },
+  "feedback": {
+    "title": "Submit Feedback",
+    "question": "Which of the area\nneeds improvement?",
+    "submit": "Submit Feedback",
+    "tag_performance": "Performance",
+    "tag_support": "Support",
+    "tag_bug": "Bug",
+    "tag_ui": "UI",
+    "tag_ux": "UX",
+    "tag_crashes": "Crashes",
+    "tag_loading": "Loading",
+    "tag_navigation": "Navigation",
+    "tag_leadership": "Leadership",
+    "tag_pricing": "Pricing"
+  },
+  "help_center": {
+    "title": "Help Center",
+    "faq_tab": "FAQ",
+    "faq_1_question": "What is FitMind?",
+    "faq_1_answer": "FitMind is an advanced fitness app that utilizes artificial intelligence to provide personalized training.",
+    "faq_2_question": "How does FitMind work?",
+    "faq_2_answer": "It analyzes your performance data to adjust your workout intensity in real-time.",
+    "faq_3_question": "Is FitMind a replacement for fitness coach?",
+    "faq_3_answer": "It acts as a digital supplement to provide 24/7 guidance alongside your professional coaching.",
+    "faq_4_question": "Is FitMind free to use?",
+    "faq_4_answer": "We offer both free tier basics and premium AI features.",
+    "faq_5_question": "Is my data secure?",
+    "faq_5_answer": "Yes, all health and personal data is encrypted and stored locally when possible."
+  },
+  "privacy_policy": {
+    "title": "Privacy Policy",
+    "commitment_title": "Our Commitment",
+    "last_updated": "Last updated: April 2026",
+    "intro": "At FitMind, we prioritize your privacy. This policy explains how we handle your data when you use our AI Fitness & Training solutions.",
+    "data_collection_title": "Data Collection",
+    "data_collection_content": "We collect information you provide directly, such as fitness goals, biometric data, and training schedules to improve your AI experience.",
+    "information_sharing_title": "Information Sharing",
+    "information_sharing_content": "FitMind does not sell your personal data to third parties. Your data is encrypted and used only for personalized training generation.",
+    "rights_title": "Your Rights",
+    "right_access": "Right to access your data",
+    "right_delete": "Right to delete your account and biometrics",
+    "right_opt_out": "Right to opt-out of AI model training usage",
+    "contact_support": "Contact Support"
   }
 }

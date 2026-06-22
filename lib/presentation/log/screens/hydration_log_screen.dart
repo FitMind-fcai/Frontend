@@ -60,7 +60,7 @@ class _HydrationLogPageState extends State<HydrationLogPage> {
     }
     final request = SaveLogRequest(
       category: 'hydration',
-      logDate: DateFormat('yyyy-MM-dd').format(_logDate),
+      logDate: DateFormat('yyyy-MM-dd',"en").format(_logDate),
       logMethod: 'TEXT',
       hydrationEntries: [
         HydrationLogEntry(

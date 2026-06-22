@@ -19,13 +19,17 @@ final class ScanAndSaveMealLogEvent extends LogEvent {
 class ScanMealVoiceEvent extends LogEvent {
   final String filePath;
   final String audioFormat;
-  ScanMealVoiceEvent(this.filePath, this.audioFormat);
+  final String language;
+
+  ScanMealVoiceEvent(this.filePath, this.audioFormat,this.language);
 }
 
 class ScanWorkoutVoiceEvent extends LogEvent {
   final String filePath;
   final String audioFormat;
-  ScanWorkoutVoiceEvent(this.filePath, this.audioFormat);
+  final String language;
+
+  ScanWorkoutVoiceEvent(this.filePath, this.audioFormat,this.language);
 }
 final class SearchFoodsEvent extends LogEvent {
   final String query;
@@ -40,4 +44,8 @@ final class SearchExercisesEvent extends LogEvent {
 final class SaveLogsEvent extends LogEvent {
   final SaveLogRequest request;
   SaveLogsEvent(this.request);
+}
+class LoadMealsSummaryEvent extends LogEvent {
+  final String? date;
+   LoadMealsSummaryEvent({this.date});
 }

@@ -59,7 +59,7 @@ class _SleepLogPageState extends State<SleepLogPage> {
   void _save() {
     final request = SaveLogRequest(
       category: 'sleep',
-      logDate: DateFormat('yyyy-MM-dd').format(_logDate),
+      logDate: DateFormat('yyyy-MM-dd',"en").format(_logDate),
       logMethod: 'TEXT',
       sleepEntries: [
         SleepLogEntry(

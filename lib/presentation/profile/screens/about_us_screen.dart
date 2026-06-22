@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 
 class AboutUsPage extends StatelessWidget {
@@ -9,16 +9,19 @@ class AboutUsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? colorScheme.surface : Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? colorScheme.surface : Colors.white,
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
-        title: const Text(
-          'About Us',
+        leading: BackButton(color: isDark ? Colors.white : Colors.black),
+        title: Text(
+          'about_us.title'.tr(),
           style: TextStyle(
-            color: Colors.black,
+            color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
             fontFamily: AppConstants.fontRegular,
             fontSize: 18,
@@ -33,7 +36,6 @@ class AboutUsPage extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 40),
-                  // App Logo
                   Container(
                     width: 200,
                     height: 200,
@@ -42,41 +44,38 @@ class AboutUsPage extends StatelessWidget {
                     ),
                     child: SvgPicture.asset("assets/images/MainLogoOrange.svg"),
                   ),
-                  const Text(
+                  Text(
                     "FitMind",
                     style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
-                        fontFamily: AppConstants.fontRegular),
+                        fontFamily: AppConstants.fontRegular,
+                        color: isDark ? Colors.white : Colors.black),
                   ),
-                  const Text(
-                    "AI Fitness & Training Solution",
+                  Text(
+                    'about_us.app_tagline'.tr(),
                     style: TextStyle(
                         fontSize: 15,
-                        color: Colors.grey,
+                        color: isDark ? Colors.white60 : Colors.grey,
                         fontWeight: FontWeight.w500,
                         fontFamily: AppConstants.fontRegular),
                   ),
                   const SizedBox(height: 40),
-
-                  // Custom Info Boxes
-                  const _InfoBox(
+                  _InfoBox(
                     icon: Icons.location_on,
-                    label: "Address",
+                    label: 'about_us.address'.tr(),
                     value: "578 Boolean Ave\nTuring St\nNew York, NY",
                   ),
                   const SizedBox(height: 16),
-                  const _InfoBox(
+                  _InfoBox(
                     icon: Icons.phone_android,
-                    label: "Telephone",
+                    label: 'about_us.telephone'.tr(),
                     value: "+123-456-789\n+44-887-449",
                   ),
                 ],
               ),
             ),
           ),
-
-          // Social Media Icons
           Padding(
             padding: const EdgeInsets.only(bottom: 40),
             child: Row(
@@ -108,12 +107,15 @@ class _InfoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       height: 160,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F2), // Light gray background
+        color: isDark ? colorScheme.surfaceContainerHigh : const Color(0xFFF2F2F2),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -121,14 +123,14 @@ class _InfoBox extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 20, color: Colors.blueGrey),
+              Icon(icon, size: 20, color: isDark ? Colors.white54 : Colors.blueGrey),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
-                  color: Color(0xFF1A1A1A),
+                  color: isDark ? Colors.white : const Color(0xFF1A1A1A),
                   fontFamily: AppConstants.fontRegular,
                 ),
               ),
@@ -136,13 +138,13 @@ class _InfoBox extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Align(
-            alignment: Alignment.bottomRight,
+            alignment: AlignmentDirectional.bottomEnd,
             child: Text(
               value,
-              textAlign: TextAlign.right,
-              style: const TextStyle(
+              textAlign: TextAlign.end,
+              style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF7D7D7D),
+                color: isDark ? Colors.white60 : const Color(0xFF7D7D7D),
                 fontFamily: AppConstants.fontRegular,
                 height: 1.5,
               ),
@@ -165,11 +167,8 @@ class _SocialIcon extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Image.asset(
         imagePath,
-        width: 28, // Adjusted to match the design scale
+        width: 28,
         height: 28,
-        // If your images are colored and you want them gray like the UI:
-        // color: Colors.grey[400],
-        // colorBlendMode: BlendMode.srcIn,
       ),
     );
   }

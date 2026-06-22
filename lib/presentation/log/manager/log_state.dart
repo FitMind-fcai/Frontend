@@ -52,6 +52,10 @@ final class ExerciseSearchSuccess extends LogState {
   final List<ExerciseSearchResult> results;
   ExerciseSearchSuccess(this.results);
 }
+class MealsSummaryLoaded extends LogState {
+  final MealsSummaryResult summary;
+  MealsSummaryLoaded(this.summary);
+}
 
 final class LogSaveSuccess extends LogState {}
 

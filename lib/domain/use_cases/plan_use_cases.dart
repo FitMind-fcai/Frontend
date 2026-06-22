@@ -96,3 +96,9 @@ class DeleteWorkoutPlanUseCase {
 
   Future<void> call(int planId) => repository.deleteWorkoutPlan(planId);
 }
+class GetWorkoutDayExercisesUseCase {
+  final PlanRepository repository;
+  GetWorkoutDayExercisesUseCase(this.repository);
+  Future<List<Exercise>> call(int planId, int dayId) =>
+      repository.getWorkoutDayExercises(planId, dayId);
+}

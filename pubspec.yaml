@@ -54,6 +54,7 @@ dependencies:
   permission_handler: ^11.3.1
   audioplayers: ^6.0.0
   easy_localization: ^3.0.8
+  health: ^13.3.1
 
 
 dev_dependencies:

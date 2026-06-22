@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
+import '../../../data/models/home/calorie_screen_result.dart';
 import '../../../data/models/meal_log/excersise_search_result.dart';
 import '../../../data/models/meal_log/meal_scan_request.dart';
 import '../../../data/models/meal_log/meal_scan_result.dart';
@@ -25,6 +26,8 @@ class LogBloc extends Bloc<LogEvent, LogState> {
   final SearchFoodsUseCase searchFoodsUseCase;
   final SearchExercisesUseCase searchExercisesUseCase;
   final SaveLogsUseCase saveLogsUseCase;
+  final GetMealsSummaryUseCase getMealsSummaryUseCase;
+
 
   LogBloc({
     required this.scanMealUseCase,
@@ -33,6 +36,8 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     required this.searchFoodsUseCase,
     required this.searchExercisesUseCase,
     required this.saveLogsUseCase,
+    required this.getMealsSummaryUseCase,
+
   }) : super(LogInitial()) {
     on<ScanMealLogEvent>(_onScanMeal);
     on<ScanMealVoiceEvent>(_onScanMealVoice);
@@ -40,6 +45,8 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     on<SearchFoodsEvent>(_onSearchFoods);
     on<SearchExercisesEvent>(_onSearchExercises);
     on<SaveLogsEvent>(_onSaveLogs);
+    on<LoadMealsSummaryEvent>(_onLoadMealsSummary);
+
   }
 
   Future<void> _onScanMeal(
@@ -60,7 +67,7 @@ class LogBloc extends Bloc<LogEvent, LogState> {
       ScanMealVoiceEvent e, Emitter<LogState> emit) async {
     emit(LogLoading());
     try {
-      final result = await scanMealVoiceUseCase(e.filePath, e.audioFormat);
+      final result = await scanMealVoiceUseCase(e.filePath, e.audioFormat, e.language);
       emit(VoiceMealScanSuccess(result, e.filePath, e.audioFormat));
     } catch (err) {
       emit(LogError(err.toString().replaceFirst('Exception: ', '')));
@@ -71,7 +78,7 @@ class LogBloc extends Bloc<LogEvent, LogState> {
       ScanWorkoutVoiceEvent e, Emitter<LogState> emit) async {
     emit(LogLoading());
     try {
-      final result = await scanWorkoutVoiceUseCase(e.filePath, e.audioFormat);
+      final result = await scanWorkoutVoiceUseCase(e.filePath, e.audioFormat,e.language);
       emit(VoiceWorkoutScanSuccess(result, e.filePath, e.audioFormat));
     } catch (err) {
       emit(LogError(err.toString().replaceFirst('Exception: ', '')));
@@ -105,6 +112,16 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     try {
       await saveLogsUseCase(event.request);
       emit(LogSaveSuccess());
+    } catch (e) {
+      emit(LogError(e.toString().replaceFirst('Exception: ', '')));
+    }
+  }
+  Future<void> _onLoadMealsSummary(
+      LoadMealsSummaryEvent event, Emitter<LogState> emit) async {
+    emit(LogLoading());
+    try {
+      final result = await getMealsSummaryUseCase(date: event.date);
+      emit(MealsSummaryLoaded(result));
     } catch (e) {
       emit(LogError(e.toString().replaceFirst('Exception: ', '')));
     }

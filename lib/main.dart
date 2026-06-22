@@ -1,5 +1,6 @@
 import 'package:fitmind/presentation/home/manager/home_bloc.dart';
 import 'package:fitmind/presentation/log/manager/log_bloc.dart';
+import 'package:fitmind/presentation/log/manager_log_history/log_history_bloc.dart';
 import 'package:fitmind/presentation/plan/manager/plan_bloc.dart';
 import 'package:fitmind/presentation/profile/manager/profile_bloc.dart';
 import 'package:fitmind/presentation/splash_screen/screens/splash_screen.dart';
@@ -42,6 +43,10 @@ void main() async {
               BlocProvider<HomeBloc>(
                 create: (_) => di.sl<HomeBloc>(),
               ),
+              BlocProvider<LogHistoryBloc>(
+                create: (_) => di.sl<LogHistoryBloc>(),
+              ),
+
             ],
             child: GetMaterialApp(
               debugShowCheckedModeBanner: false,

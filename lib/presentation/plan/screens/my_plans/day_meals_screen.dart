@@ -586,7 +586,7 @@ class _IngredientRow extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  ingredient.foodName,
+                  ingredient.foodName?? 'Unknown ingredient',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -643,25 +643,25 @@ class _IngredientRow extends StatelessWidget {
             children: [
               _IngMacro(
                 label: 'day_meals.ing_macro_cal'.tr(),
-                value: ingredient.calories.toStringAsFixed(0),
+                value: ingredient.calories!.toStringAsFixed(0),
                 color: const Color(0xFFF97316),
               ),
               const SizedBox(width: 6),
               _IngMacro(
                 label: 'day_meals.ing_macro_protein'.tr(),
-                value: '${ingredient.proteinG.toStringAsFixed(1)}g',
+                value: '${ingredient.proteinG?.toStringAsFixed(1)}g',
                 color: const Color(0xFF3B82F6),
               ),
               const SizedBox(width: 6),
               _IngMacro(
                 label: 'day_meals.ing_macro_carbs'.tr(),
-                value: '${ingredient.carbsG.toStringAsFixed(1)}g',
+                value: '${ingredient.carbsG?.toStringAsFixed(1)}g',
                 color: const Color(0xFF10B981),
               ),
               const SizedBox(width: 6),
               _IngMacro(
                 label: 'day_meals.ing_macro_fats'.tr(),
-                value: '${ingredient.fatsG.toStringAsFixed(1)}g',
+                value: '${ingredient.fatsG?.toStringAsFixed(1)}g',
                 color: const Color(0xFFF59E0B),
               ),
               if (ingredient.fiberG != null) ...[

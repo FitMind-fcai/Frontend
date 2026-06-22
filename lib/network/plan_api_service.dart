@@ -69,4 +69,9 @@ abstract class PlanApiService {
   Future<void> deleteWorkoutPlan(
     @Path("planId") int planId,
   );
+  @GET("/v1/workout-plans/{plan_id}/days/{day_id}/exercises")
+  Future<List<Exercise>> getWorkoutDayExercises(
+      @Path("plan_id") int planId,
+      @Path("day_id") int dayId,
+      );
 }

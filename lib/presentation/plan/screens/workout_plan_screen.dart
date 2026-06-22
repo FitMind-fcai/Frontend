@@ -186,6 +186,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   void _submitWorkoutPreferences() {
     final request = WorkoutPlanGenerationRequest(
       durationWeeks: _durationWeeks,
+      lang: context.locale.languageCode == 'ar' ? 'ar' : 'en',
       workoutPreferences: WorkoutPreferences(
         workoutDaysPerWeek: int.parse(_selectedDays),
         workoutLocation: WorkoutLocation.fromString(_selectedWorkoutLocation),

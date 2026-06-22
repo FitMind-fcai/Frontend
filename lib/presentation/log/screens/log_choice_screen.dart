@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fitmind/presentation/log/screens/log_history/log_history_screen.dart';
 
 import 'package:fitmind/presentation/log/screens/text_log_meal.dart';
 import 'package:fitmind/presentation/log/screens/voice_log.dart';
 import 'package:fitmind/presentation/log/screens/workout_log_text_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/app_constants.dart';
 import 'image_log_meal.dart';
@@ -172,6 +174,21 @@ class _LogEntryPageState extends State<LogEntryPage>
               fontFamily: AppConstants.fontRegular,
             ),
           ),
+          SizedBox(width: 190,),
+          GestureDetector(
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => LogHistoryScreen()),
+              );
+              },
+            child: Text("My Logs",style: TextStyle(
+              fontFamily: AppConstants.fontRegular,
+              fontSize: 16,
+              fontWeight: AppConstants.extraBold,
+              decoration: TextDecoration.underline,
+            ),),
+          )
         ],
       ),
     );

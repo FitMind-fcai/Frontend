@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
   const PrivacyPolicyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? colorScheme.surface : Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? colorScheme.surface : Colors.white,
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
-        title: const Text(
-          'Privacy Policy',
+        leading: BackButton(color: isDark ? Colors.white : Colors.black),
+        title: Text(
+          'privacy_policy.title'.tr(),
           style: TextStyle(
-            color: Colors.black,
+            color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
             fontFamily: AppConstants.fontRegular,
             fontSize: 18,
@@ -31,71 +35,66 @@ class PrivacyPolicyPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 30),
-                  // Header Section
-                  const Text(
-                    "Our Commitment",
+                  Text(
+                    'privacy_policy.commitment_title'.tr(),
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
                       fontFamily: AppConstants.fontRegular,
+                      color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    "Last updated: April 2026",
+                  Text(
+                    'privacy_policy.last_updated'.tr(),
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey,
+                      color: isDark ? Colors.white60 : Colors.grey,
                       fontWeight: FontWeight.w500,
                       fontFamily: AppConstants.fontRegular,
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    "At FitMind, we prioritize your privacy. This policy explains how we handle your data when you use our AI Fitness & Training solutions.",
+                  Text(
+                    'privacy_policy.intro'.tr(),
                     style: TextStyle(
                       fontSize: 15,
                       height: 1.6,
-                      color: Color(0xFF1A1A1A),
+                      color: isDark ? Colors.white70 : const Color(0xFF1A1A1A),
                       fontFamily: AppConstants.fontRegular,
                     ),
                   ),
                   const SizedBox(height: 32),
-
-                  // Data Collection Box (Using your _InfoBox style)
-                  const _PolicySectionBox(
+                  _PolicySectionBox(
                     icon: Icons.security,
-                    title: "Data Collection",
-                    content: "We collect information you provide directly, such as fitness goals, biometric data, and training schedules to improve your AI experience.",
+                    title: 'privacy_policy.data_collection_title'.tr(),
+                    content: 'privacy_policy.data_collection_content'.tr(),
                   ),
                   const SizedBox(height: 16),
-
-                  // Usage Box
-                  const _PolicySectionBox(
+                  _PolicySectionBox(
                     icon: Icons.visibility_off,
-                    title: "Information Sharing",
-                    content: "FitMind does not sell your personal data to third parties. Your data is encrypted and used only for personalized training generation.",
+                    title: 'privacy_policy.information_sharing_title'.tr(),
+                    content: 'privacy_policy.information_sharing_content'.tr(),
                   ),
                   const SizedBox(height: 32),
-
-                  // Standard Text Section for finer details
-                  const Text(
-                    "Your Rights",
+                  Text(
+                    'privacy_policy.rights_title'.tr(),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       fontFamily: AppConstants.fontRegular,
+                      color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    "• Right to access your data\n"
-                        "• Right to delete your account and biometrics\n"
-                        "• Right to opt-out of AI model training usage",
+                  Text(
+                    '• ${'privacy_policy.right_access'.tr()}\n'
+                        '• ${'privacy_policy.right_delete'.tr()}\n'
+                        '• ${'privacy_policy.right_opt_out'.tr()}',
                     style: TextStyle(
                       fontSize: 14,
                       height: 2.0,
-                      color: Color(0xFF7D7D7D),
+                      color: isDark ? Colors.white60 : const Color(0xFF7D7D7D),
                       fontFamily: AppConstants.fontRegular,
                     ),
                   ),
@@ -104,17 +103,13 @@ class PrivacyPolicyPage extends StatelessWidget {
               ),
             ),
           ),
-
-          // Contact Support Button (Consistent with the bottom-padding vibe)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             child: SizedBox(
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed: () {
-                  // Link to your support email or contact page
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1A1A1A),
                   shape: RoundedRectangleBorder(
@@ -122,9 +117,9 @@ class PrivacyPolicyPage extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  "Contact Support",
-                  style: TextStyle(
+                child: Text(
+                  'privacy_policy.contact_support'.tr(),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontFamily: AppConstants.fontRegular,
@@ -139,7 +134,6 @@ class PrivacyPolicyPage extends StatelessWidget {
   }
 }
 
-// Reusing your _InfoBox pattern but slightly modified for long text
 class _PolicySectionBox extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -153,11 +147,14 @@ class _PolicySectionBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F2),
+        color: isDark ? colorScheme.surfaceContainerHigh : const Color(0xFFF2F2F2),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -165,14 +162,14 @@ class _PolicySectionBox extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 20, color: Colors.blueGrey),
+              Icon(icon, size: 20, color: isDark ? Colors.white54 : Colors.blueGrey),
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
-                  color: Color(0xFF1A1A1A),
+                  color: isDark ? Colors.white : const Color(0xFF1A1A1A),
                   fontFamily: AppConstants.fontRegular,
                 ),
               ),
@@ -181,9 +178,9 @@ class _PolicySectionBox extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             content,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: Color(0xFF7D7D7D),
+              color: isDark ? Colors.white60 : const Color(0xFF7D7D7D),
               fontFamily: AppConstants.fontRegular,
               height: 1.5,
             ),

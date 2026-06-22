@@ -67,12 +67,15 @@ class WorkoutPlanResult {
   }
 }
 class WorkoutDay {
+  final int? id; // backend day id — needed for the per-day exercises endpoint
+
   final int dayNumber;
   final String dayName;
   final String? focus;
   final List<Exercise> exercises;
 
   WorkoutDay({
+    this.id,
     required this.dayNumber,
     required this.dayName,
     this.focus,
@@ -81,6 +84,7 @@ class WorkoutDay {
 
   factory WorkoutDay.fromJson(Map<String, dynamic> json) {
     return WorkoutDay(
+      id: (json['id'] as num?)?.toInt(),
       dayNumber: (json['day_number'] ?? 0).toInt(),
       dayName: json['day_name'] ?? '',
       focus: json['focus_area']?? '',
@@ -91,6 +95,7 @@ class WorkoutDay {
   }
   Map<String, dynamic> toJson() {
     return {
+      if (id != null) 'id': id,
       'day_number': dayNumber,
       'day_name': dayName,
       'focus_area': focus,
@@ -109,6 +114,7 @@ class Exercise {
   final String? muscleGroup;
   final String? equipment;
   final String? difficulty;
+  final double? weightKg; // add this field
 
   Exercise({
     required this.name,
@@ -120,12 +126,15 @@ class Exercise {
     this.muscleGroup,
     this.equipment,
     this.difficulty,
+    this.weightKg, // add to constructor
+
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
     final central = json['central_exercise'] as Map<String, dynamic>?;
 
     return Exercise(
+      weightKg: (json['weight_kg'] as num?)?.toDouble(), // add this line
       name: central?['name'] ?? json['exercise_name'] ?? json['name'] ?? '',
       description: central?['instructions'] ?? json['description'],
       sets: (json['sets'] as num?)?.toInt(),

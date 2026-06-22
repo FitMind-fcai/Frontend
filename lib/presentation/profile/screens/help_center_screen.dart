@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HelpCenterPage extends StatelessWidget {
   const HelpCenterPage({super.key});
@@ -27,9 +28,9 @@ class HelpCenterPage extends StatelessWidget {
                   children: [
                     _headerButton(
                         Icons.chevron_left, () => Navigator.pop(context)),
-                    const Text(
-                      'Help Center',
-                      style: TextStyle(
+                    Text(
+                      'help_center.title'.tr(),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -48,10 +49,10 @@ class HelpCenterPage extends StatelessWidget {
                     color: Colors.white.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      "FAQ",
-                      style: TextStyle(
+                      'help_center.faq_tab'.tr(),
+                      style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontFamily: AppConstants.fontRegular),
@@ -72,31 +73,11 @@ class HelpCenterPage extends StatelessWidget {
                   const SizedBox(height: 25),
 
                   // FAQ List
-                  const _FaqTile(
-                    question: "What is FitMind?",
-                    answer:
-                        "FitMind is an advanced fitness app that utilizes artificial intelligence to provide personalized training.",
-                  ),
-                  const _FaqTile(
-                    question: "How does FitMind work?",
-                    answer:
-                        "It analyzes your performance data to adjust your workout intensity in real-time.",
-                  ),
-                  const _FaqTile(
-                    question: "Is FitMind a replacement for fitness coach?",
-                    answer:
-                        "It acts as a digital supplement to provide 24/7 guidance alongside your professional coaching.",
-                  ),
-                  const _FaqTile(
-                    question: "Is FitMind free to use?",
-                    answer:
-                        "We offer both free tier basics and premium AI features.",
-                  ),
-                  const _FaqTile(
-                    question: "Is my data secure?",
-                    answer:
-                        "Yes, all health and personal data is encrypted and stored locally when possible.",
-                  ),
+                  _FaqTile( question: 'help_center.faq_1_question'.tr(), answer: 'help_center.faq_1_answer'.tr(), ),
+                  _FaqTile( question: 'help_center.faq_2_question'.tr(), answer: 'help_center.faq_2_answer'.tr(), ),
+                  _FaqTile( question: 'help_center.faq_3_question'.tr(), answer: 'help_center.faq_3_answer'.tr(), ),
+                  _FaqTile( question: 'help_center.faq_4_question'.tr(), answer: 'help_center.faq_4_answer'.tr(), ),
+                  _FaqTile( question: 'help_center.faq_5_question'.tr(), answer: 'help_center.faq_5_answer'.tr(), )
                 ],
               ),
             ),
@@ -157,7 +138,7 @@ class _FaqTileState extends State<_FaqTile> {
         borderRadius: BorderRadius.circular(25),
         border: Border.all(
           // Logic: If expanded, use transparent. If collapsed, show the grey border.
-          color: _isExpanded ? Colors.grey[600]!:Colors.transparent ,
+          color: _isExpanded ? Colors.grey[600]! : Colors.transparent,
           width: 2,
         ),
       ),
@@ -170,7 +151,8 @@ class _FaqTileState extends State<_FaqTile> {
         ),
         child: ExpansionTile(
           initiallyExpanded: widget.isInitialExpanded,
-          onExpansionChanged: (expanded) => setState(() => _isExpanded = expanded),
+          onExpansionChanged: (expanded) =>
+              setState(() => _isExpanded = expanded),
           // Adding vertical padding here makes the "box" feel bigger
           tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           title: Text(

@@ -12,6 +12,7 @@ import 'package:shared_preferences_android/shared_preferences_android.dart' as s
 import 'package:image_picker_ios/image_picker_ios.dart' as image_picker_ios;
 import 'package:path_provider_foundation/path_provider_foundation.dart' as path_provider_foundation;
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart' as shared_preferences_foundation;
+import 'package:device_info_plus/device_info_plus.dart' as device_info_plus;
 import 'package:file_selector_linux/file_selector_linux.dart' as file_selector_linux;
 import 'package:image_picker_linux/image_picker_linux.dart' as image_picker_linux;
 import 'package:path_provider_linux/path_provider_linux.dart' as path_provider_linux;
@@ -21,6 +22,7 @@ import 'package:file_selector_macos/file_selector_macos.dart' as file_selector_m
 import 'package:image_picker_macos/image_picker_macos.dart' as image_picker_macos;
 import 'package:path_provider_foundation/path_provider_foundation.dart' as path_provider_foundation;
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart' as shared_preferences_foundation;
+import 'package:device_info_plus/device_info_plus.dart' as device_info_plus;
 import 'package:file_selector_windows/file_selector_windows.dart' as file_selector_windows;
 import 'package:image_picker_windows/image_picker_windows.dart' as image_picker_windows;
 import 'package:path_provider_windows/path_provider_windows.dart' as path_provider_windows;
@@ -88,6 +90,15 @@ class _PluginRegistrant {
       }
 
     } else if (Platform.isLinux) {
+      try {
+        device_info_plus.DeviceInfoPlusLinuxPlugin.registerWith();
+      } catch (err) {
+        print(
+          '`device_info_plus` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
       try {
         file_selector_linux.FileSelectorLinux.registerWith();
       } catch (err) {
@@ -171,6 +182,15 @@ class _PluginRegistrant {
       }
 
     } else if (Platform.isWindows) {
+      try {
+        device_info_plus.DeviceInfoPlusWindowsPlugin.registerWith();
+      } catch (err) {
+        print(
+          '`device_info_plus` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
       try {
         file_selector_windows.FileSelectorWindows.registerWith();
       } catch (err) {

@@ -3,7 +3,13 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../data/data_sources/local/auth_local_data_source.dart';
+import '../data/models/home/calorie_screen_result.dart';
 import '../data/models/meal_log/excersise_search_result.dart';
+import '../data/models/meal_log/meal_log_history/hydration_log_entry.dart';
+import '../data/models/meal_log/meal_log_history/meal_log_entry.dart';
+import '../data/models/meal_log/meal_log_history/sleep_log_entry.dart';
+import '../data/models/meal_log/meal_log_history/weight_log_entry.dart';
+import '../data/models/meal_log/meal_log_history/workout_log_entry.dart';
 import '../data/models/meal_log/meal_scan_request.dart';
 import '../data/models/meal_log/meal_scan_result.dart';
 import '../data/models/meal_log/meal_text_result.dart';
@@ -74,6 +80,7 @@ abstract class LogApiService {
   static Future<VoiceMealScanResult> scanMealVoice(
     String filePath,
     String audioFormat,
+      String language
   ) async {
     try {
       final formData = FormData.fromMap({
@@ -82,6 +89,8 @@ abstract class LogApiService {
           filename: 'voice_meal.$audioFormat',
         ),
         'audio_format': audioFormat,
+        'language': language,
+
       });
 
       final response = await _dio.post<Map<String, dynamic>>(
@@ -104,6 +113,7 @@ abstract class LogApiService {
   static Future<VoiceWorkoutScanResult> scanWorkoutVoice(
     String filePath,
     String audioFormat,
+      String language
   ) async {
     try {
       final formData = FormData.fromMap({
@@ -112,6 +122,8 @@ abstract class LogApiService {
           filename: 'voice_workout.$audioFormat',
         ),
         'audio_format': audioFormat,
+        'language': language,
+
       });
 
       final response = await _dio.post<Map<String, dynamic>>(
@@ -130,4 +142,43 @@ abstract class LogApiService {
       rethrow;
     }
   }
+  @GET("/v1/tracking/logs/meals/summary")
+  Future<MealsSummaryResult> getMealsSummary({
+    @Query("date") String? date,
+  });
+  @GET("/v1/tracking/logs/meals")
+  Future<List<MealLogHistory>> getMealLogs({
+    @Query("date") String? date,
+    @Query("limit") int limit = 50,
+  });
+
+  @GET("/v1/tracking/logs/workouts")
+  Future<List<WorkoutLogHistory>> getWorkoutLogs({
+    @Query("date") String? date,
+    @Query("limit") int limit = 50,
+  });
+
+  @GET("/v1/tracking/logs/weights")
+  Future<List<WeightLogHistory>> getWeightLogs({
+    @Query("date") String? date,
+    @Query("limit") int limit = 50,
+  });
+
+  @GET("/v1/tracking/logs/sleep")
+  Future<List<SleepLogHistory>> getSleepLogs({
+    @Query("date") String? date,
+    @Query("limit") int limit = 50,
+  });
+
+  @GET("/v1/tracking/logs/hydration")
+  Future<List<HydrationLogHistory>> getHydrationLogs({
+    @Query("date") String? date,
+    @Query("limit") int limit = 50,
+  });
+
+  @DELETE("/v1/tracking/logs/{category}/{logId}")
+  Future<void> deleteLog(
+      @Path("category") String category,
+      @Path("logId") int logId,
+      );
 }

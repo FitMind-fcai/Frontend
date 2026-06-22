@@ -1,6 +1,6 @@
 import 'package:fitmind/presentation/authentication/widgets/common_button.dart';
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 
 void main() => runApp(const MaterialApp(home: FeedbackPage()));
@@ -53,13 +53,14 @@ class _FeedbackPageState extends State<FeedbackPage> {
                         color: Colors.white.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.chevron_left, color: Colors.white),
+                      child:
+                          const Icon(Icons.chevron_left, color: Colors.white),
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Text(
-                    'Submit Feedback',
-                    style: TextStyle(
+                  Text(
+                    'feedback.title'.tr(),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -84,10 +85,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     bottom: 0,
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.82,
-                      height: cardHeight + 25, // Still offsets from the main height
+                      height: cardHeight + 25,
+                      // Still offsets from the main height
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.15),
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(40)),
                       ),
                     ),
                   ),
@@ -99,7 +102,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
                       height: cardHeight + 12,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.25),
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(40)),
                       ),
                     ),
                   ),
@@ -114,14 +118,15 @@ class _FeedbackPageState extends State<FeedbackPage> {
                       padding: const EdgeInsets.fromLTRB(24, 60, 24, 30),
                       decoration: const BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(45)),
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(45)),
                       ),
                       child: Column(
                         children: [
-                          const Text(
-                            'Which of the area\nneeds improvement?',
+                          Text(
+                            'feedback.question'.tr(),
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 28,
                               fontFamily: AppConstants.fontRegular,
                               fontWeight: FontWeight.w900,
@@ -147,7 +152,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
                             ],
                           ),
                           AppConstants.verticalSpaceXXL,
-                          CommonButton(title: "Submit Feedback", onPressed: () {}),
+                          CommonButton(
+                              title: 'feedback.submit'.tr(), onPressed: () {}),
                           const SizedBox(height: 10),
                         ],
                       ),
@@ -194,8 +200,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
           borderRadius: BorderRadius.circular(15),
         ),
         child: Text(
-          label,
-          style: TextStyle(color: isSelected ? Colors.white : Colors.black54,
+          'feedback.tag_$label'.tr(),
+          style: TextStyle(
+              color: isSelected ? Colors.white : Colors.black54,
               fontFamily: AppConstants.fontRegular,
               fontSize: 16,
               fontWeight: FontWeight.bold),

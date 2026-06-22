@@ -34,7 +34,7 @@ class _VoiceMealResultPageState extends State<VoiceMealResultPage> {
   void initState() {
     super.initState();
     _mealType = widget.result.mealType.isNotEmpty ? widget.result.mealType : 'lunch';
-    _logDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    _logDate = DateFormat('yyyy-MM-dd',"en").format(DateTime.now());
     if (widget.result.matchedFoods.isNotEmpty) {
       _selectedFoodId = widget.result.matchedFoods.first.id;
     }

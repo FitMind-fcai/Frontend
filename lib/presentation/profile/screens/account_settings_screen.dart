@@ -33,39 +33,30 @@ class AccountSettingsPage extends StatelessWidget {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Black banner app bar ───────────────────────────────────
             _SettingsAppBar(onBack: () => Navigator.of(context).maybePop()),
 
             const SizedBox(height: 20),
 
-            // ── Scrollable body ────────────────────────────────────
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  // ── General ──────────────────────────────────────
                   _SectionHeader(title: 'General'),
                   _SettingsGroup(
                     children: [
                       _SettingsTile(
                         icon: Icons.notifications_outlined,
                         label: 'Notifications',
-                        onTap: () =>
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => NotificationSettingsPage(),
-                              ),
-                            ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => NotificationSettingsPage()),
+                        ),
                       ),
                       _SettingsTile(
                         icon: Icons.person_outline_rounded,
                         label: 'Personal Information',
-                        onTap: () =>
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => PersonalInfoPage(),
-                              ),
-                            ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => PersonalInfoPage()),
+                        ),
                       ),
                       _SettingsTile(
                         icon: Icons.dark_mode_outlined,
@@ -78,7 +69,6 @@ class AccountSettingsPage extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // ── Security & Privacy ────────────────────────────
                   _SectionHeader(
                     title: 'Security & Privacy',
                     badge: 'Beta',
@@ -86,16 +76,12 @@ class AccountSettingsPage extends StatelessWidget {
                   ),
                   _SettingsGroup(
                     children: [
-
                       _SettingsTile(
                         icon: Icons.shield_outlined,
                         label: 'Privacy Policy',
-                        onTap: () =>
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => PrivacyPolicyPage(),
-                              ),
-                            ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => PrivacyPolicyPage()),
+                        ),
                         isLast: true,
                       ),
                     ],
@@ -103,39 +89,29 @@ class AccountSettingsPage extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // ── Help & Support ────────────────────────────────
                   _SectionHeader(title: 'Help & Support'),
                   _SettingsGroup(
                     children: [
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
                         label: 'About Us',
-                        onTap: () =>
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => AboutUsPage(),
-                              ),
-                            ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => AboutUsPage()),
+                        ),
                       ),
                       _SettingsTile(
                         icon: Icons.help_outline_rounded,
                         label: 'Help Center',
-                        onTap: () =>
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => HelpCenterPage(),
-                              ),
-                            ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => HelpCenterPage()),
+                        ),
                       ),
                       _SettingsTile(
                         icon: Icons.feedback_outlined,
                         label: 'Submit Feedback',
-                        onTap: () =>
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => FeedbackPage(),
-                              ),
-                            ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => FeedbackPage()),
+                        ),
                         isLast: true,
                       ),
                     ],
@@ -143,7 +119,6 @@ class AccountSettingsPage extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // ── Danger Zone ───────────────────────────────────
                   _SectionHeader(
                     title: 'Danger Zone',
                     badge: 'Warning',
@@ -155,7 +130,6 @@ class AccountSettingsPage extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // ── Log Out ───────────────────────────────────────
                   _SectionHeader(title: 'Log Out'),
                   _SettingsGroup(
                     children: [
@@ -182,7 +156,7 @@ class AccountSettingsPage extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Black banner app bar — mirrors ProfileAppBar style, no image, no extra icons
+// Black banner app bar
 // ─────────────────────────────────────────────────────────────────────────────
 class _SettingsAppBar extends StatelessWidget {
   final VoidCallback onBack;
@@ -208,7 +182,6 @@ class _SettingsAppBar extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // ── Back button ─────────────────────────────────────
               GestureDetector(
                 onTap: onBack,
                 child: Container(
@@ -230,7 +203,6 @@ class _SettingsAppBar extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 14),
-              // ── Title ───────────────────────────────────────────
               Text(
                 'Account Settings',
                 style: TextStyle(
@@ -269,6 +241,9 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final labelColor = isDark ? Colors.white54 : const Color(0xFF888888);
+
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 8),
       child: Row(
@@ -276,10 +251,10 @@ class _SectionHeader extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF888888),
+              color: labelColor,
               letterSpacing: 0.2,
             ),
           ),
@@ -306,7 +281,7 @@ class _SectionHeader extends StatelessWidget {
           if (trailingIcon != null)
             Icon(trailingIcon, size: 16, color: trailingIconColor),
           const SizedBox(width: 4),
-          Icon(Icons.more_horiz, size: 18, color: Colors.grey[400]),
+          Icon(Icons.more_horiz, size: 18, color: isDark ? Colors.white38 : Colors.grey[400]),
         ],
       ),
     );
@@ -314,7 +289,7 @@ class _SectionHeader extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Settings group — now just a Column, each tile is its own card
+// Settings group
 // ─────────────────────────────────────────────────────────────────────────────
 class _SettingsGroup extends StatelessWidget {
   final List<Widget> children;
@@ -335,7 +310,7 @@ class _SettingsTile extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final Widget? trailing;
-  final bool isLast; // kept for API compatibility, no longer used
+  final bool isLast;
 
   const _SettingsTile({
     required this.icon,
@@ -349,10 +324,17 @@ class _SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
+
+    final tileBg = isDark ? Colors.grey[800]! : Colors.grey[200]!;
+    final iconBg = isDark ? colorScheme.surfaceContainerHighest : Colors.white;
+    final iconColor = isDark ? Colors.white : Colors.black;
+    final labelColor = isDark ? Colors.white : const Color(0xFF1A1A1A);
+    final arrowColor = isDark ? Colors.white : Colors.black;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: isDark?Colors.grey[600]:Colors.grey[200],
+        color: tileBg,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: onTap,
@@ -361,40 +343,35 @@ class _SettingsTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                // Icon container
                 Container(
                   width: 34,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: iconBg,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(icon, size: 18, color: Colors.black),
+                  child: Icon(icon, size: 18, color: iconColor),
                 ),
                 const SizedBox(width: 14),
-                // Label
                 Expanded(
                   child: Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       fontFamily: AppConstants.fontRegular,
-                      color: Color(0xFF1A1A1A),
+                      color: labelColor,
                     ),
                   ),
                 ),
-                // Trailing widget or default chevron
                 trailing ??
                     Image.asset(
                       "assets/images/Monotone arrow right.png",
                       width: 20,
                       height: 20,
-                      color: Colors.black,
-                      // This applies a color filter to the image
-                      colorBlendMode: BlendMode
-                          .srcIn, // Ensures the color only fills the icon shape
-                    )
+                      color: arrowColor,
+                      colorBlendMode: BlendMode.srcIn,
+                    ),
               ],
             ),
           ),
@@ -501,10 +478,9 @@ class _DangerButton extends StatelessWidget {
               "assets/images/Monotone arrow right.png",
               width: 20,
               height: 20,
-              color: Colors.white, // This applies a color filter to the image
-              colorBlendMode: BlendMode
-                  .srcIn, // Ensures the color only fills the icon shape
-            )
+              color: Colors.white,
+              colorBlendMode: BlendMode.srcIn,
+            ),
           ],
         ),
       ),

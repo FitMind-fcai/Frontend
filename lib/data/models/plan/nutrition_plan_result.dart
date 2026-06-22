@@ -182,89 +182,81 @@ class Meal {
 
 }
 class Ingredient {
-  final int id;
-  final int nutritionPlanMealId;
+  final int? id;
+  final int? nutritionPlanMealId;
   final int centralFoodId;
   final double amountG;
-  final String foodName;
+  final String? foodName;
   final String? foodCategory;
-  final double calories;
-  final double proteinG;
-  final double carbsG;
-  final double fatsG;
+  final double? calories;
+  final double? proteinG;
+  final double? carbsG;
+  final double? fatsG;
   final double? fiberG;
-  final double caloriesPer100g;
-  final double proteinPer100g;
-  final double carbsPer100g;
-  final double fatsPer100g;
+  final double? caloriesPer100g;
+  final double? proteinPer100g;
+  final double? carbsPer100g;
+  final double? fatsPer100g;
   final double? fiberPer100g;
 
   Ingredient({
-    required this.id,
-    required this.nutritionPlanMealId,
+    this.id,
+    this.nutritionPlanMealId,
     required this.centralFoodId,
     required this.amountG,
-    required this.foodName,
+    this.foodName,
     this.foodCategory,
-    required this.calories,
-    required this.proteinG,
-    required this.carbsG,
-    required this.fatsG,
+    this.calories,
+    this.proteinG,
+    this.carbsG,
+    this.fatsG,
     this.fiberG,
-    required this.caloriesPer100g,
-    required this.proteinPer100g,
-    required this.carbsPer100g,
-    required this.fatsPer100g,
+    this.caloriesPer100g,
+    this.proteinPer100g,
+    this.carbsPer100g,
+    this.fatsPer100g,
     this.fiberPer100g,
   });
 
   factory Ingredient.fromJson(Map<String, dynamic> json) {
     return Ingredient(
-      id: (json['id'] as num).toInt(),
-      nutritionPlanMealId: (json['nutrition_plan_meal_id'] as num).toInt(),
-      centralFoodId: (json['central_food_id'] as num).toInt(),
-      amountG: (json['amount_g'] as num).toDouble(),
-      foodName: json['food_name'] ?? '',
+      id: (json['id'] as num?)?.toInt(),
+      nutritionPlanMealId: (json['nutrition_plan_meal_id'] as num?)?.toInt(),
+      centralFoodId: (json['central_food_id'] as num? ?? 0).toInt(),
+      amountG: (json['amount_g'] as num? ?? 0).toDouble(),
+      foodName: json['food_name'],
       foodCategory: json['food_category'],
-      calories: (json['calories'] as num? ?? 0).toDouble(),
-      proteinG: (json['protein_g'] as num? ?? 0).toDouble(),
-      carbsG: (json['carbs_g'] as num? ?? 0).toDouble(),
-      fatsG: (json['fats_g'] as num? ?? 0).toDouble(),
-      fiberG: json['fiber_g'] != null
-          ? (json['fiber_g'] as num).toDouble()
-          : null,
-      caloriesPer100g:
-      (json['calories_per_100g'] as num? ?? 0).toDouble(),
-      proteinPer100g:
-      (json['protein_per_100g'] as num? ?? 0).toDouble(),
-      carbsPer100g:
-      (json['carbs_per_100g'] as num? ?? 0).toDouble(),
-      fatsPer100g:
-      (json['fats_per_100g'] as num? ?? 0).toDouble(),
-      fiberPer100g: json['fiber_per_100g'] != null
-          ? (json['fiber_per_100g'] as num).toDouble()
-          : null,
+      calories: (json['calories'] as num?)?.toDouble(),
+      proteinG: (json['protein_g'] as num?)?.toDouble(),
+      carbsG: (json['carbs_g'] as num?)?.toDouble(),
+      fatsG: (json['fats_g'] as num?)?.toDouble(),
+      fiberG: (json['fiber_g'] as num?)?.toDouble(),
+      caloriesPer100g: (json['calories_per_100g'] as num?)?.toDouble(),
+      proteinPer100g: (json['protein_per_100g'] as num?)?.toDouble(),
+      carbsPer100g: (json['carbs_per_100g'] as num?)?.toDouble(),
+      fatsPer100g: (json['fats_per_100g'] as num?)?.toDouble(),
+      fiberPer100g: (json['fiber_per_100g'] as num?)?.toDouble(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'nutrition_plan_meal_id': nutritionPlanMealId,
+      if (id != null) 'id': id,
+      if (nutritionPlanMealId != null) 'nutrition_plan_meal_id': nutritionPlanMealId,
       'central_food_id': centralFoodId,
       'amount_g': amountG,
-      'food_name': foodName,
-      'food_category': foodCategory,
-      'calories': calories,
-      'protein_g': proteinG,
-      'carbs_g': carbsG,
-      'fats_g': fatsG,
-      'fiber_g': fiberG,
-      'calories_per_100g': caloriesPer100g,
-      'protein_per_100g': proteinPer100g,
-      'carbs_per_100g': carbsPer100g,
-      'fats_per_100g': fatsPer100g,
-      'fiber_per_100g': fiberPer100g,
+      if (foodName != null) 'food_name': foodName,
+      if (foodCategory != null) 'food_category': foodCategory,
+      if (calories != null) 'calories': calories,
+      if (proteinG != null) 'protein_g': proteinG,
+      if (carbsG != null) 'carbs_g': carbsG,
+      if (fatsG != null) 'fats_g': fatsG,
+      if (fiberG != null) 'fiber_g': fiberG,
+      if (caloriesPer100g != null) 'calories_per_100g': caloriesPer100g,
+      if (proteinPer100g != null) 'protein_per_100g': proteinPer100g,
+      if (carbsPer100g != null) 'carbs_per_100g': carbsPer100g,
+      if (fatsPer100g != null) 'fats_per_100g': fatsPer100g,
+      if (fiberPer100g != null) 'fiber_per_100g': fiberPer100g,
     };
   }
 }

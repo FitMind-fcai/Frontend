@@ -71,6 +71,13 @@ class DeleteWorkoutPlanEvent extends PlanEvent {
   @override
   List<Object> get props => [planId];
 }
+class LoadWorkoutDayExercisesEvent extends PlanEvent {
+  final int planId;
+  final int dayId;
+  const LoadWorkoutDayExercisesEvent(this.planId, this.dayId);
+  @override
+  List<Object> get props => [planId, dayId];
+}
 
 
 

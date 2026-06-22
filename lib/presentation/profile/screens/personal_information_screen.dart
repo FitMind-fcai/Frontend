@@ -9,10 +9,6 @@ import '../../assessment/widgets/tag_input_widget.dart';
 import '../../authentication/widgets/app_form_field.dart';
 import '../manager/profile_bloc.dart';
 
-// ---------------------------------------------------------------------------
-// Personal Info Page — synced with GET /v1/profiles/me & PUT /v1/profiles/me
-// ---------------------------------------------------------------------------
-
 class PersonalInfoPage extends StatefulWidget {
   const PersonalInfoPage({Key? key}) : super(key: key);
 
@@ -21,7 +17,6 @@ class PersonalInfoPage extends StatefulWidget {
 }
 
 class _PersonalInfoPageState extends State<PersonalInfoPage> {
-  // ── Basic text field controllers ─────────────────────────────────────────
   final _fullNameController   = TextEditingController();
   final _emailController      = TextEditingController();
   final _passwordController   = TextEditingController(text: '');
@@ -32,19 +27,16 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
   bool _obscurePassword = true;
   bool _isLoading       = true;
 
-  // ── Enum selections ──────────────────────────────────────────────────────
   Gender        _selectedGender      = Gender.Male;
   FitnessGoal   _selectedFitnessGoal = FitnessGoal.LoseWeight;
   ActivityLevel _selectedActivity    = ActivityLevel.Sedentary;
 
-  // ── Tag lists ────────────────────────────────────────────────────────────
   List<String> _dietaryPreferences = [];
   List<String> _medicalConditions  = [];
   List<String> _allergies          = [];
   List<String> _injuries           = [];
   List<String> _medications        = [];
 
-  // ── Cached profile for userId ────────────────────────────────────────────
   int _userId = 0;
 
   @override
@@ -64,7 +56,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     super.dispose();
   }
 
-  // ── Populate fields from fetched profile ─────────────────────────────────
   void _populateFromProfile(ProfileBody profile) {
     _userId = profile.userId;
     _ageController.text    = profile.age.toString();
@@ -80,7 +71,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     _medications           = List.from(profile.medications);
   }
 
-  // ── Build the PUT body from current field state ──────────────────────────
   ProfileBody _buildProfileBody() => ProfileBody(
     userId:              _userId,
     age:                 int.tryParse(_ageController.text) ?? 0,
@@ -96,16 +86,23 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     medications:         _medications,
   );
 
-  // ── Shared label style ───────────────────────────────────────────────────
-  TextStyle get _labelStyle => TextStyle(
-    fontFamily: AppConstants.fontRegular,
-    fontSize: AppConstants.fontSizeM,
-    fontWeight: FontWeight.w600,
-    color: AppConstants.secondaryColor,
-  );
-
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final labelColor = isDark ? Colors.white : AppConstants.secondaryColor;
+    final labelStyle = TextStyle(
+      fontFamily: AppConstants.fontRegular,
+      fontSize: AppConstants.fontSizeM,
+      fontWeight: FontWeight.w600,
+      color: labelColor,
+    );
+    final fieldFill = isDark ? colorScheme.surfaceContainerHighest : const Color(0xFFF5F5F5);
+    final fieldTextColor = isDark ? Colors.white : Colors.black;
+    final iconColor = isDark ? Colors.white54 : AppConstants.secondaryColor;
+    final dropdownTextColor = isDark ? Colors.white : AppConstants.secondaryColor;
+
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is ProfileLoaded) {
@@ -128,23 +125,19 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? colorScheme.surface : Colors.white,
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : Column(
           children: [
-            // ── Top dark header ──────────────────────────────────────
             InfoAppBar(),
-
-            // ── Scrollable content ───────────────────────────────────
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── Age ─────────────────────────────────────────
+                    // ── Age ──────────────────────────────────────────
                     AppTextField(
                       label: 'Age',
                       controller: _ageController,
@@ -153,35 +146,38 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                     ),
                     const SizedBox(height: 16),
 
-                    // ── Height ──────────────────────────────────────
+                    // ── Height ───────────────────────────────────────
                     AppTextField(
                       label: 'Height',
                       controller: _heightController,
                       prefixIconPath: 'assets/images/user.png',
                       keyboardType: TextInputType.number,
                     ),
-                    _unitHint('centimeters'),
+                    _unitHint('centimeters', isDark),
                     const SizedBox(height: 16),
 
-                    // ── Weight ──────────────────────────────────────
+                    // ── Weight ───────────────────────────────────────
                     AppTextField(
                       label: 'Weight',
                       controller: _weightController,
                       prefixIconPath: 'assets/images/user.png',
                       keyboardType: TextInputType.number,
                     ),
-                    _unitHint('kilograms'),
+                    _unitHint('kilograms', isDark),
                     const SizedBox(height: 16),
 
-                    // ── Gender ──────────────────────────────────────
+                    // ── Gender ───────────────────────────────────────
                     _buildEnumDropdown<Gender>(
                       label: 'Gender',
                       icon: Icons.transgender,
                       value: _selectedGender,
                       items: Gender.values,
                       itemLabel: (g) => g.name,
-                      onChanged: (v) =>
-                          setState(() => _selectedGender = v!),
+                      onChanged: (v) => setState(() => _selectedGender = v!),
+                      labelStyle: labelStyle,
+                      fieldFill: fieldFill,
+                      iconColor: iconColor,
+                      textColor: dropdownTextColor,
                     ),
                     const SizedBox(height: 16),
 
@@ -192,8 +188,11 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                       value: _selectedFitnessGoal,
                       items: FitnessGoal.values,
                       itemLabel: getFitnessGoalString,
-                      onChanged: (v) =>
-                          setState(() => _selectedFitnessGoal = v!),
+                      onChanged: (v) => setState(() => _selectedFitnessGoal = v!),
+                      labelStyle: labelStyle,
+                      fieldFill: fieldFill,
+                      iconColor: iconColor,
+                      textColor: dropdownTextColor,
                     ),
                     const SizedBox(height: 16),
 
@@ -203,61 +202,31 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                       icon: Icons.directions_run,
                       value: _selectedActivity,
                       items: ActivityLevel.values,
-                      itemLabel: (a) => a.name
-                          .replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'),
-                              (_) => ' '),
-                      onChanged: (v) =>
-                          setState(() => _selectedActivity = v!),
+                      itemLabel: (a) => a.name.replaceAllMapped(
+                          RegExp(r'(?<=[a-z])(?=[A-Z])'), (_) => ' '),
+                      onChanged: (v) => setState(() => _selectedActivity = v!),
+                      labelStyle: labelStyle,
+                      fieldFill: fieldFill,
+                      iconColor: iconColor,
+                      textColor: dropdownTextColor,
                     ),
                     const SizedBox(height: 24),
 
-                    // ── Dietary Preferences ──────────────────────────
-                    _buildTagSection(
-                      label: 'Dietary Preferences',
-                      values: _dietaryPreferences,
-                      onChanged: (v) =>
-                          setState(() => _dietaryPreferences = v),
-                    ),
+                    // ── Tag sections ─────────────────────────────────
+                    _buildTagSection(label: 'Dietary Preferences', values: _dietaryPreferences, onChanged: (v) => setState(() => _dietaryPreferences = v), labelStyle: labelStyle),
                     const SizedBox(height: 20),
-
-                    // ── Medical Conditions ───────────────────────────
-                    _buildTagSection(
-                      label: 'Medical Conditions',
-                      values: _medicalConditions,
-                      onChanged: (v) =>
-                          setState(() => _medicalConditions = v),
-                    ),
+                    _buildTagSection(label: 'Medical Conditions', values: _medicalConditions, onChanged: (v) => setState(() => _medicalConditions = v), labelStyle: labelStyle),
                     const SizedBox(height: 20),
-
-                    // ── Allergies ────────────────────────────────────
-                    _buildTagSection(
-                      label: 'Allergies',
-                      values: _allergies,
-                      onChanged: (v) => setState(() => _allergies = v),
-                    ),
+                    _buildTagSection(label: 'Allergies', values: _allergies, onChanged: (v) => setState(() => _allergies = v), labelStyle: labelStyle),
                     const SizedBox(height: 20),
-
-                    // ── Injuries ─────────────────────────────────────
-                    _buildTagSection(
-                      label: 'Injuries',
-                      values: _injuries,
-                      onChanged: (v) => setState(() => _injuries = v),
-                    ),
+                    _buildTagSection(label: 'Injuries', values: _injuries, onChanged: (v) => setState(() => _injuries = v), labelStyle: labelStyle),
                     const SizedBox(height: 20),
-
-                    // ── Medications ──────────────────────────────────
-                    _buildTagSection(
-                      label: 'Medications',
-                      values: _medications,
-                      onChanged: (v) => setState(() => _medications = v),
-                    ),
+                    _buildTagSection(label: 'Medications', values: _medications, onChanged: (v) => setState(() => _medications = v), labelStyle: labelStyle),
                     const SizedBox(height: 32),
                   ],
                 ),
               ),
             ),
-
-            // ── Save Settings button ─────────────────────────────────
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CommonButton(
@@ -275,9 +244,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     );
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-
-  Widget _unitHint(String unit) => Padding(
+  Widget _unitHint(String unit, bool isDark) => Padding(
     padding: const EdgeInsets.only(right: 4, top: 4),
     child: Align(
       alignment: Alignment.centerRight,
@@ -285,7 +252,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
         unit,
         style: TextStyle(
           fontSize: 12,
-          color: Colors.grey.shade500,
+          color: isDark ? Colors.white38 : Colors.grey.shade500,
           fontFamily: AppConstants.fontRegular,
         ),
       ),
@@ -296,16 +263,14 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     required String label,
     required List<String> values,
     required ValueChanged<List<String>> onChanged,
+    required TextStyle labelStyle,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(' $label', style: _labelStyle),
+        Text(' $label', style: labelStyle),
         const SizedBox(height: 8),
-        TagInputWidget(
-          initialValues: values,
-          onChanged: onChanged,
-        ),
+        TagInputWidget(initialValues: values, onChanged: onChanged),
       ],
     );
   }
@@ -317,21 +282,26 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     required List<T> items,
     required String Function(T) itemLabel,
     required ValueChanged<T?> onChanged,
+    required TextStyle labelStyle,
+    required Color fieldFill,
+    required Color iconColor,
+    required Color textColor,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(' $label', style: _labelStyle),
+        Text(' $label', style: labelStyle),
         const SizedBox(height: 4),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFF5F5F5),
+            color: fieldFill,
             borderRadius: BorderRadius.circular(20),
           ),
           child: DropdownButtonFormField<T>(
             value: value,
+            dropdownColor: fieldFill,
             decoration: InputDecoration(
-              prefixIcon: Icon(icon, color: AppConstants.secondaryColor),
+              prefixIcon: Icon(icon, color: iconColor),
               filled: true,
               fillColor: Colors.transparent,
               border: OutlineInputBorder(
@@ -344,18 +314,16 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
-                borderSide: const BorderSide(
-                    color: AppConstants.primaryColor, width: 2.5),
+                borderSide: const BorderSide(color: Color(0xFFFF8C42), width: 2.5),
               ),
               contentPadding: const EdgeInsets.symmetric(vertical: 14),
             ),
-            style: const TextStyle(
-              color: AppConstants.secondaryColor,
+            style: TextStyle(
+              color: textColor,
               fontFamily: AppConstants.fontRegular,
               fontSize: 15,
             ),
-            icon: const Icon(Icons.keyboard_arrow_down,
-                color: AppConstants.secondaryColor),
+            icon: Icon(Icons.keyboard_arrow_down, color: iconColor),
             items: items
                 .map((item) => DropdownMenuItem<T>(
               value: item,

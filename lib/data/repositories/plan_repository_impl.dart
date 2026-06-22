@@ -56,4 +56,9 @@ class PlanRepositoryImpl implements PlanRepository {
   Future<void> deleteWorkoutPlan(int planId) async {
     return await remote.deleteWorkoutPlan(planId);
   }
+  @override
+  Future<List<Exercise>> getWorkoutDayExercises(int planId, int dayId) {
+    return remote.getWorkoutDayExercises(planId, dayId);
+  }
+
 }

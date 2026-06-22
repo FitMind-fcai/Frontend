@@ -20,5 +20,7 @@ abstract class PlanRepository {
 
   Future<void> deleteNutritionPlan(int planId);
   Future<void> deleteWorkoutPlan(int planId);
+  Future<List<Exercise>> getWorkoutDayExercises(int planId, int dayId);
+
 
 }

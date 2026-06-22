@@ -84,5 +84,11 @@ class PlanDeleteSuccess extends PlanState {
   @override
   List<Object?> get props => [message];
 }
+class WorkoutDayExercisesLoaded extends PlanState {
+  final List<Exercise> exercises;
+  const WorkoutDayExercisesLoaded(this.exercises);
+  @override
+  List<Object?> get props => [exercises];
+}
 // If PlanLoading doesn't carry isSaving yet, add a flag:
 

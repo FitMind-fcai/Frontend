@@ -64,7 +64,7 @@ class _WeightLogPageState extends State<WeightLogPage> {
 
     final request = SaveLogRequest(
       category: 'weight',
-      logDate: DateFormat('yyyy-MM-dd').format(_logDate),
+      logDate: DateFormat('yyyy-MM-dd',"en").format(_logDate),
       logMethod: 'TEXT',
       weightEntries: [
         WeightLogEntry(

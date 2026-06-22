@@ -30,6 +30,7 @@ class _VoiceLogPageState extends State<VoiceLogPage>
   int _seconds = 0;
   String? _recordedPath;
 
+
   late AnimationController _pulseCtrl;
   late AnimationController _ringCtrl;
   late Animation<double> _pulseAnim;
@@ -117,15 +118,16 @@ class _VoiceLogPageState extends State<VoiceLogPage>
     if (_recordedPath == null) return;
 
     const audioFormat = 'm4a';
+    final language = context.locale.languageCode == 'ar' ? 'ar' : 'en';
 
     if (widget.type == LogType.meal) {
       context
           .read<LogBloc>()
-          .add(ScanMealVoiceEvent(_recordedPath!, audioFormat));
+          .add(ScanMealVoiceEvent(_recordedPath!, audioFormat,language));
     } else {
       context
           .read<LogBloc>()
-          .add(ScanWorkoutVoiceEvent(_recordedPath!, audioFormat));
+          .add(ScanWorkoutVoiceEvent(_recordedPath!, audioFormat,language));
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:fitmind/presentation/home/screens/calorie_home_screen.dart';
 import 'package:fitmind/presentation/home/screens/score_home_screen.dart';
 import 'package:fitmind/presentation/home/screens/steps_home_screen.dart';
 import 'package:fitmind/presentation/home/widgets/home_app_bar.dart';
+import 'package:fitmind/presentation/plan/screens/my_plans/todays_workout_screen.dart';
 
 import 'package:fitmind/presentation/profile/screens/profile_main_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import '../../../data/models/home/next_meal_response.dart';
 import '../../log/screens/hydration_log_screen.dart';
 import '../../log/screens/sleep_log_screen.dart';
 import '../../log/screens/weight_log_screen.dart';
+import '../../plan/screens/my_plans/todays_meals_screen.dart';
 import '../manager/home_bloc.dart';
 import '../widgets/fitness_metric_card.dart';
 import '../widgets/home_bottom_nav_bar.dart';
@@ -37,8 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _pages = [
       const _HomePage(),
-      const Center(child: Text('Workout')),
-      const Center(child: Text('Nutrition')),
+      TodayWorkoutTab(),
+      TodayMealsTab(),
       ProfileScreen(),
     ];
     context.read<HomeBloc>().add(const LoadHomeEvent());
@@ -47,7 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colorScheme = Theme.of(context).colorScheme;    return Scaffold(
+    final colorScheme = Theme.of(context).colorScheme;
+    return Scaffold(
       extendBody: true,
       backgroundColor: isDark ? colorScheme.surface : Colors.grey[100],
       body: _pages[_selectedIndex],
@@ -125,6 +128,7 @@ class _HomePage extends StatelessWidget {
                               );
                               if (context.mounted) {
                                 context.read<HomeBloc>().add(const GetScoreEvent());
+                                context.read<HomeBloc>().add(const RefreshLiveMetricsEvent());
                               }
                             },
                             child: MetricCard(
@@ -146,7 +150,10 @@ class _HomePage extends StatelessWidget {
                             ),
                             child: MetricCard(
                               title: 'home.metric_steps'.tr(),
-                              value: '12,540',
+                              value: state is HomeLoaded && state.steps != null
+                                  ? state.steps!.toString().replaceAllMapped(
+                                  RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')
+                                  : '--',
                               color: Colors.blue,
                               icon: Icons.directions_run,
                             ),
@@ -157,15 +164,17 @@ class _HomePage extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (_) => const CalorieStatsPage()),
                             ),
-                            child:MetricCard(
+                            child: MetricCard(
                               title: 'home.metric_calories'.tr(),
-                              value: state is HomeLoaded ? '15' : '--',
-                              // CHANGED: was a flat Colors.grey, which has no
+                              value: state is HomeLoaded && state.calories != null
+                                  ? '${state.calories}'
+                                  : '--',                              // CHANGED: was a flat Colors.grey, which has no
                               // dark-mode equivalent. outline reads as a
                               // neutral accent in both themes.
                               color: Theme.of(context).colorScheme.outline,
                               icon: Icons.local_fire_department,
-                              fallbackIcon: Icons.local_fire_department_outlined,
+                              fallbackIcon:
+                                  Icons.local_fire_department_outlined,
                             ),
                           ),
                         ],
@@ -196,10 +205,9 @@ class _HomePage extends StatelessWidget {
                     if (state is HomeLoading)
                       const _ShimmerBox(height: 240, radius: 25)
                     else if (state is HomeLoaded)
-                      WorkoutHighlightCard(workout:state.workout)
+                      WorkoutHighlightCard(workout: state.workout)
                     else if (state is HomeError)
-                        _ErrorTile(message: state.message),
-
+                      _ErrorTile(message: state.message),
 
                     const SizedBox(height: 25),
 
@@ -225,23 +233,11 @@ class _HomePage extends StatelessWidget {
                     ),
 
                     if (state is HomeLoading)
-                      const _ShimmerBox(height: 220, radius: 30)
+                      const _ShimmerBox(height: 240, radius: 25)
+                    else if (state is HomeLoaded)
+                      _MealCardRow(nextMeal: state.nextMeal)
                     else if (state is HomeError)
-                      _ErrorTile(message: state.message)
-                    else
-                      const SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        clipBehavior: Clip.none,
-                        child: Row(
-                          children: [
-                            MealCard(
-                              title: 'Salad & Egg',
-                              kcal: '548kcal',
-                              time: '20min',
-                            ),
-                          ],
-                        ),
-                      ),
+                      _ErrorTile(message: state.message),
 
                     const SizedBox(height: 25),
 
@@ -263,12 +259,17 @@ class _HomePage extends StatelessWidget {
                             label: 'home.log_hydration'.tr(),
                             icon: Icons.water_drop_outlined,
                             color: const Color(0xFF29B6F6),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const HydrationLogPage(),
-                              ),
-                            ),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => const HydrationLogPage()),
+                              );
+                              if (context.mounted) {
+                                context.read<HomeBloc>().add(const GetScoreEvent());
+                                context.read<HomeBloc>().add(const RefreshLiveMetricsEvent());
+
+                              }
+                            },
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -277,26 +278,36 @@ class _HomePage extends StatelessWidget {
                             label: 'home.log_sleep'.tr(),
                             icon: Icons.bedtime_outlined,
                             color: const Color(0xFF7E57C2),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const SleepLogPage(),
-                              ),
-                            ),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => const SleepLogPage()),
+                              );
+                              if (context.mounted) {
+                                context.read<HomeBloc>().add(const GetScoreEvent());
+                                context.read<HomeBloc>().add(const RefreshLiveMetricsEvent());
+
+                              }
+                            },
                           ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child:_MiscLogCard(
+                          child: _MiscLogCard(
                             label: 'home.log_weight'.tr(),
                             icon: Icons.monitor_weight_outlined,
                             color: const Color(0xFF26A69A),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const WeightLogPage(),
-                              ),
-                            ),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => const WeightLogPage()),
+                              );
+                              if (context.mounted) {
+                                context.read<HomeBloc>().add(const GetScoreEvent());
+                                context.read<HomeBloc>().add(const RefreshLiveMetricsEvent());
+
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -348,9 +359,8 @@ class _MiscLogCard extends StatelessWidget {
               // CHANGED: a black shadow at 4% opacity is invisible on a dark
               // background and can look like a smudge. Drop it out entirely
               // in dark mode rather than trying to tune the opacity.
-              color: isDark
-                  ? Colors.transparent
-                  : Colors.black.withOpacity(0.04),
+              color:
+                  isDark ? Colors.transparent : Colors.black.withOpacity(0.04),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -404,12 +414,13 @@ class _MiscLogCard extends StatelessWidget {
 
 // ── Meal card row built from real API data ────────────────────────────────────
 class _MealCardRow extends StatelessWidget {
-  final NextMealResponse nextMeal;
+  final NextMealResponse? nextMeal;
+
   const _MealCardRow({required this.nextMeal});
 
   @override
   Widget build(BuildContext context) {
-    final meal = nextMeal.recommendedMeal;
+    final meal = nextMeal?.recommendedMeal;
     if (meal == null) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -446,6 +457,7 @@ class _MealCardRow extends StatelessWidget {
 class _ShimmerBox extends StatelessWidget {
   final double height;
   final double radius;
+
   const _ShimmerBox({required this.height, required this.radius});
 
   @override
@@ -467,6 +479,7 @@ class _ShimmerBox extends StatelessWidget {
 // ── Inline error tile ─────────────────────────────────────────────────────────
 class _ErrorTile extends StatelessWidget {
   final String message;
+
   const _ErrorTile({required this.message});
 
   @override

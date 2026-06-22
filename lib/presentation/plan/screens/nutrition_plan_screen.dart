@@ -228,7 +228,10 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   void _submitNutritionPreferences() {
     final request = NutritionPlanGenerationRequest(
       durationWeeks: _durationWeeks,
+      lang: context.locale.languageCode == 'ar' ? 'ar' : 'en',
+
       nutritionPreferences: NutritionPreferences(
+
         caloriePreference: CaloriePreference.fromString(prefferedCalorieMethod),
         customCalorieTarget:
             prefferedCalorieMethod == 'Custom' ? _calorieTarget : null,

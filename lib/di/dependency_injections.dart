@@ -4,6 +4,7 @@ import 'package:fitmind/domain/use_cases/log_use_cases.dart';
 import 'package:fitmind/network/log_api_service.dart';
 import 'package:fitmind/network/plan_api_service.dart';
 import 'package:fitmind/network/recommendations_api_service.dart';
+import 'package:fitmind/presentation/log/manager_log_history/log_history_bloc.dart';
 import 'package:fitmind/presentation/plan/manager/plan_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
@@ -65,7 +66,7 @@ Future<void> init() async {
       () => LogRemoteDataSourceImpl(sl()));
 
   sl.registerLazySingleton<RecommendationsRemoteDataSource>(
-          () => RecommendationsRemoteDataSourceImpl(sl()));
+      () => RecommendationsRemoteDataSourceImpl(sl()));
   // Repository
   sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(sl(), sl()));
@@ -74,7 +75,8 @@ Future<void> init() async {
 
   sl.registerLazySingleton<PlanRepository>(() => PlanRepositoryImpl(sl()));
   sl.registerLazySingleton<LogRepository>(() => LogRepositoryImpl(sl()));
-  sl.registerLazySingleton<RecommendationsRepository>(() => RecommendationsRepositoryImpl(sl()));
+  sl.registerLazySingleton<RecommendationsRepository>(
+      () => RecommendationsRepositoryImpl(sl()));
 
   // UseCases
   sl.registerLazySingleton(() => SignInUseCase(sl()));
@@ -99,6 +101,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetWorkoutPlanByIdUseCase(sl()));
   sl.registerLazySingleton(() => DeleteNutritionPlanUseCase(sl()));
   sl.registerLazySingleton(() => DeleteWorkoutPlanUseCase(sl()));
+  sl.registerLazySingleton(() => GetWorkoutDayExercisesUseCase(sl()));
 
   sl.registerLazySingleton(() => ScanMealUseCase(sl()));
 
@@ -108,6 +111,14 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SearchFoodsUseCase(sl()));
   sl.registerLazySingleton(() => SearchExercisesUseCase(sl()));
   sl.registerLazySingleton(() => SaveLogsUseCase(sl()));
+  sl.registerLazySingleton(() => GetMealsSummaryUseCase(sl()));
+  sl.registerLazySingleton(() => GetMealLogsUseCase(sl()));
+  sl.registerLazySingleton(() => GetWorkoutLogsUseCase(sl()));
+  sl.registerLazySingleton(() => GetWeightLogsUseCase(sl()));
+  sl.registerLazySingleton(() =>GetHydrationLogsUseCase(sl()));
+  sl.registerLazySingleton(() => GetSleepLogsUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteLogUseCase(sl()));
+
 
 
   sl.registerLazySingleton(() => GetNextMealUseCase(sl()));
@@ -149,6 +160,7 @@ Future<void> init() async {
       sl(),
       sl(),
       sl(),
+      sl(),
     ),
   );
   sl.registerFactory<LogBloc>(
@@ -159,14 +171,23 @@ Future<void> init() async {
       searchExercisesUseCase: sl(),
       searchFoodsUseCase: sl(),
       saveLogsUseCase: sl(),
+      getMealsSummaryUseCase: sl(),
     ),
   );
 
   sl.registerFactory(
     () => HomeBloc(
       sl(),
-       sl(),
+      sl(),
+      sl(),
       sl(),
     ),
   );
+  sl.registerFactory(() => LogHistoryBloc(
+      getMealLogs: sl(),
+      getWorkoutLogs: sl(),
+      getWeightLogs: sl(),
+      getSleepLogs: sl(),
+      getHydrationLogs: sl(),
+      deleteLog: sl()));
 }

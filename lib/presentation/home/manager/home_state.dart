@@ -53,15 +53,19 @@ class HomeLoaded extends HomeState {
   final WorkoutRecommendationResponse? workout;
   final NextMealResponse? nextMeal;
   final ScoreResponse? score;
+  final int? calories;
+  final int? steps;
 
   const HomeLoaded({
     this.workout,
     this.nextMeal,
     this.score,
+    this.calories,
+    this.steps
   });
 
   @override
-  List<Object?> get props => [workout, nextMeal, score];
+  List<Object?> get props => [workout, nextMeal, score,calories,steps];
 }
 
 // ─── Shared error ─────────────────────────────────────────────────────────────

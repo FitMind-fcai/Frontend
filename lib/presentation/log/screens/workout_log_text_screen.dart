@@ -51,7 +51,7 @@ class _TextLogWorkoutPageState extends State<TextLogWorkoutPage> {
     final weightText = _weightController.text.trim();
     final request = SaveLogRequest(
       category: 'workout',
-      logDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      logDate: DateFormat('yyyy-MM-dd',"en").format(DateTime.now()),
       logMethod: 'TEXT',
       workoutEntries: [
         WorkoutLogEntry(

@@ -268,7 +268,6 @@
     "weekday_sunday": "الأحد",
     "date_label": "{weekday}، {day} {month}",
     "exercises_count": "{count} تمارين"
-
   },
   "day_meals": {
     "day_label": "اليوم {number}",
@@ -560,14 +559,89 @@
   "score": {
     "title": "نتيجة Fitmind",
     "radar_calorie": "السعرات",
-    "radar_bmi": "مؤشر كتلة الجسم",
-    "radar_bpm": "نبضات القلب",
+    "radar_nutrition": "التغذية",
+    "radar_strength": "القوة",
+    "radar_agility": "الرشاقة",
+    "radar_endurance": "التحمل",
     "radar_hydration": "شرب الماء",
     "radar_sleep": "النوم",
     "radar_steps": "الخطوات",
     "summary_healthy": "أنت شخص يتمتع بصحة جيدة.",
     "legend_strength": "القوة",
     "legend_agility": "الرشاقة",
-    "legend_endurance": "التحمل"
-  }
+    "legend_endurance": "التحمل",
+    "no_score": "نتيجتك غير متاحة بعد. سجل بعض النشاط وتحقق لاحقًا."
+  },
+  "today_meals": {
+    "title": "وجبات اليوم",
+    "no_plan_today": "لا توجد وجبات مجدولة لهذا اليوم. تحقق من خطتك الغذائية أو أنشئ واحدة جديدة."
+  },
+  "log_detail": {
+    "entry_deleted": "تم حذف الإدخال",
+    "no_logs_yet": "لا توجد سجلات {category} حتى الآن",
+    "delete_confirm_title": "حذف الإدخال؟",
+    "delete_confirm_body": "لا يمكن التراجع عن هذا الإجراء.",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "retry": "إعادة المحاولة",
+    "chip_meal": "وجبة",
+    "chip_cal": "سعرات",
+    "chip_protein": "بروتين",
+    "chip_carbs": "كربوهيدرات",
+    "chip_fats": "دهون",
+    "chip_sets": "مجموعات",
+    "chip_reps": "تكرارات",
+    "chip_weight": "الوزن",
+    "chip_time": "الوقت",
+    "chip_hours": "ساعات",
+    "chip_quality": "الجودة",
+    "title_workout": "تمرين",
+    "title_sleep": "نوم",
+    "weight_value": "{value} كجم",
+    "water_value": "{value} مل",
+    "weight_chip_value": "{value} كجم",
+    "time_chip_value": "{value} دقيقة",
+    "quality_chip_value": "{value}/10",
+    "category_meal": "وجبة",
+    "category_workout": "تمرين",
+    "category_weight": "وزن",
+    "category_sleep": "نوم",
+    "category_hydration": "ماء"
+  },
+  "about_us": {
+    "title": "من نحن",
+    "app_tagline": "حل ذكي للياقة البدنية والتدريب",
+    "address": "العنوان",
+    "telephone": "الهاتف"
+  },
+  "feedback": {
+    "title": "إرسال الملاحظات",
+    "question": "ما الجوانب التي\nتحتاج إلى تحسين؟",
+    "submit": "إرسال الملاحظات",
+    "tag_performance": "الأداء",
+    "tag_support": "الدعم",
+    "tag_bug": "الأخطاء",
+    "tag_ui": "واجهة المستخدم",
+    "tag_ux": "تجربة المستخدم",
+    "tag_crashes": "الانهيارات",
+    "tag_loading": "التحميل",
+    "tag_navigation": "التنقل",
+    "tag_leadership": "الإدارة",
+    "tag_pricing": "الأسعار"
+  },
+  "help_center": {
+    "title": "مركز المساعدة",
+    "faq_tab": "الأسئلة الشائعة",
+    "faq_1_question": "ما هو FitMind؟",
+    "faq_1_answer": "FitMind هو تطبيق متقدم للياقة البدنية يستخدم الذكاء الاصطناعي لتقديم تدريبات مخصصة.",
+    "faq_2_question": "كيف يعمل FitMind؟",
+    "faq_2_answer": "يقوم بتحليل بيانات أدائك لضبط شدة التمارين في الوقت الفعلي.",
+    "faq_3_question": "هل يعتبر FitMind بديلاً للمدرب الرياضي؟",
+    "faq_3_answer": "يعمل كمساعد رقمي يوفر إرشادات مستمرة إلى جانب المدرب المختص.",
+    "faq_4_question": "هل استخدام FitMind مجاني؟",
+    "faq_4_answer": "نقدم خطة مجانية أساسية بالإضافة إلى مزايا ذكاء اصطناعي مدفوعة.",
+    "faq_5_question": "هل بياناتي آمنة؟",
+    "faq_5_answer": "نعم، يتم تشفير جميع البيانات الصحية والشخصية وتخزينها محلياً كلما أمكن ذلك."
+  },
+  "privacy_policy": { "title": "سياسة الخصوصية", "commitment_title": "التزامنا", "last_updated": "آخر تحديث: أبريل 2026", "intro": "في FitMind، نولي خصوصيتك أهمية كبيرة. توضح هذه السياسة كيفية التعامل مع بياناتك عند استخدام حلول اللياقة البدنية والتدريب المعتمدة على الذكاء الاصطناعي.", "data_collection_title": "جمع البيانات", "data_collection_content": "نجمع المعلومات التي تقدمها مباشرة، مثل أهداف اللياقة البدنية والبيانات الحيوية وخطط التدريب، لتحسين تجربتك مع الذكاء الاصطناعي.", "information_sharing_title": "مشاركة المعلومات", "information_sharing_content": "لا تقوم FitMind ببيع بياناتك الشخصية لأي طرف ثالث. يتم تشفير بياناتك واستخدامها فقط لتخصيص برامج التدريب.", "rights_title": "حقوقك", "right_access": "الحق في الوصول إلى بياناتك", "right_delete": "الحق في حذف حسابك وبياناتك الحيوية", "right_opt_out": "الحق في إلغاء استخدام بياناتك في تدريب نماذج الذكاء الاصطناعي", "contact_support": "التواصل مع الدعم" }
 }

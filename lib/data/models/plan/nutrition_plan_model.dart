@@ -7,6 +7,7 @@ class NutritionPreferences {
   final CuisinePreference cuisinePreference;
   final List<String>? excludeIngredients;
 
+
   NutritionPreferences({
     required this.caloriePreference,
     this.customCalorieTarget,

@@ -8,16 +8,19 @@ class NotificationSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? colorScheme.surface : Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? colorScheme.surface : Colors.white,
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
-        title: const Text(
+        leading: BackButton(color: isDark ? Colors.white : Colors.black),
+        title: Text(
           'Notification Settings',
           style: TextStyle(
-            color: Colors.black,
+            color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
             fontFamily: AppConstants.fontRegular,
             fontSize: 18,
@@ -31,7 +34,7 @@ class NotificationSettingsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionHeader("General"),
+                _buildSectionHeader("General", isDark),
                 _SettingsGroup(
                   children: [
                     _SettingsTile(
@@ -55,7 +58,7 @@ class NotificationSettingsPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                _buildSectionHeader("Sound"),
+                _buildSectionHeader("Sound", isDark),
                 _SettingsGroup(
                   children: [
                     _SettingsTile(
@@ -72,14 +75,10 @@ class NotificationSettingsPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-
-                const SizedBox(height: 100), // Space for the floating button
+                const SizedBox(height: 100),
               ],
             ),
           ),
-
-          // Fixed Save Settings Button at the bottom
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -88,9 +87,7 @@ class NotificationSettingsPage extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Logic to save settings
-                  },
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
@@ -122,7 +119,7 @@ class NotificationSettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
@@ -130,39 +127,34 @@ class NotificationSettingsPage extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               fontFamily: AppConstants.fontRegular,
-              color: Colors.black,
+              color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          const Icon(Icons.more_vert, size: 18, color: Colors.grey),
+          Icon(Icons.more_vert, size: 18, color: isDark ? Colors.white38 : Colors.grey),
         ],
       ),
     );
   }
 }
+
 class _SettingsGroup extends StatelessWidget {
   final List<Widget> children;
-
   const _SettingsGroup({required this.children});
 
   @override
-  Widget build(BuildContext context) {
-    return Column(children: children);
-  }
+  Widget build(BuildContext context) => Column(children: children);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Individual settings tile
-// ─────────────────────────────────────────────────────────────────────────────
 class _SettingsTile extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
   final Widget? trailing;
-  final bool isLast; // kept for API compatibility, no longer used
+  final bool isLast;
 
   const _SettingsTile({
     required this.icon,
@@ -174,10 +166,13 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: Colors.grey[200],
+        color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: onTap,
@@ -186,40 +181,35 @@ class _SettingsTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                // Icon container
                 Container(
                   width: 34,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(icon, size: 18, color: Colors.black),
+                  child: Icon(icon, size: 18, color: isDark ? Colors.white : Colors.black),
                 ),
                 const SizedBox(width: 14),
-                // Label
                 Expanded(
                   child: Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       fontFamily: AppConstants.fontRegular,
-                      color: Color(0xFF1A1A1A),
+                      color: isDark ? Colors.white : const Color(0xFF1A1A1A),
                     ),
                   ),
                 ),
-                // Trailing widget or default chevron
                 trailing ??
                     Image.asset(
                       "assets/images/Monotone arrow right.png",
                       width: 20,
                       height: 20,
-                      color: Colors.black,
-                      // This applies a color filter to the image
-                      colorBlendMode: BlendMode
-                          .srcIn, // Ensures the color only fills the icon shape
-                    )
+                      color: isDark ? Colors.white : Colors.black,
+                      colorBlendMode: BlendMode.srcIn,
+                    ),
               ],
             ),
           ),
@@ -229,13 +219,9 @@ class _SettingsTile extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Toggle switch
-// ─────────────────────────────────────────────────────────────────────────────
 class _AppToggle extends StatefulWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
-
   const _AppToggle({required this.value, required this.onChanged});
 
   @override

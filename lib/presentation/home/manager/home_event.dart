@@ -30,3 +30,6 @@ class LoadHomeEvent extends HomeEvent {
   @override
   List<Object?> get props => [mealTime];
 }
+class RefreshLiveMetricsEvent extends HomeEvent {
+  const RefreshLiveMetricsEvent();
+}
