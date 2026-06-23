@@ -75,6 +75,7 @@ class _HomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const HomeAppBar(),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Column(
@@ -319,6 +320,7 @@ class _HomePage extends StatelessWidget {
               AppConstants.verticalSpaceXXL,
               AppConstants.verticalSpaceXXL,
               AppConstants.verticalSpaceXXL,
+
             ],
           ),
         );

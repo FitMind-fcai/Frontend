@@ -121,13 +121,6 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // Summary strip
-            // NOTE: fixed dark-navy card regardless of theme — same
-            // reasoning as the meals screen's summary strip. Its tone is
-            // close enough to the elevated dark surface used elsewhere
-            // that it still reads as a raised card on a dark page, so
-            // nothing in this block (including white54 labels and the
-            // accent value colors) needs to change.
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -201,10 +194,11 @@ class _SummaryItem extends StatelessWidget {
         Text(
           value,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.w800,
             color: color,
             fontFamily: AppConstants.fontRegular,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         const SizedBox(height: 2),
@@ -400,8 +394,6 @@ class _ExerciseCardState extends State<_ExerciseCard>
                 ],
               ),
             ),
-            // Stats pills row
-            // NOTE: all _StatTag colors are brand/accent tints — untouched.
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
               child: Row(
@@ -534,8 +526,7 @@ class _ExerciseDetails extends StatelessWidget {
               ex.description!,
               style: TextStyle(
                 fontSize: 13,
-                // CHANGED: was const Color(0xFF6B7280) — too low-contrast
-                // against a dark card, swapped to onSurfaceVariant.
+
                 color: isDark ? colorScheme.onSurfaceVariant : const Color(0xFF6B7280),
                 height: 1.5,
                 fontFamily: AppConstants.fontRegular,
@@ -550,10 +541,6 @@ class _ExerciseDetails extends StatelessWidget {
               padding:
               const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                // CHANGED: was const Color(0xFFF9FAFB) — same near-white
-                // tile issue fixed on the ingredient row in the meals
-                // screen. A faint white overlay keeps the same "one step
-                // lighter than the card" effect on dark.
                 color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFF9FAFB),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
@@ -567,7 +554,6 @@ class _ExerciseDetails extends StatelessWidget {
                   Icon(
                     Icons.fitness_center_rounded,
                     size: 14,
-                    // CHANGED: was const Color(0xFF6B7280).
                     color: isDark ? colorScheme.onSurfaceVariant : const Color(0xFF6B7280),
                   ),
                   const SizedBox(width: 6),
@@ -575,7 +561,6 @@ class _ExerciseDetails extends StatelessWidget {
                     ex.equipment!,
                     style: TextStyle(
                       fontSize: 13,
-                      // CHANGED: was const Color(0xFF6B7280).
                       color: isDark ? colorScheme.onSurfaceVariant : const Color(0xFF6B7280),
                       fontFamily: AppConstants.fontRegular,
                     ),
@@ -601,12 +586,6 @@ class _DifficultyBadge extends StatelessWidget {
 
   const _DifficultyBadge({required this.level});
 
-  // NOTE: every branch here — including the 0xFF6B7280 fallback for an
-  // unrecognized level string — is a mid-to-vivid tone used as a tinted
-  // background/border/text combo, the same pattern left untouched
-  // elsewhere (e.g. the workout day card's exercise-count chip text).
-  // These already have adequate contrast against a dark card, so this
-  // widget doesn't need any theme-aware changes.
   Color get _color {
     switch (level.toLowerCase()) {
       case 'easy':

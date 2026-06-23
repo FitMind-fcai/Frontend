@@ -1,9 +1,11 @@
 import 'package:bloc/bloc.dart';
 
+import '../../../core/services/fcm_service.dart';
 import '../../../data/data_sources/local/auth_local_data_source.dart';
 import '../../../data/data_sources/local/profile_local_data_source.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/use_cases/auth_use_cases.dart';
+import '../../../domain/use_cases/notifications_use_cases.dart';
 import '../../../domain/use_cases/profile_use_cases.dart';
 import '../../../network/profile_api_service.dart';
 
@@ -23,6 +25,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GetOtpStatusUseCase getOtpStatusUseCase;
   final ProfileLocalDataSource profileLocalDataSource;
   final GetMyProfileUseCase getMyProfileUseCase;
+  final RegisterDeviceTokenUseCase registerDeviceTokenUseCase;
+  final DeleteDeviceTokenUseCase deleteDeviceTokenUseCase;
+  final FcmService fcmService;
 
 // ✅ add local storage
 
@@ -39,6 +44,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.getOtpStatusUseCase,
     required this.profileLocalDataSource,
     required this.getMyProfileUseCase,
+    required this.registerDeviceTokenUseCase,
+    required this.deleteDeviceTokenUseCase,
+    required this.fcmService,
   }) : super(AuthInitial()) {
     on<SignInEvent>(_onSignIn);
     on<SignUpEvent>(_onSignUp);
@@ -63,6 +71,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (profile != null) {
         await profileLocalDataSource.cacheProfile(profile);
+
+        // Register FCM token
+        final fcmToken = await fcmService.getToken();
+        print('🔔 FCM Token: $fcmToken');
+        if (fcmToken != null) {
+          await registerDeviceTokenUseCase(fcmToken);
+        }
+
+        // Listen for token refresh
+        fcmService.listenToTokenRefresh((newToken) {
+          registerDeviceTokenUseCase(newToken);
+        });
+
         emit(AuthSuccess(authResponse.user));
       } else {
         emit(AuthSuccessNoProfile(authResponse.user));
@@ -95,6 +116,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final user = await checkAuthStatusUseCase();
 
     if (user != null) {
+      // ✅ Register FCM token for auto-logged-in users
+      final fcmToken = await fcmService.getToken();
+      print('🔔 FCM Token (auto-login): $fcmToken');
+      if (fcmToken != null) {
+        await registerDeviceTokenUseCase(fcmToken);
+      }
+
       emit(AuthSuccess(user));
     } else {
       emit(AuthInitial());
@@ -155,8 +183,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ) async {
     emit(AuthLoading());
     try {
+      await deleteDeviceTokenUseCase(); // remove FCM token first
       await deleteUserUseCase();
-      emit(AuthInitial()); // ← add this
+      emit(AuthInitial());
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }

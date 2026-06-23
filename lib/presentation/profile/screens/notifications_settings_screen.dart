@@ -1,10 +1,69 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../data/models/notifications_prefernces_model.dart';
+import '../../notifications/manager/notification_bloc.dart';
 
-class NotificationSettingsPage extends StatelessWidget {
+class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({super.key});
+
+  @override
+  State<NotificationSettingsPage> createState() =>
+      _NotificationSettingsPageState();
+}
+
+class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
+  // Local state for toggles
+  bool _mealReminders = false;
+  bool _workoutReminders = false;
+  bool _hydrationReminders = false;
+  bool _sleepReminders = false;
+  bool _coachingReminders = false;
+
+  // Local state for time fields
+  int _hydrationIntervalHours = 2;
+  int _mealReminderMinutesBefore = 30;
+  int _workoutReminderHour = 8;
+  int _sleepReminderHour = 22;
+  int _coachingDailyHour = 9;
+
+  void _populateFromPrefs(NotificationPreferencesModel prefs) {
+    _mealReminders = prefs.mealRemindersEnabled;
+    _workoutReminders = prefs.workoutRemindersEnabled;
+    _hydrationReminders = prefs.hydrationRemindersEnabled;
+    _sleepReminders = prefs.sleepRemindersEnabled;
+    _coachingReminders = prefs.coachingRemindersEnabled;
+    _hydrationIntervalHours = prefs.hydrationIntervalHours;
+    _mealReminderMinutesBefore = prefs.mealReminderMinutesBefore;
+    _workoutReminderHour = prefs.workoutReminderHour;
+    _sleepReminderHour = prefs.sleepReminderHour;
+    _coachingDailyHour = prefs.coachingDailyHour;
+  }
+
+  void _onSave() {
+    final prefs = NotificationPreferencesModel(
+      mealRemindersEnabled: _mealReminders,
+      workoutRemindersEnabled: _workoutReminders,
+      hydrationRemindersEnabled: _hydrationReminders,
+      sleepRemindersEnabled: _sleepReminders,
+      coachingRemindersEnabled: _coachingReminders,
+      hydrationIntervalHours: _hydrationIntervalHours,
+      mealReminderMinutesBefore: _mealReminderMinutesBefore,
+      workoutReminderHour: _workoutReminderHour,
+      sleepReminderHour: _sleepReminderHour,
+      coachingDailyHour: _coachingDailyHour,
+    );
+    context.read<NotificationBloc>().add(
+      UpdateNotificationPreferencesEvent(prefs),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<NotificationBloc>().add(LoadNotificationPreferencesEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,94 +86,137 @@ class NotificationSettingsPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSectionHeader("General", isDark),
-                _SettingsGroup(
+      body: BlocConsumer<NotificationBloc, NotificationState>(
+        listener: (context, state) {
+          if (state is NotificationPreferencesLoaded) {
+            setState(() => _populateFromPrefs(state.prefs));
+          }
+          if (state is NotificationPreferencesSaved) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Settings saved!')),
+            );
+          }
+          if (state is NotificationError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is NotificationLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _SettingsTile(
-                      icon: Icons.notifications_none_outlined,
-                      label: 'Push Notifications',
-                      onTap: () {},
-                      trailing: _AppToggle(value: true, onChanged: (v) {}),
-                    ),
-                    _SettingsTile(
-                      icon: Icons.face_retouching_natural,
-                      label: 'AI Coach Notification',
-                      onTap: () {},
-                      trailing: _AppToggle(value: false, onChanged: (v) {}),
-                    ),
-                    _SettingsTile(
-                      icon: Icons.bar_chart_rounded,
-                      label: 'Metrics Notification',
-                      onTap: () {},
-                      trailing: _AppToggle(value: true, onChanged: (v) {}),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildSectionHeader("Sound", isDark),
-                _SettingsGroup(
-                  children: [
-                    _SettingsTile(
-                      icon: Icons.vibration,
-                      label: 'Vibrations',
-                      onTap: () {},
-                      trailing: _AppToggle(value: false, onChanged: (v) {}),
-                    ),
-                    _SettingsTile(
-                      icon: Icons.volume_up_outlined,
-                      label: 'Sound',
-                      onTap: () {},
-                      trailing: _AppToggle(value: true, onChanged: (v) {}),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 100),
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Save Settings",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    _buildSectionHeader("Reminders", isDark),
+                    _SettingsGroup(
+                      children: [
+                        _SettingsTile(
+                          icon: Icons.restaurant_menu_outlined,
+                          label: 'Meal Reminders',
+                          onTap: () {},
+                          trailing: _AppToggle(
+                            value: _mealReminders,
+                            onChanged: (v) =>
+                                setState(() => _mealReminders = v),
+                          ),
                         ),
+                        _SettingsTile(
+                          icon: Icons.fitness_center_outlined,
+                          label: 'Workout Reminders',
+                          onTap: () {},
+                          trailing: _AppToggle(
+                            value: _workoutReminders,
+                            onChanged: (v) =>
+                                setState(() => _workoutReminders = v),
+                          ),
+                        ),
+                        _SettingsTile(
+                          icon: Icons.water_drop_outlined,
+                          label: 'Hydration Reminders',
+                          onTap: () {},
+                          trailing: _AppToggle(
+                            value: _hydrationReminders,
+                            onChanged: (v) =>
+                                setState(() => _hydrationReminders = v),
+                          ),
+                        ),
+                        _SettingsTile(
+                          icon: Icons.bedtime_outlined,
+                          label: 'Sleep Reminders',
+                          onTap: () {},
+                          trailing: _AppToggle(
+                            value: _sleepReminders,
+                            onChanged: (v) =>
+                                setState(() => _sleepReminders = v),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _buildSectionHeader("AI Coach", isDark),
+                    _SettingsGroup(
+                      children: [
+                        _SettingsTile(
+                          icon: Icons.face_retouching_natural,
+                          label: 'AI Coach Notifications',
+                          onTap: () {},
+                          trailing: _AppToggle(
+                            value: _coachingReminders,
+                            onChanged: (v) =>
+                                setState(() => _coachingReminders = v),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 100),
+                  ],
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _onSave,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.check, color: Colors.white, size: 20),
-                    ],
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Save Settings",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(Icons.check, color: Colors.white, size: 20),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
@@ -134,7 +236,8 @@ class NotificationSettingsPage extends StatelessWidget {
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          Icon(Icons.more_vert, size: 18, color: isDark ? Colors.white38 : Colors.grey),
+          Icon(Icons.more_vert,
+              size: 18, color: isDark ? Colors.white38 : Colors.grey),
         ],
       ),
     );

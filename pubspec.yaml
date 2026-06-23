@@ -55,6 +55,9 @@ dependencies:
   audioplayers: ^6.0.0
   easy_localization: ^3.0.8
   health: ^13.3.1
+  firebase_core: ^3.13.0
+  firebase_messaging: ^15.2.5
+  flutter_local_notifications: ^17.2.4
 
 
 dev_dependencies:

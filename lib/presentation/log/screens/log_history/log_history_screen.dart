@@ -3,52 +3,54 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../manager_log_history/log_history_bloc.dart';
 import 'log_detail_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 class LogHistoryScreen extends StatelessWidget {
   const LogHistoryScreen({super.key});
 
-  static const _cards = [
+  List<_LogCard> _buildCards() => [
     _LogCard(
       category: 'meal',
-      label: 'Meal Logs',
-      subtitle: 'Calories & macros',
+      label: 'log_history.meal_label'.tr(),
+      subtitle: 'log_history.meal_subtitle'.tr(),
       icon: Icons.restaurant_outlined,
-      color: Color(0xFFFF6B00),
+      color: const Color(0xFFFF6B00),
     ),
     _LogCard(
       category: 'workout',
-      label: 'Workout Logs',
-      subtitle: 'Sets, reps & duration',
+      label: 'log_history.workout_label'.tr(),
+      subtitle: 'log_history.workout_subtitle'.tr(),
       icon: Icons.fitness_center_outlined,
-      color: Color(0xFF3B82F6),
+      color: const Color(0xFF3B82F6),
     ),
     _LogCard(
       category: 'weight',
-      label: 'Weight Logs',
-      subtitle: 'Body weight over time',
+      label: 'log_history.weight_label'.tr(),
+      subtitle: 'log_history.weight_subtitle'.tr(),
       icon: Icons.monitor_weight_outlined,
-      color: Color(0xFF26A69A),
+      color: const Color(0xFF26A69A),
     ),
     _LogCard(
       category: 'sleep',
-      label: 'Sleep Logs',
-      subtitle: 'Hours & quality',
+      label: 'log_history.sleep_label'.tr(),
+      subtitle: 'log_history.sleep_subtitle'.tr(),
       icon: Icons.bedtime_outlined,
-      color: Color(0xFF7E57C2),
+      color: const Color(0xFF7E57C2),
     ),
     _LogCard(
       category: 'hydration',
-      label: 'Hydration Logs',
-      subtitle: 'Water intake',
+      label: 'log_history.hydration_label'.tr(),
+      subtitle: 'log_history.hydration_subtitle'.tr(),
       icon: Icons.water_drop_outlined,
-      color: Color(0xFF29B6F6),
+      color: const Color(0xFF29B6F6),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final cards = _buildCards(); // ← must be declared here, inside build()
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -61,7 +63,7 @@ class LogHistoryScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'My Logs',
+          'log_history.title'.tr(),
           style: TextStyle(
             color: colorScheme.onSurface,
             fontWeight: FontWeight.w700,
@@ -73,9 +75,9 @@ class LogHistoryScreen extends StatelessWidget {
       ),
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        itemCount: _cards.length,
+        itemCount: cards.length,
         separatorBuilder: (_, __) => const SizedBox(height: 14),
-        itemBuilder: (context, i) => _LogCategoryTile(card: _cards[i]),
+        itemBuilder: (context, i) => _LogCategoryTile(card: cards[i]),
       ),
     );
   }

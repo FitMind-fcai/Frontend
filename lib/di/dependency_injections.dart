@@ -1,13 +1,17 @@
 import 'package:fitmind/data/data_sources/remote/log_remote_data_source.dart';
+import 'package:fitmind/data/data_sources/remote/notifications_remote_data_source.dart';
 import 'package:fitmind/data/data_sources/remote/plan_remote_data_source.dart';
 import 'package:fitmind/domain/use_cases/log_use_cases.dart';
+import 'package:fitmind/domain/use_cases/notifications_use_cases.dart';
 import 'package:fitmind/network/log_api_service.dart';
 import 'package:fitmind/network/plan_api_service.dart';
 import 'package:fitmind/network/recommendations_api_service.dart';
 import 'package:fitmind/presentation/log/manager_log_history/log_history_bloc.dart';
+import 'package:fitmind/presentation/notifications/manager/notification_bloc.dart';
 import 'package:fitmind/presentation/plan/manager/plan_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+import '../core/services/fcm_service.dart';
 import '../data/data_sources/local/auth_local_data_source.dart';
 import '../data/data_sources/local/profile_local_data_source.dart';
 import '../data/data_sources/remote/auth_remote_data_source.dart';
@@ -15,11 +19,13 @@ import '../data/data_sources/remote/profile_remote_data_source.dart';
 import '../data/data_sources/remote/recommendations_remote_data_source.dart';
 import '../data/repositories/auth_repository_impl.dart';
 import '../data/repositories/log_repository_impl.dart';
+import '../data/repositories/notifications_repository_impl.dart';
 import '../data/repositories/plan_repository_impl.dart';
 import '../data/repositories/profile_repository_impl.dart';
 import '../data/repositories/recommendations_repository_impl.dart';
 import '../domain/repositories/auth_repository.dart';
 import '../domain/repositories/log_repository.dart';
+import '../domain/repositories/notifications_repository.dart';
 import '../domain/repositories/plan_repository.dart';
 import '../domain/repositories/profile_repository.dart';
 import '../domain/repositories/recommendations_repository.dart';
@@ -28,6 +34,7 @@ import '../domain/use_cases/plan_use_cases.dart';
 import '../domain/use_cases/profile_use_cases.dart';
 import '../domain/use_cases/recommendations_use_cases.dart';
 import '../network/auth_api_service.dart';
+import '../network/notifications_api_service.dart';
 import '../network/profile_api_service.dart';
 import '../presentation/authentication/manager/auth_bloc.dart';
 import '../presentation/home/manager/home_bloc.dart';
@@ -47,6 +54,9 @@ Future<void> init() async {
   sl.registerLazySingleton<PlanApiService>(() => PlanApiService(sl(), sl()));
   sl.registerLazySingleton<LogApiService>(() => LogApiService(sl(), sl()));
   sl.registerLazySingleton(() => RecommendationsApiService(sl(), sl()));
+  sl.registerLazySingleton(() => NotificationsApiService(sl(), sl()));
+  sl.registerLazySingleton<FcmService>(() => FcmService());
+
 
   // Data Sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
@@ -64,7 +74,8 @@ Future<void> init() async {
 
   sl.registerLazySingleton<LogRemoteDataSource>(
       () => LogRemoteDataSourceImpl(sl()));
-
+  sl.registerLazySingleton<NotificationRemoteDataSource>(
+          () => NotificationRemoteDataSourceImpl(sl()));
   sl.registerLazySingleton<RecommendationsRemoteDataSource>(
       () => RecommendationsRemoteDataSourceImpl(sl()));
   // Repository
@@ -77,7 +88,8 @@ Future<void> init() async {
   sl.registerLazySingleton<LogRepository>(() => LogRepositoryImpl(sl()));
   sl.registerLazySingleton<RecommendationsRepository>(
       () => RecommendationsRepositoryImpl(sl()));
-
+  sl.registerLazySingleton<NotificationRepository>(
+          () =>NotificationRepositoryImpl(sl()));
   // UseCases
   sl.registerLazySingleton(() => SignInUseCase(sl()));
   sl.registerLazySingleton(() => SignUpUseCase(sl()));
@@ -125,6 +137,13 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetTodayWorkoutUseCase(sl()));
   sl.registerLazySingleton(() => GetScoreUseCase(sl()));
 
+
+  sl.registerLazySingleton(() => GetNotificationPreferencesUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteDeviceTokenUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateNotificationPreferencesUseCase(sl()));
+  sl.registerLazySingleton(() => TriggerReminderUseCase(sl()));
+  sl.registerLazySingleton(() => RegisterDeviceTokenUseCase(sl()));
+
   sl.registerFactory<AuthBloc>(
     () => AuthBloc(
       signInUseCase: sl(),
@@ -139,6 +158,9 @@ Future<void> init() async {
       getOtpStatusUseCase: sl(),
       getMyProfileUseCase: sl(),
       profileLocalDataSource: sl(),
+      deleteDeviceTokenUseCase: sl(),
+      fcmService: sl(),
+      registerDeviceTokenUseCase: sl(),
     ),
   );
   sl.registerFactory<ProfileBloc>(
@@ -190,4 +212,6 @@ Future<void> init() async {
       getSleepLogs: sl(),
       getHydrationLogs: sl(),
       deleteLog: sl()));
+
+  sl.registerFactory(()=>NotificationBloc(getPreferences: sl(), updatePreferences: sl(), triggerReminder: sl()));
 }

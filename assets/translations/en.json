@@ -656,5 +656,18 @@
     "right_delete": "Right to delete your account and biometrics",
     "right_opt_out": "Right to opt-out of AI model training usage",
     "contact_support": "Contact Support"
+  },
+  "log_history": {
+    "title": "My Logs",
+    "meal_label": "Meal Logs",
+    "meal_subtitle": "Calories & macros",
+    "workout_label": "Workout Logs",
+    "workout_subtitle": "Sets, reps & duration",
+    "weight_label": "Weight Logs",
+    "weight_subtitle": "Body weight over time",
+    "sleep_label": "Sleep Logs",
+    "sleep_subtitle": "Hours & quality",
+    "hydration_label": "Hydration Logs",
+    "hydration_subtitle": "Water intake"
   }
 }

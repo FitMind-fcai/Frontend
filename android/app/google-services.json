@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "599286330432",
+    "project_id": "fitmind-4b7ac",
+    "storage_bucket": "fitmind-4b7ac.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599286330432:android:0aa58f1f6235fd8cf11ba5",
+        "android_client_info": {
+          "package_name": "com.example.fitmind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTgWkeYnYWl3j5nW1RGPug5JLvRlXuz60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
