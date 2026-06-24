@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
-
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import '../../authentication/manager/auth_bloc.dart';
 import '../../home/screens/home_screen.dart';
 import '../../onboarding/screens/welcome_screen.dart';
@@ -52,9 +52,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-              const Text(
-                "Loading...",
-                style: TextStyle(
+              Text(
+                'common.loading'.tr(),
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w500,

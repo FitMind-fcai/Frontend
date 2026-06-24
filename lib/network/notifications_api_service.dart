@@ -29,7 +29,7 @@ abstract class NotificationsApiService {
   Future<void> registerDeviceToken(@Body() Map<String, dynamic> body);
 
   @DELETE('/v1/notifications/device-token')
-  Future<void> deleteDeviceToken();
+  Future<void> deleteDeviceToken(@Body() Map<String, dynamic> body);
 
   @GET('/v1/notifications/preferences')
   Future<NotificationPreferencesModel> getPreferences();
@@ -39,4 +39,21 @@ abstract class NotificationsApiService {
 
   @POST('/v1/notifications/trigger/{reminderType}')
   Future<void> triggerReminder(@Path('reminderType') String reminderType);
+
+  @GET('/v1/coaching/messages')
+  Future<HttpResponse<dynamic>> getCoachingMessagesRaw(
+      @Query('skip') int skip,
+      @Query('limit') int limit,
+      @Query('category') String? category,
+      @Query('unread_only') bool unreadOnly,
+      );
+
+  @PATCH('/v1/coaching/messages/{message_id}/read')
+  Future<void> markCoachingMessageRead(@Path('message_id') int messageId);
+
+  @POST('/v1/coaching/messages/read-all')
+  Future<void> markAllCoachingMessagesRead();
+
+  @DELETE('/v1/coaching/messages/{message_id}')
+  Future<void> dismissCoachingMessage(@Path('message_id') int messageId);
 }

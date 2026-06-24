@@ -65,7 +65,8 @@
     "reset_password": "Reset Password",
     "reset_password_subtitle": "Enter your new password below.",
     "new_password_label": " New Password",
-    "password_reset_success": "Password reset successful"
+    "password_reset_success": "Password reset successful",
+    "verification_email_sent": "Verification email sent! Please check your inbox."
   },
   "assessment": {
     "title": "Assessment",
@@ -669,5 +670,122 @@
     "sleep_subtitle": "Hours & quality",
     "hydration_label": "Hydration Logs",
     "hydration_subtitle": "Water intake"
+  },
+  "notifications": {
+    "title": "Coaching Messages",
+    "mark_all_read": "Mark all read",
+    "filter_all": "All",
+    "filter_daily": "Daily",
+    "filter_weekly": "Weekly",
+    "filter_alert": "Alert",
+    "empty_title": "No messages yet",
+    "retry": "Retry"
+  },
+  "today_workout": {
+    "title": "Today's Workout",
+    "no_plan_today": "No workout scheduled for today."
+  },
+  "account_settings": {
+    "title": "Account Settings",
+    "section_general": "General",
+    "section_security_privacy": "Security & Privacy",
+    "section_help_support": "Help & Support",
+    "section_danger_zone": "Danger Zone",
+    "section_log_out": "Log Out",
+    "badge_beta": "Beta",
+    "badge_warning": "Warning",
+    "notifications": "Notifications",
+    "personal_information": "Personal Information",
+    "dark_mode": "Dark Mode",
+    "privacy_policy": "Privacy Policy",
+    "about_us": "About Us",
+    "help_center": "Help Center",
+    "submit_feedback": "Submit Feedback",
+    "sign_out": "Sign Out",
+    "close_account": "Close Account"
+  },
+  "notification_settings": {
+    "title": "Notification Settings",
+    "section_reminders": "Reminders",
+    "section_ai_coach": "AI Coach",
+    "meal_reminders": "Meal Reminders",
+    "workout_reminders": "Workout Reminders",
+    "hydration_reminders": "Hydration Reminders",
+    "sleep_reminders": "Sleep Reminders",
+    "ai_coach_notifications": "AI Coach Notifications",
+    "save_settings": "Save Settings",
+    "settings_saved": "Settings saved!"
+  },
+  "profile_screen": {
+    "current_age": "Current Age",
+    "weight": "Weight",
+    "daily_intake": "Daily Intake",
+    "age_value": "{value} yr",
+    "weight_value": "{value} kg",
+    "daily_intake_value": "{value} kcal"
+  },
+  "home_app_bar": {
+    "greeting": "Hello, {name}!",
+    "fallback_name": "there",
+    "healthy_score": "{value}% Healthy",
+    "pro": "Pro",
+    "date_format": "MMM d, yyyy"
+  },
+  "personal_info": {
+    "age": "Age",
+    "height": "Height",
+    "weight": "Weight",
+    "gender": "Gender",
+    "fitness_goal": "Fitness Goal",
+    "activity_level": "Activity Level",
+    "dietary_preferences": "Dietary Preferences",
+    "medical_conditions": "Medical Conditions",
+    "allergies": "Allergies",
+    "injuries": "Injuries",
+    "medications": "Medications",
+    "save_settings": "Save Settings",
+    "profile_updated": "Profile updated successfully!",
+    "centimeters": "centimeters",
+    "kilograms": "kilograms",
+    "gender_male": "Male",
+    "gender_female": "Female",
+    "goal_lose_weight": "Lose Weight",
+    "goal_maintain_weight": "Maintain Weight",
+    "goal_build_muscle": "Build Muscle",
+    "activity_sedentary": "Sedentary",
+    "activity_lightly_active": "Lightly Active",
+    "activity_moderately_active": "Moderately Active",
+    "activity_very_active": "Very Active",
+    "activity_extra_active": "Extra Active",
+    "title": "Personal Information"
+  },
+  "meal_card": {
+    "protein": "Protein",
+    "fat": "Fat",
+    "kcal": "kcal",
+    "min": "min"
+  },
+  "workout_card": {
+    "minutes_short": "min",
+    "exercises": "exercises",
+    "logged": "Logged",
+    "generate_plan": "Generate a workout plan to get started"
+  },
+  "week_card": {
+    "week": "Week",
+    "days": "days"
+  },
+  "plan": {
+    "weeks": "Weeks",
+    "week": "Week",
+    "days": "days",
+    "active_plan": "ACTIVE PLAN",
+    "workout_plan": "Workout Plan",
+    "nutrition_plan": "Nutrition Plan"
+  },
+  "common": {
+    "min": "min",
+    "loading": "Loading..."
   }
 }
+

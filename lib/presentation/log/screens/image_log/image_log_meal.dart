@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../data/models/meal_log/meal_scan_request.dart';
-import '../manager/log_bloc.dart';
-import 'log_choice_screen.dart';
-import 'log_page_shell.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../data/models/meal_log/meal_scan_request.dart';
+import '../../manager/log_bloc.dart';
+import '../log_choice_screen.dart';
+import '../../widgets/log_page_shell.dart';
 import 'meal_scan_result_page.dart';
 
 class ImageLogPage extends StatefulWidget {

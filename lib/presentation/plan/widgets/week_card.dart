@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 
 class WeekCard extends StatelessWidget {
@@ -18,12 +18,14 @@ class WeekCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark?Colors.black45:Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -60,20 +62,20 @@ class WeekCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Week $weekNumber',
-                  style: const TextStyle(
+                  '${'week_card.week'.tr()} $weekNumber',
+                  style:  TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A2E),
+                    color:isDark?Colors.white: Color(0xFF1A1A2E),
                     fontFamily: AppConstants.fontRegular,
                   ),
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  '$dayCount days',
-                  style: const TextStyle(
+                  '$dayCount ${'week_card.days'.tr()}',
+                  style:  TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF9CA3AF),
+                    color:isDark?Colors.white: Color(0xFF9CA3AF),
                     fontFamily: AppConstants.fontRegular,
                   ),
                 ),
@@ -81,9 +83,9 @@ class WeekCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     dateRange,
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontSize: 10,
-                      color: Color(0xFFB0B7C3),
+                      color:isDark?Colors.white: Color(0xFFB0B7C3),
                       fontFamily: AppConstants.fontRegular,
                     ),
                     maxLines: 1,

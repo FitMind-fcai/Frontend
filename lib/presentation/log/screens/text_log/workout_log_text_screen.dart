@@ -2,13 +2,13 @@ import 'package:flutter/material.dart' hide SearchBar;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../data/models/meal_log/excersise_search_result.dart';
-import '../../../data/models/save_log_request.dart';
-import '../manager/log_bloc.dart';
-import '../widgets/text_log_shared_widgets.dart';
-import 'log_choice_screen.dart';
-import 'log_page_shell.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../data/models/meal_log/excersise_search_result.dart';
+import '../../../../data/models/save_log_request.dart';
+import '../../manager/log_bloc.dart';
+import '../../widgets/text_log_shared_widgets.dart';
+import '../log_choice_screen.dart';
+import '../../widgets/log_page_shell.dart';
 
 class TextLogWorkoutPage extends StatefulWidget {
   const TextLogWorkoutPage({super.key});

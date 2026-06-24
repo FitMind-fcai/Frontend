@@ -1,12 +1,12 @@
 import 'package:fitmind/core/constants/app_constants.dart';
-import 'package:fitmind/presentation/assessment/screens/assessment_screen.dart';
 import 'package:fitmind/presentation/plan/screens/plan_screen.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../data/data_sources/local/auth_local_data_source.dart';
 import '../../../data/models/user_model.dart';
+import '../../notifications/manager/notification_bloc.dart';
+import '../../notifications/screens/notifications_screen.dart';
 
 class HomeAppBar extends StatefulWidget {
   const HomeAppBar();
@@ -23,6 +23,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
   void initState() {
     super.initState();
     _loadUser();
+    context.read<NotificationBloc>().add(const LoadCoachingMessagesEvent());
   }
 
   Future<void> _loadUser() async {
@@ -37,6 +38,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = context.locale.languageCode == 'ar'; // Check if the current locale is Arabic (RTL)
     final now = DateTime.now();
     final months = [
       'JAN',
@@ -52,8 +54,10 @@ class _HomeAppBarState extends State<HomeAppBar> {
       'NOV',
       'DEC'
     ];
-    final dateLabel = '${months[now.month - 1]} ${now.day}, ${now.year}';
-
+    final dateLabel = DateFormat(
+      'home_app_bar.date_format'.tr(),
+      context.locale.languageCode,
+    ).format(now);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
@@ -97,43 +101,64 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 ],
               ),
               // Notification bell
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.white10,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: const Icon(Icons.notifications_rounded,
-                        color: Colors.white, size: 22),
-                  ),
-                  Positioned(
-                    top: -4,
-                    right: -4,
-                    child: Container(
-                      width: 18,
-                      height: 18,
-                      decoration: BoxDecoration(
-                        color: AppConstants.primaryColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          '8',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.bold,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const CoachingMessagesScreen()),
+                  );
+                },
+                child: BlocBuilder<NotificationBloc, NotificationState>(
+                  builder: (context, state) {
+                    final unreadCount =
+                        state is CoachingMessagesLoaded ? state.unreadCount : 0;
+
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(14),
                           ),
+                          child: const Icon(Icons.notifications_rounded,
+                              color: Colors.white, size: 22),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
+                        if (unreadCount > 0)
+                          Positioned(
+                            top: -4,
+                            right: -4,
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5),
+                              constraints: const BoxConstraints(
+                                minWidth: 18,
+                                minHeight: 18,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppConstants.primaryColor,
+                                borderRadius: BorderRadius.circular(9),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  unreadCount > 99 ? '99+' : '$unreadCount',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontFamily: AppConstants.fontRegular,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -165,7 +190,12 @@ class _HomeAppBarState extends State<HomeAppBar> {
                       : Row(
                           children: [
                             Text(
-                              'Hello, ${_userName ?? 'there'}!',
+                              'home_app_bar.greeting'.tr(
+                                namedArgs: {
+                                  'name': _userName ??
+                                      'home_app_bar.fallback_name'.tr(),
+                                },
+                              ),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -175,21 +205,23 @@ class _HomeAppBarState extends State<HomeAppBar> {
                             ),
                             AppConstants.horizontalSpaceXXL,
                             AppConstants.horizontalSpaceXL,
-
-
-
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const PlanSelectionScreen()),
+                                  MaterialPageRoute(
+                                      builder: (_) =>
+                                          const PlanSelectionScreen()),
                                 );
                               },
                               child: SizedBox(
                                 width: 24,
                                 height: 24,
-                                child: Image.asset(
-                                    "assets/images/Monotone arrow right.png"),
+                                child: Transform.flip(
+                                  flipX: isRtl, // Flip the arrow horizontally if the locale is RTL
+                                  child: Image.asset(
+                                      "assets/images/Monotone arrow right.png"),
+                                ),
                               ),
                             ),
                           ],
@@ -200,8 +232,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                       _BadgeChip(
                         icon: Icons.add,
                         iconColor: const Color(0xFFFF6B35),
-                        label: '88% Healthy',
-                        textColor: Colors.white70,
+                        label: 'home_app_bar.healthy_score'.tr( namedArgs: { 'value': '88', }, ),                        textColor: Colors.white70,
                       ),
                       const SizedBox(width: 8),
                       const Text('•',
@@ -211,8 +242,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                       _BadgeChip(
                         icon: Icons.star_rounded,
                         iconColor: const Color(0xFF4A90E2),
-                        label: 'Pro',
-                        textColor: Colors.white70,
+                        label: 'home_app_bar.pro'.tr(),                        textColor: Colors.white70,
                       ),
                     ],
                   ),

@@ -1,16 +1,17 @@
 // lib/presentation/log/screens/voice_log_page.dart
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:fitmind/presentation/log/screens/voice_log/voice_workout_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../core/constants/app_constants.dart';
-import '../manager/log_bloc.dart';
-import 'log_choice_screen.dart';
-import 'log_page_shell.dart';
-import 'log_voice_result_screen.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../manager/log_bloc.dart';
+import '../log_choice_screen.dart';
+import '../../widgets/log_page_shell.dart';
+import 'voice_meal_result_screen.dart';
 
 class VoiceLogPage extends StatefulWidget {
   final LogType type;
@@ -140,7 +141,6 @@ class _VoiceLogPageState extends State<VoiceLogPage>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colorScheme = Theme.of(context).colorScheme;
     return BlocListener<LogBloc, LogState>(
       listener: (context, state) {
         if (state is VoiceMealScanSuccess) {

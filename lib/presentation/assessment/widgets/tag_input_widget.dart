@@ -66,10 +66,12 @@ class _TagInputWidgetState extends State<TagInputWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       constraints: const BoxConstraints(maxWidth: 500),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark?colorScheme.surface:Colors.white,
         border: Border.all(color: Colors.orange[400]!, width: 2),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [

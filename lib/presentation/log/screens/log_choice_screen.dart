@@ -2,16 +2,15 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fitmind/presentation/log/screens/log_history/log_history_screen.dart';
 
-import 'package:fitmind/presentation/log/screens/text_log_meal.dart';
-import 'package:fitmind/presentation/log/screens/voice_log.dart';
-import 'package:fitmind/presentation/log/screens/workout_log_text_screen.dart';
+import 'package:fitmind/presentation/log/screens/voice_log/voice_log.dart';
+import 'package:fitmind/presentation/log/screens/text_log/workout_log_text_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/app_constants.dart';
-import 'image_log_meal.dart';
-import 'meal_text_log_screen.dart';
+import 'image_log/image_log_meal.dart';
+import 'text_log/meal_text_log_screen.dart';
 
 enum LogType { workout, meal }
 
@@ -140,7 +139,7 @@ class _LogEntryPageState extends State<LogEntryPage>
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 16, 16, 0),
       child: Row(
         children: [
           GestureDetector(
@@ -182,7 +181,7 @@ class _LogEntryPageState extends State<LogEntryPage>
                 MaterialPageRoute(builder: (_) => LogHistoryScreen()),
               );
               },
-            child: Text("My Logs",style: TextStyle(
+            child: Text('log_history.title'.tr(),style: TextStyle(
               fontFamily: AppConstants.fontRegular,
               fontSize: 16,
               fontWeight: AppConstants.extraBold,
@@ -233,22 +232,23 @@ class _LogEntryPageState extends State<LogEntryPage>
     final colorScheme = Theme.of(context).colorScheme;
     final methods = [
       (
-        LogMethod.voice,
-        Icons.mic_rounded,
-        'log_entry.method_voice'.tr(),
-        'log_entry.method_voice_subtitle'.tr()
+      LogMethod.voice,
+      Icons.mic_rounded,
+      'log_entry.method_voice'.tr(),
+      'log_entry.method_voice_subtitle'.tr()
       ),
-      (
+      if (_selectedType != LogType.workout)
+        (
         LogMethod.image,
         Icons.camera_alt_rounded,
         'log_entry.method_image'.tr(),
         'log_entry.method_image_subtitle'.tr()
-      ),
+        ),
       (
-        LogMethod.text,
-        Icons.edit_rounded,
-        'log_entry.method_text'.tr(),
-        'log_entry.method_text_subtitle'.tr()
+      LogMethod.text,
+      Icons.edit_rounded,
+      'log_entry.method_text'.tr(),
+      'log_entry.method_text_subtitle'.tr()
       ),
     ];
     return Column(

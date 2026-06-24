@@ -1,7 +1,7 @@
 import 'package:fitmind/presentation/plan/widgets/week_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/plan/workout_plan_result.dart';
 import '../screens/my_plans/workout_week_days_screen.dart';
@@ -41,26 +41,27 @@ class WorkoutPlanBody extends StatelessWidget {
   String _fmt(DateTime d) => '${d.day} ${_monthAbbr(d.month)} ${d.year}';
 
   String _monthAbbr(int m) => const [
-    '',
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ][m];
+        '',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ][m];
 
   @override
   Widget build(BuildContext context) {
     final weeks = _groupByWeek(plan.workoutDays);
     final sortedWeeks = weeks.keys.toList()..sort();
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
       child: Column(
@@ -68,12 +69,12 @@ class WorkoutPlanBody extends StatelessWidget {
         children: [
           _WorkoutPlanHeaderCard(plan: plan),
           const SizedBox(height: 28),
-          const Text(
-            'Weeks',
+          Text(
+            'plan.weeks'.tr(),
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF1A1A2E),
+              color: isDark ? Colors.white : Color(0xFF1A1A2E),
               fontFamily: AppConstants.fontRegular,
             ),
           ),
@@ -152,11 +153,11 @@ class _WorkoutPlanHeaderCard extends StatelessWidget {
               color: AppConstants.primaryColor.withOpacity(0.25),
               borderRadius: BorderRadius.circular(8),
               border:
-              Border.all(color: AppConstants.primaryColor.withOpacity(0.5)),
+                  Border.all(color: AppConstants.primaryColor.withOpacity(0.5)),
             ),
-            child: const Text(
-              'ACTIVE PLAN',
-              style: TextStyle(
+            child: Text(
+              'plan.active_plan'.tr(),
+              style: const TextStyle(
                 color: Colors.white70,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -167,7 +168,7 @@ class _WorkoutPlanHeaderCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            plan.planName.isNotEmpty ? plan.planName : 'Workout Plan',
+            plan.planName.isNotEmpty ? plan.planName : 'plan.workout_plan'.tr(),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 22,
@@ -197,13 +198,14 @@ class _WorkoutPlanHeaderCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               MacroPill(
-                label: '${plan.estimatedDurationPerSession} min',
+                label:
+                    '${plan.estimatedDurationPerSession} ${'common.min'.tr()}',
                 icon: Icons.timer_rounded,
                 color: const Color(0xFF3B82F6),
               ),
               const SizedBox(width: 8),
               MacroPill(
-                label: '${plan.workoutDays.length} days',
+                label: '${plan.workoutDays.length} ${'plan.days'.tr()}',
                 icon: Icons.calendar_today_rounded,
                 color: const Color(0xFF10B981),
               ),

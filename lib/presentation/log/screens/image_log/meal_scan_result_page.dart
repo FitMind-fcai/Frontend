@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../data/models/meal_log/meal_scan_result.dart';
-import '../../../data/models/save_log_request.dart';
-import '../manager/log_bloc.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../data/models/meal_log/meal_scan_result.dart';
+import '../../../../data/models/save_log_request.dart';
+import '../../manager/log_bloc.dart';
 
 // ── Data class: a user's selection of one matched food + servings ─────────────
 

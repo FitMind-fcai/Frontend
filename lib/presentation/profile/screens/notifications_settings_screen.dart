@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/notifications_prefernces_model.dart';
 import '../../notifications/manager/notification_bloc.dart';
@@ -55,8 +55,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       coachingDailyHour: _coachingDailyHour,
     );
     context.read<NotificationBloc>().add(
-      UpdateNotificationPreferencesEvent(prefs),
-    );
+          UpdateNotificationPreferencesEvent(prefs),
+        );
   }
 
   @override
@@ -77,7 +77,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         elevation: 0,
         leading: BackButton(color: isDark ? Colors.white : Colors.black),
         title: Text(
-          'Notification Settings',
+          'notification_settings.title'.tr(),
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
@@ -92,9 +92,11 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
             setState(() => _populateFromPrefs(state.prefs));
           }
           if (state is NotificationPreferencesSaved) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Settings saved!')),
-            );
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                'notification_settings.settings_saved'.tr(),
+              ),
+            ));
           }
           if (state is NotificationError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -114,12 +116,13 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader("Reminders", isDark),
+                    _buildSectionHeader(
+                        'notification_settings.section_reminders'.tr(), isDark),
                     _SettingsGroup(
                       children: [
                         _SettingsTile(
                           icon: Icons.restaurant_menu_outlined,
-                          label: 'Meal Reminders',
+                          label: 'notification_settings.meal_reminders'.tr(),
                           onTap: () {},
                           trailing: _AppToggle(
                             value: _mealReminders,
@@ -129,7 +132,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                         ),
                         _SettingsTile(
                           icon: Icons.fitness_center_outlined,
-                          label: 'Workout Reminders',
+                          label: 'notification_settings.workout_reminders'.tr(),
                           onTap: () {},
                           trailing: _AppToggle(
                             value: _workoutReminders,
@@ -139,7 +142,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                         ),
                         _SettingsTile(
                           icon: Icons.water_drop_outlined,
-                          label: 'Hydration Reminders',
+                          label:
+                              'notification_settings.hydration_reminders'.tr(),
                           onTap: () {},
                           trailing: _AppToggle(
                             value: _hydrationReminders,
@@ -149,7 +153,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                         ),
                         _SettingsTile(
                           icon: Icons.bedtime_outlined,
-                          label: 'Sleep Reminders',
+                          label: 'notification_settings.sleep_reminders'.tr(),
                           onTap: () {},
                           trailing: _AppToggle(
                             value: _sleepReminders,
@@ -160,12 +164,14 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    _buildSectionHeader("AI Coach", isDark),
+                    _buildSectionHeader(
+                        'notification_settings.section_ai_coach'.tr(), isDark),
                     _SettingsGroup(
                       children: [
                         _SettingsTile(
                           icon: Icons.face_retouching_natural,
-                          label: 'AI Coach Notifications',
+                          label: 'notification_settings.ai_coach_notifications'
+                              .tr(),
                           onTap: () {},
                           trailing: _AppToggle(
                             value: _coachingReminders,
@@ -189,25 +195,26 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                     child: ElevatedButton(
                       onPressed: _onSave,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
+                        backgroundColor: isDark?AppConstants.primaryColor:Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                         elevation: 0,
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Save Settings",
-                            style: TextStyle(
+                            'notification_settings.save_settings'.tr(),
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: 8),
-                          Icon(Icons.check, color: Colors.white, size: 20),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.check,
+                              color: Colors.white, size: 20),
                         ],
                       ),
                     ),
@@ -246,6 +253,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
 class _SettingsGroup extends StatelessWidget {
   final List<Widget> children;
+
   const _SettingsGroup({required this.children});
 
   @override
@@ -288,10 +296,13 @@ class _SettingsTile extends StatelessWidget {
                   width: 34,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
+                    color: isDark
+                        ? colorScheme.surfaceContainerHighest
+                        : Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(icon, size: 18, color: isDark ? Colors.white : Colors.black),
+                  child: Icon(icon,
+                      size: 18, color: isDark ? Colors.white : Colors.black),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -325,6 +336,7 @@ class _SettingsTile extends StatelessWidget {
 class _AppToggle extends StatefulWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
+
   const _AppToggle({required this.value, required this.onChanged});
 
   @override

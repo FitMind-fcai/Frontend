@@ -28,3 +28,26 @@ class NotificationError extends NotificationState {
   @override
   List<Object?> get props => [message];
 }
+class CoachingMessagesLoaded extends NotificationState {
+  final List<CoachingMessageModel> messages;
+  final int unreadCount;
+  const CoachingMessagesLoaded(this.messages, this.unreadCount);
+
+  @override
+  List<Object?> get props => [messages, unreadCount];
+}
+
+class CoachingMessagesLoading extends NotificationState {
+  const CoachingMessagesLoading();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class CoachingMessageActionError extends NotificationState {
+  final String message;
+  const CoachingMessageActionError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

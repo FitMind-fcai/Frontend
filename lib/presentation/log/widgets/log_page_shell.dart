@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../../../core/constants/app_constants.dart';
-import 'log_choice_screen.dart';
+import '../screens/log_choice_screen.dart';
 
 class LogPageShell extends StatelessWidget {
   final LogType type;

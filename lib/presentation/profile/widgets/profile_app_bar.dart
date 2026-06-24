@@ -67,16 +67,6 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
                 padding: const EdgeInsets.all(8.0),
                 child: Stack(
                   children: [
-                    // ── Edit / pencil — top LEFT ─────────────────────
-                    Positioned(
-                      bottom: 2,
-                      left: 16,
-                      child: _GlassIconButton(
-                        icon: Icons.edit_rounded,
-                        onTap: () {},
-                      ),
-                    ),
-                    // ── Settings / gear — top RIGHT ──────────────────
                     Positioned(
                       bottom: 2,
                       right: 16,

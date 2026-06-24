@@ -65,7 +65,8 @@
     "reset_password": "إعادة تعيين كلمة المرور",
     "reset_password_subtitle": "أدخل كلمة المرور الجديدة أدناه.",
     "new_password_label": " كلمة المرور الجديدة",
-    "password_reset_success": "تم إعادة تعيين كلمة المرور بنجاح"
+    "password_reset_success": "تم إعادة تعيين كلمة المرور بنجاح",
+    "verification_email_sent": "تم إرسال رسالة تأكيد البريد الإلكتروني! يرجى التحقق من بريدك الوارد."
   },
   "assessment": {
     "title": "التقييم",
@@ -670,5 +671,128 @@
     "sleep_subtitle": "الساعات والجودة",
     "hydration_label": "سجلات شرب الماء",
     "hydration_subtitle": "كمية الماء المستهلكة"
+  },
+  "notifications": {
+    "title": "رسائل التدريب",
+    "mark_all_read": "تحديد الكل كمقروء",
+    "filter_all": "الكل",
+    "filter_daily": "يومي",
+    "filter_weekly": "أسبوعي",
+    "filter_alert": "تنبيه",
+    "empty_title": "لا توجد رسائل حتى الآن",
+    "retry": "إعادة المحاولة"
+  },
+  "today_workout": {
+    "title": "تمرين اليوم",
+    "no_plan_today": "لا يوجد تمرين مجدول لهذا اليوم."
+  },
+  "account_settings": {
+    "title": "إعدادات الحساب",
+    "section_general": "عام",
+    "section_security_privacy": "الأمان والخصوصية",
+    "section_help_support": "المساعدة والدعم",
+    "section_danger_zone": "منطقة الخطر",
+    "section_log_out": "تسجيل الخروج",
+    "badge_beta": "تجريبي",
+    "badge_warning": "تحذير",
+    "notifications": "الإشعارات",
+    "personal_information": "المعلومات الشخصية",
+    "dark_mode": "الوضع الداكن",
+    "privacy_policy": "سياسة الخصوصية",
+    "about_us": "من نحن",
+    "help_center": "مركز المساعدة",
+    "submit_feedback": "إرسال ملاحظات",
+    "sign_out": "تسجيل الخروج",
+    "close_account": "إغلاق الحساب"
+  },
+  "notification_settings": {
+    "title": "إعدادات الإشعارات",
+    "section_reminders": "التذكيرات",
+    "section_ai_coach": "المدرب الذكي",
+    "meal_reminders": "تذكيرات الوجبات",
+    "workout_reminders": "تذكيرات التمارين",
+    "hydration_reminders": "تذكيرات شرب الماء",
+    "sleep_reminders": "تذكيرات النوم",
+    "ai_coach_notifications": "إشعارات المدرب الذكي",
+    "save_settings": "حفظ الإعدادات",
+    "settings_saved": "تم حفظ الإعدادات!"
+  },
+  "profile_screen": {
+    "current_age": "العمر الحالي",
+    "weight": "الوزن",
+    "daily_intake": "السعرات اليومية",
+    "age_value": "{value} سنة",
+    "weight_value": "{value} كجم",
+    "daily_intake_value": "{value} سعرة"
+  },
+  "home_app_bar": {
+    "greeting": "مرحباً، {name}!",
+    "fallback_name": "صديقي",
+
+    "healthy_score": "{value}% صحي",
+    "pro": "احترافي",
+
+    "date_format": "d MMM yyyy"
+  },
+  "personal_info": {
+    "age": "العمر",
+    "height": "الطول",
+    "weight": "الوزن",
+    "gender": "الجنس",
+    "fitness_goal": "الهدف الرياضي",
+    "activity_level": "مستوى النشاط",
+    "dietary_preferences": "التفضيلات الغذائية",
+    "medical_conditions": "الحالات الطبية",
+    "allergies": "الحساسية",
+    "injuries": "الإصابات",
+    "medications": "الأدوية",
+    "save_settings": "حفظ الإعدادات",
+    "profile_updated": "تم تحديث الملف الشخصي بنجاح",
+    "centimeters": "سنتيمتر",
+    "kilograms": "كيلوجرام",
+
+    "gender_male": "ذكر",
+    "gender_female": "أنثى",
+
+    "goal_lose_weight": "إنقاص الوزن",
+    "goal_maintain_weight": "الحفاظ على الوزن",
+    "goal_build_muscle": "بناء العضلات",
+
+    "activity_sedentary": "قليل الحركة",
+    "activity_lightly_active": "نشاط خفيف",
+    "activity_moderately_active": "نشاط متوسط",
+    "activity_very_active": "نشاط مرتفع",
+    "activity_extra_active": "نشاط مرتفع جداً",
+    "title": "المعلومات الشخصية"
+
+  },
+  "meal_card": {
+    "protein": "بروتين",
+    "fat": "دهون",
+    "kcal": "سعرة",
+    "min": "دقيقة"
+  },
+  "workout_card": {
+    "minutes_short": "د",
+    "exercises": "تمارين",
+    "logged": "مسجل",
+    "generate_plan": "أنشئ خطة تدريب للبدء"
+  },
+  "week_card": {
+    "week": "الأسبوع",
+    "days": "أيام"
+  },
+  "plan": {
+    "weeks": "الأسابيع",
+    "week": "الأسبوع",
+    "days": "أيام",
+    "active_plan": "الخطة النشطة",
+    "workout_plan": "خطة التمرين",
+    "nutrition_plan": "الخطة الغذائية"
+
+  },
+  "common": {
+    "min": "دقيقة",
+    "loading": "جاري التحميل..."
   }
 }

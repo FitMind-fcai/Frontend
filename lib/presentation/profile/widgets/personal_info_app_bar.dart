@@ -1,6 +1,6 @@
 import 'package:fitmind/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../data/data_sources/local/auth_local_data_source.dart';
 import '../../../data/models/user_model.dart';
 import '../screens/account_settings_screen.dart';
@@ -70,9 +70,9 @@ class _InfoAppBarState extends State<InfoAppBar> {
                         ),
                         const SizedBox(width: 40),
                         // ── Title Text ──────────────────────────────────────
-                        const Text(
-                          'Personal Information',
-                          style: TextStyle(
+                        Text(
+                          'personal_info.title'.tr(),
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,

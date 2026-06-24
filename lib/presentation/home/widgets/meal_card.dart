@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MealCard extends StatelessWidget {
   final String title;
@@ -24,13 +25,14 @@ class MealCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final proteinLabel = proteinG != null ? '${proteinG!.toStringAsFixed(0)}g' : '25g';
+    final proteinLabel =
+        proteinG != null ? '${proteinG!.toStringAsFixed(0)}g' : '25g';
     final fatLabel = fatsG != null ? '${fatsG!.toStringAsFixed(0)}g' : '17g';
+    final isArabic = context.locale.languageCode == 'ar';
 
     return Container(
       width: 280,
       height: 220,
-      margin: const EdgeInsets.only(right: 15),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
@@ -43,19 +45,22 @@ class MealCard extends StatelessWidget {
             blurRadius: 10,
           ),
         ],
-        image:  DecorationImage(
-          image: isDark?const AssetImage('assets/images/darkmeal.png'):const AssetImage('assets/images/meal_image.png'),
+        image: DecorationImage(
+          image: isDark
+              ? const AssetImage('assets/images/darkmeal.png')
+              : const AssetImage('assets/images/meal_image.png'),
           fit: BoxFit.cover,
         ),
       ),
       child: Stack(
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
-              _buildMacroTag(proteinLabel, 'Protein', isDark),
+              _buildMacroTag(proteinLabel, 'meal_card.protein'.tr(), isDark),
               const SizedBox(height: 8),
-              _buildMacroTag(fatLabel, 'Fat', isDark),
+              _buildMacroTag(fatLabel, 'meal_card.fat'.tr(), isDark),
               const Spacer(),
               Text(
                 title,
@@ -97,7 +102,6 @@ class MealCard extends StatelessWidget {
               ),
             ],
           ),
-
         ],
       ),
     );

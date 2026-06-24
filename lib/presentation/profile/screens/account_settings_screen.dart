@@ -8,6 +8,7 @@ import 'package:fitmind/presentation/profile/screens/personal_information_screen
 import 'package:fitmind/presentation/profile/screens/privacy_policy_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../authentication/manager/auth_bloc.dart';
 import '../../onboarding/screens/welcome_screen.dart';
@@ -41,27 +42,25 @@ class AccountSettingsPage extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  _SectionHeader(title: 'General'),
+                  _SectionHeader(title: 'account_settings.section_general'.tr(),),
                   _SettingsGroup(
                     children: [
                       _SettingsTile(
                         icon: Icons.notifications_outlined,
-                        label: 'Notifications',
+                        label: 'account_settings.notifications'.tr(),
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => NotificationSettingsPage()),
                         ),
                       ),
                       _SettingsTile(
                         icon: Icons.person_outline_rounded,
-                        label: 'Personal Information',
-                        onTap: () => Navigator.of(context).push(
+                        label: 'account_settings.personal_information'.tr(),                        onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => PersonalInfoPage()),
                         ),
                       ),
                       _SettingsTile(
                         icon: Icons.dark_mode_outlined,
-                        label: 'Dark Mode',
-                        onTap: () {},
+                        label: 'account_settings.dark_mode'.tr(),                        onTap: () {},
                         trailing: _AppToggle(value: false, onChanged: (_) {}),
                       ),
                     ],
@@ -70,16 +69,14 @@ class AccountSettingsPage extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   _SectionHeader(
-                    title: 'Security & Privacy',
-                    badge: 'Beta',
+                    title: 'account_settings.section_security_privacy'.tr(), badge: 'account_settings.badge_beta'.tr(),
                     badgeColor: const Color(0xFF3A7BFF),
                   ),
                   _SettingsGroup(
                     children: [
                       _SettingsTile(
                         icon: Icons.shield_outlined,
-                        label: 'Privacy Policy',
-                        onTap: () => Navigator.of(context).push(
+                        label: 'account_settings.privacy_policy'.tr(),                        onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => PrivacyPolicyPage()),
                         ),
                         isLast: true,
@@ -89,27 +86,24 @@ class AccountSettingsPage extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  _SectionHeader(title: 'Help & Support'),
+                  _SectionHeader(title: 'account_settings.section_help_support'.tr(),),
                   _SettingsGroup(
                     children: [
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
-                        label: 'About Us',
-                        onTap: () => Navigator.of(context).push(
+                        label: 'account_settings.submit_feedback'.tr(),                        onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => AboutUsPage()),
                         ),
                       ),
                       _SettingsTile(
                         icon: Icons.help_outline_rounded,
-                        label: 'Help Center',
-                        onTap: () => Navigator.of(context).push(
+                        label: 'account_settings.help_center'.tr(),                        onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => HelpCenterPage()),
                         ),
                       ),
                       _SettingsTile(
                         icon: Icons.feedback_outlined,
-                        label: 'Submit Feedback',
-                        onTap: () => Navigator.of(context).push(
+                        label:'account_settings.close_account'.tr(),                        onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => FeedbackPage()),
                         ),
                         isLast: true,
@@ -120,8 +114,7 @@ class AccountSettingsPage extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   _SectionHeader(
-                    title: 'Danger Zone',
-                    badge: 'Warning',
+                    title: 'account_settings.section_danger_zone'.tr(), badge: 'account_settings.badge_warning'.tr(),
                     badgeColor: Colors.red,
                     trailingIcon: Icons.warning_amber_rounded,
                     trailingIconColor: const Color(0xFFFF3B30),
@@ -130,13 +123,12 @@ class AccountSettingsPage extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  _SectionHeader(title: 'Log Out'),
+                  _SectionHeader(title: 'account_settings.section_log_out'.tr()),
                   _SettingsGroup(
                     children: [
                       _SettingsTile(
                         icon: Icons.logout_rounded,
-                        label: 'Sign Out',
-                        onTap: () {
+                        label: 'account_settings.sign_out'.tr(),                        onTap: () {
                           context.read<AuthBloc>().add(DeleteUserEvent());
                         },
                         isLast: true,
@@ -324,6 +316,7 @@ class _SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
+    final isRtl = context.locale.languageCode == 'ar'; // Check if the current locale is Arabic (RTL)
 
     final tileBg = isDark ? Colors.grey[800]! : Colors.grey[200]!;
     final iconBg = isDark ? colorScheme.surfaceContainerHighest : Colors.white;
@@ -364,14 +357,17 @@ class _SettingsTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                trailing ??
-                    Image.asset(
-                      "assets/images/Monotone arrow right.png",
-                      width: 20,
-                      height: 20,
-                      color: arrowColor,
-                      colorBlendMode: BlendMode.srcIn,
-                    ),
+                Transform.flip(
+                  flipX: isRtl, // Flip the arrow horizontally if the locale is RTL
+                  child: trailing ??
+                      Image.asset(
+                        "assets/images/Monotone arrow right.png",
+                        width: 20,
+                        height: 20,
+                        color: arrowColor,
+                        colorBlendMode: BlendMode.srcIn,
+                      ),
+                ),
               ],
             ),
           ),

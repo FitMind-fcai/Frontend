@@ -12,9 +12,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/home/next_meal_response.dart';
-import '../../log/screens/hydration_log_screen.dart';
-import '../../log/screens/sleep_log_screen.dart';
-import '../../log/screens/weight_log_screen.dart';
+import '../../log/screens/misc_log/hydration_log_screen.dart';
+import '../../log/screens/misc_log/sleep_log_screen.dart';
+import '../../log/screens/misc_log/weight_log_screen.dart';
 import '../../plan/screens/my_plans/todays_meals_screen.dart';
 import '../manager/home_bloc.dart';
 import '../widgets/fitness_metric_card.dart';
@@ -82,11 +82,6 @@ class _HomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppConstants.verticalSpaceM,
-
-                    // ── Fitness Metrics header ──────────────────────────────
-                    // NOTE: this Text and the "See All" label below have no
-                    // explicit color, so they already inherit from the active
-                    // theme's textTheme — no change needed here.
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -96,16 +91,6 @@ class _HomePage extends StatelessWidget {
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
                             fontFamily: AppConstants.fontRegular,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'See All',
-                            style: TextStyle(
-                              color: AppConstants.primaryColor,
-                              fontFamily: AppConstants.fontRegular,
-                            ),
                           ),
                         ),
                       ],
@@ -223,15 +208,10 @@ class _HomePage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'See All',
-                            style: TextStyle(color: Colors.orange),
-                          ),
-                        ),
+
                       ],
                     ),
+                    SizedBox(height: 12,),
 
                     if (state is HomeLoading)
                       const _ShimmerBox(height: 240, radius: 25)
@@ -354,13 +334,11 @@ class _MiscLogCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
           // CHANGED: was Colors.white — now follows the theme's card surface.
-          color: colorScheme.surface,
+          color: isDark?Colors.black45:colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              // CHANGED: a black shadow at 4% opacity is invisible on a dark
-              // background and can look like a smudge. Drop it out entirely
-              // in dark mode rather than trying to tune the opacity.
+
               color:
                   isDark ? Colors.transparent : Colors.black.withOpacity(0.04),
               blurRadius: 12,
@@ -444,8 +422,8 @@ class _MealCardRow extends StatelessWidget {
         children: [
           MealCard(
             title: meal.mealName,
-            kcal: '${meal.calories.toInt()}kcal',
-            time: '${totalTime}min',
+            kcal: '${meal.calories.toInt()} ${'meal_card.kcal'.tr()}',
+            time: '$totalTime ${'meal_card.min'.tr()}',
             proteinG: meal.proteinG,
             fatsG: meal.fatsG,
           ),

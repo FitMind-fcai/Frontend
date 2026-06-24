@@ -37,10 +37,6 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // CHANGED: computed once here and reused below — every other color in
-    // this file stays exactly as it was for light mode; isDark only
-    // branches where a literal color would actually break (white-on-dark,
-    // navy text invisible on a dark background, etc).
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -56,9 +52,6 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
         }
       },
       child: Scaffold(
-        // CHANGED: was always const Color(0xFFF5F5F5). Light mode keeps
-        // that exact value; dark mode uses the app's established dark
-        // surface instead of a hardcoded equivalent.
         backgroundColor: isDark ? colorScheme.surface : const Color(0xFFF5F5F5),
         body: SafeArea(
           child: Column(
@@ -130,24 +123,15 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    // CHANGED: was Colors.white — dark mode now uses the
-                    // elevated surface tone so this chip still reads as a
-                    // distinct card against a dark page background.
                     color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
                     borderRadius: BorderRadius.circular(13),
                     border: Border.all(
-                      // CHANGED: was const Color(0xFFEAEAEA) — that border
-                      // is nearly invisible against a dark card, so dark
-                      // mode uses outlineVariant instead.
                       color: isDark ? colorScheme.outlineVariant : const Color(0xFFEAEAEA),
                     ),
                   ),
                   child: Icon(
                     Icons.arrow_back_ios_new_rounded,
                     size: 16,
-                    // CHANGED: was const Color(0xFF1A1A2E) — that navy is
-                    // basically invisible on a dark card, same problem as
-                    // every other "near-black on dark" case fixed so far.
                     color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                   ),
                 ),
@@ -201,12 +185,7 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
   }
 
   void _showDeleteConfirmation(BuildContext context, int planId) {
-    // NOTE: no changes needed inside this dialog. AlertDialog has no
-    // explicit backgroundColor set, so it already pulls from the active
-    // theme automatically, and the title/content Text widgets have no
-    // explicit color either, so they inherit the theme's text color too.
-    // The grey "Cancel" and red "Delete" labels are both legible against
-    // light or dark dialog backgrounds, so they're left as-is.
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(

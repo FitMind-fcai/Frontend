@@ -57,7 +57,6 @@ Future<void> init() async {
   sl.registerLazySingleton(() => NotificationsApiService(sl(), sl()));
   sl.registerLazySingleton<FcmService>(() => FcmService());
 
-
   // Data Sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(sl()));
@@ -75,7 +74,7 @@ Future<void> init() async {
   sl.registerLazySingleton<LogRemoteDataSource>(
       () => LogRemoteDataSourceImpl(sl()));
   sl.registerLazySingleton<NotificationRemoteDataSource>(
-          () => NotificationRemoteDataSourceImpl(sl()));
+      () => NotificationRemoteDataSourceImpl(sl()));
   sl.registerLazySingleton<RecommendationsRemoteDataSource>(
       () => RecommendationsRemoteDataSourceImpl(sl()));
   // Repository
@@ -89,7 +88,7 @@ Future<void> init() async {
   sl.registerLazySingleton<RecommendationsRepository>(
       () => RecommendationsRepositoryImpl(sl()));
   sl.registerLazySingleton<NotificationRepository>(
-          () =>NotificationRepositoryImpl(sl()));
+      () => NotificationRepositoryImpl(sl()));
   // UseCases
   sl.registerLazySingleton(() => SignInUseCase(sl()));
   sl.registerLazySingleton(() => SignUpUseCase(sl()));
@@ -127,22 +126,23 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetMealLogsUseCase(sl()));
   sl.registerLazySingleton(() => GetWorkoutLogsUseCase(sl()));
   sl.registerLazySingleton(() => GetWeightLogsUseCase(sl()));
-  sl.registerLazySingleton(() =>GetHydrationLogsUseCase(sl()));
+  sl.registerLazySingleton(() => GetHydrationLogsUseCase(sl()));
   sl.registerLazySingleton(() => GetSleepLogsUseCase(sl()));
   sl.registerLazySingleton(() => DeleteLogUseCase(sl()));
-
-
 
   sl.registerLazySingleton(() => GetNextMealUseCase(sl()));
   sl.registerLazySingleton(() => GetTodayWorkoutUseCase(sl()));
   sl.registerLazySingleton(() => GetScoreUseCase(sl()));
-
 
   sl.registerLazySingleton(() => GetNotificationPreferencesUseCase(sl()));
   sl.registerLazySingleton(() => DeleteDeviceTokenUseCase(sl()));
   sl.registerLazySingleton(() => UpdateNotificationPreferencesUseCase(sl()));
   sl.registerLazySingleton(() => TriggerReminderUseCase(sl()));
   sl.registerLazySingleton(() => RegisterDeviceTokenUseCase(sl()));
+  sl.registerLazySingleton(() => GetCoachingMessagesUseCase(sl()));
+  sl.registerLazySingleton(() => MarkAllCoachingMessagesReadUseCase(sl()));
+  sl.registerLazySingleton(() => MarkCoachingMessageReadUseCase(sl()));
+  sl.registerLazySingleton(() => DismissCoachingMessageUseCase(sl()));
 
   sl.registerFactory<AuthBloc>(
     () => AuthBloc(
@@ -213,5 +213,12 @@ Future<void> init() async {
       getHydrationLogs: sl(),
       deleteLog: sl()));
 
-  sl.registerFactory(()=>NotificationBloc(getPreferences: sl(), updatePreferences: sl(), triggerReminder: sl()));
+  sl.registerFactory(() => NotificationBloc(
+      getPreferences: sl(),
+      updatePreferences: sl(),
+      triggerReminder: sl(),
+      dismissCoachingMessageUseCase: sl(),
+      getCoachingMessagesUseCase: sl(),
+      markAllCoachingMessagesReadUseCase: sl(),
+      markCoachingMessageReadUseCase: sl()));
 }

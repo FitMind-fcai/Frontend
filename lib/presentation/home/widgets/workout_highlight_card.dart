@@ -1,7 +1,7 @@
 // lib/presentation/home/widgets/workout_highlight_card.dart
 
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/home/next_workout_response.dart';
 
@@ -14,19 +14,22 @@ class WorkoutHighlightCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasPlan = workout?.hasPlan ?? false;
+    final isArabic = context.locale.languageCode == 'ar';
 
     // Derived display values
     final title = hasPlan
         ? (workout!.workoutDayName.isNotEmpty
-        ? workout!.workoutDayName
-        : workout!.focusArea)
+            ? workout!.workoutDayName
+            : workout!.focusArea)
         : '';
 
-    final durationText =
-    hasPlan ? '${workout!.estimatedDurationMinutes}min' : '';
+    final durationText = hasPlan
+        ? '${workout!.estimatedDurationMinutes} ${'workout_card.minutes_short'.tr()}'
+        : '';
 
-    final exerciseCount =
-    hasPlan ? '${workout!.exercises.length} exercises' : '';
+    final exerciseCount = hasPlan
+        ? '${workout!.exercises.length} ${'workout_card.exercises'.tr()}'
+        : '';
 
     final focusLabel = hasPlan ? workout!.focusArea : '';
 
@@ -48,8 +51,11 @@ class WorkoutHighlightCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                mainAxisAlignment:
+                    isArabic ? MainAxisAlignment.end : MainAxisAlignment.start,
                 children: [
-                  const Icon(Icons.access_time, color: Colors.white70, size: 16),
+                  const Icon(Icons.access_time,
+                      color: Colors.white70, size: 16),
                   const SizedBox(width: 4),
                   Text(
                     '$durationText  •  ',
@@ -86,7 +92,7 @@ class WorkoutHighlightCard extends StatelessWidget {
                 children: [
                   Container(
                     padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.white24,
                       borderRadius: BorderRadius.circular(10),
@@ -110,14 +116,14 @@ class WorkoutHighlightCard extends StatelessWidget {
                         color: Colors.green.withOpacity(0.7),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.check_circle,
+                          const Icon(Icons.check_circle,
                               color: Colors.white, size: 12),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Text(
-                            'Logged',
-                            style: TextStyle(
+                            'workout_card.logged'.tr(),
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
                               fontFamily: AppConstants.fontRegular,
@@ -144,7 +150,7 @@ class WorkoutHighlightCard extends StatelessWidget {
                   child: Text(
                     workout!.message.isNotEmpty
                         ? workout!.message
-                        : 'Generate a workout plan to get started',
+                        : 'workout_card.generate_plan'.tr(),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.white,

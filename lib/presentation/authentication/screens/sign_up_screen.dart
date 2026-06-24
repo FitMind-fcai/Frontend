@@ -314,61 +314,77 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       AppConstants.verticalSpaceL,
 
                       // Sign Up Button
-                      Container(
-                        width: double.infinity,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: isFormValid
-                              ? isDark
+                      BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          final isLoading = state is AuthLoading;
+                          return Container(
+                            width: double.infinity,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: isFormValid
+                                  ? isDark
                                   ? AppConstants.primaryColor
                                   : AppConstants.secondaryColor
-                              : isDark
+                                  : isDark
                                   ? Colors.white12
                                   : Colors.grey.shade400,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: TextButton(
-                          onPressed: isFormValid
-                              ? () {
-                                  if (_formKey.currentState!.validate()) {
-                                    context.read<AuthBloc>().add(
-                                          SignUpEvent(
-                                            UserEntity(
-                                              name: nameController.text.trim(),
-                                              email:
-                                                  emailController.text.trim(),
-                                              password: passwordController.text
-                                                  .trim(),
-                                            ),
-                                          ),
-                                        );
-                                  }
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: TextButton(
+                              onPressed: (isFormValid && !isLoading)
+                                  ? () {
+                                if (_formKey.currentState!.validate()) {
+                                  context.read<AuthBloc>().add(
+                                    SignUpEvent(
+                                      UserEntity(
+                                        name: nameController.text
+                                            .trim(),
+                                        email: emailController.text
+                                            .trim(),
+                                        password: passwordController
+                                            .text
+                                            .trim(),
+                                      ),
+                                    ),
+                                  );
                                 }
-                              : null,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'auth.sign_up'.tr(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: AppConstants.fontRegular,
+                              }
+                                  : null,
+                              child: isLoading
+                                  ? SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: Colors.white.withOpacity(0.8),
                                 ),
+                              )
+                                  : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'auth.sign_up'.tr(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: AppConstants.fontRegular,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Transform.flip(
+                                    flipX: isRtl, // Flip the arrow horizontally if the locale is RTL
+                                    child: Image.asset(
+                                      'assets/images/Monotone arrow right.png',
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 12),
-                              Transform.flip(
-                                flipX: isRtl, // Flip the arrow horizontally if the locale is RTL
-                                child: Image.asset(
-                                  'assets/images/Monotone arrow right.png',
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       ),
                       AppConstants.horizontalSpaceXXL,
 

@@ -183,8 +183,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ) async {
     emit(AuthLoading());
     try {
-      await deleteDeviceTokenUseCase(); // remove FCM token first
-      await deleteUserUseCase();
+      final fcmToken = await fcmService.getToken();
+      print('🔔 FCM Token: $fcmToken');
+      if (fcmToken != null) {
+        await deleteDeviceTokenUseCase(fcmToken);
+      }
+      await deleteUserUseCase(); // remove FCM token first
       emit(AuthInitial());
     } catch (e) {
       emit(AuthFailure(e.toString()));

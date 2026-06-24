@@ -1,6 +1,7 @@
+import 'package:fitmind/presentation/plan/widgets/week_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../data/models/plan/nutrition_plan_result.dart';
 import '../screens/my_plans/week_days_screen.dart';
@@ -39,26 +40,27 @@ class PlanBody extends StatelessWidget {
   String _fmt(DateTime d) => '${d.day} ${_monthAbbr(d.month)} ${d.year}';
 
   String _monthAbbr(int m) => const [
-    '',
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ][m];
+        '',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ][m];
 
   @override
   Widget build(BuildContext context) {
     final weeks = _groupByWeek(plan.days);
     final sortedWeeks = weeks.keys.toList()..sort();
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
       child: Column(
@@ -66,12 +68,12 @@ class PlanBody extends StatelessWidget {
         children: [
           _PlanHeaderCard(plan: plan),
           const SizedBox(height: 28),
-          const Text(
-            'Weeks',
+          Text(
+            'plan.weeks'.tr(),
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF1A1A2E),
+              color: isDark ? Colors.white : Color(0xFF1A1A2E),
               fontFamily: AppConstants.fontRegular,
             ),
           ),
@@ -89,7 +91,7 @@ class PlanBody extends StatelessWidget {
             itemBuilder: (context, index) {
               final weekNum = sortedWeeks[index];
               final weekDays = weeks[weekNum]!;
-              return _WeekCard(
+              return WeekCard(
                 weekNumber: weekNum,
                 dayCount: weekDays.length,
                 dateRange: _formatDateRange(weekDays),
@@ -150,11 +152,11 @@ class _PlanHeaderCard extends StatelessWidget {
               color: const Color(0xFF3B82F6).withOpacity(0.25),
               borderRadius: BorderRadius.circular(8),
               border:
-              Border.all(color: const Color(0xFF3B82F6).withOpacity(0.5)),
+                  Border.all(color: const Color(0xFF3B82F6).withOpacity(0.5)),
             ),
-            child: const Text(
-              'ACTIVE PLAN',
-              style: TextStyle(
+            child: Text(
+              'plan.active_plan'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF93C5FD),
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -165,7 +167,7 @@ class _PlanHeaderCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            plan.planName ?? 'Nutrition Plan',
+            plan.planName ?? 'plan.nutrition_plan'.tr(),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 22,
@@ -189,19 +191,19 @@ class _PlanHeaderCard extends StatelessWidget {
           Row(
             children: [
               _MacroPill(
-                label: '${plan.dailyCalories} kcal',
+                label: '${plan.dailyCalories} ${'meal_card.kcal'.tr()}',
                 icon: Icons.local_fire_department_rounded,
                 color: const Color(0xFFF97316),
               ),
               const SizedBox(width: 8),
               _MacroPill(
-                label: '${plan.dailyProteinG}g protein',
+                label:'${plan.dailyProteinG}g ${'meal_card.protein'.tr()}',
                 icon: Icons.fitness_center_rounded,
                 color: const Color(0xFF3B82F6),
               ),
               const SizedBox(width: 8),
               _MacroPill(
-                label: '${plan.days.length} days',
+                label: '${plan.days.length} ${'plan.days'.tr()}',
                 icon: Icons.calendar_today_rounded,
                 color: const Color(0xFF10B981),
               ),
@@ -245,102 +247,6 @@ class _MacroPill extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _WeekCard extends StatelessWidget {
-  final int weekNumber;
-  final int dayCount;
-  final String dateRange;
-  final VoidCallback onTap;
-
-  const _WeekCard({
-    required this.weekNumber,
-    required this.dayCount,
-    required this.dateRange,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppConstants.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    Icons.calendar_view_week_rounded,
-                    size: 18,
-                    color: AppConstants.primaryColor,
-                  ),
-                ),
-                Icon(Icons.chevron_right_rounded,
-                    color: Colors.grey[300], size: 20),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Week $weekNumber',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A2E),
-                    fontFamily: AppConstants.fontRegular,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  '$dayCount days',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF9CA3AF),
-                    fontFamily: AppConstants.fontRegular,
-                  ),
-                ),
-                if (dateRange.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    dateRange,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: Color(0xFFB0B7C3),
-                      fontFamily: AppConstants.fontRegular,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }

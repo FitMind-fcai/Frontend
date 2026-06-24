@@ -33,11 +33,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthLoading) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Signing in...")),
-          );
-        }
         if (state is AuthSuccess) {
           Navigator.pushReplacement(
             context,
@@ -263,15 +258,50 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       AppConstants.verticalSpaceL,
 
-                      CommonButton(
-                        title: 'auth.sign_in'.tr(),
-                        onPressed: () {
-                          context.read<AuthBloc>().add(
-                                SignInEvent(
-                                  emailController.text,
-                                  passwordController.text,
+                      BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          final isLoading = state is AuthLoading;
+                          return SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: ElevatedButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () {
+                                context.read<AuthBloc>().add(
+                                  SignInEvent(
+                                    emailController.text,
+                                    passwordController.text,
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppConstants.primaryColor,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                              ),
+                              child: isLoading
+                                  ? SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: Colors.white.withOpacity(0.8),
                                 ),
-                              );
+                              )
+                                  : Text(
+                                'auth.sign_in'.tr(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppConstants.fontRegular,
+                                ),
+                              ),
+                            ),
+                          );
                         },
                       ),
                       AppConstants.horizontalSpaceXXL,
