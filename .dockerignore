@@ -1,0 +1,12 @@
+build/
+.dart_tool/
+.packages
+.pub/
+android/
+ios/
+macos/
+windows/
+linux/
+test/
+.git/
+*.md
