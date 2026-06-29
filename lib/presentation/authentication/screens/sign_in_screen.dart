@@ -304,7 +304,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           );
                         },
                       ),
-                      AppConstants.horizontalSpaceXXL,
+                      AppConstants.verticalSpaceM,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -320,7 +320,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => Get.off(() => SignUpScreen()),
+                            onTap: () => Get.to(() => SignUpScreen()),
                             child: Text(
                               'auth.sign_up'.tr(),
                               style: TextStyle(

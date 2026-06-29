@@ -45,16 +45,22 @@ class MealScanResultPage extends StatefulWidget {
 
 class _MealScanResultPageState extends State<MealScanResultPage> {
   static const Color _accent = Color(0xFF3B82F6);
-  static const Color _surface = Colors.white;
-  static const Color _bg = Color(0xFFF8F9FA);
-  static const Color _border = Color(0xFFEAEAEA);
-  static const Color _textPrimary = Color(0xFF1A1A2E);
-  static const Color _textMuted = Color(0xFF9CA3AF);
+
+  bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+  Color get _bg =>
+      _isDark ? const Color(0xFF0F0F1A) : const Color(0xFFF8F9FA);
+  Color get _surface =>
+      _isDark ? const Color(0xFF1C1C2E) : Colors.white;
+  Color get _border =>
+      _isDark ? const Color(0xFF2E2E45) : const Color(0xFFEAEAEA);
+  Color get _textPrimary =>
+      _isDark ? Colors.white : const Color(0xFF1A1A2E);
+  Color get _textMuted => const Color(0xFF9CA3AF);
+
+  // ── Computed totals ────────────────────────────────────────────────────────
 
   // food.id → _SelectedFood (preserves insertion order via LinkedHashMap)
   final Map<int, _SelectedFood> _selections = {};
-
-  // ── Computed totals ────────────────────────────────────────────────────────
 
   double get _totalCalories =>
       _selections.values.fold(0, (s, f) => s + f.calories);
@@ -86,7 +92,7 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
   // ── Save ───────────────────────────────────────────────────────────────────
 
   void _onSave() {
-    final logDate = DateFormat('yyyy-MM-dd',"en").format(DateTime.now());
+    final logDate = DateFormat('yyyy-MM-dd', "en").format(DateTime.now());
     final mealType = widget.scanResult.mealType.isNotEmpty
         ? widget.scanResult.mealType
         : 'LUNCH';
@@ -94,7 +100,6 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
     List<MealLogEntry> mealEntries;
 
     if (_selections.isEmpty) {
-      // No catalog match chosen → save AI aggregate as one raw entry
       mealEntries = [
         MealLogEntry(
           mealType: mealType,
@@ -108,7 +113,6 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
         ),
       ];
     } else {
-      // Save each selected food as its own entry
       mealEntries = _selections.values.map((sel) {
         return MealLogEntry(
           centralFoodId: sel.food.id,
@@ -136,7 +140,7 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
     padding: const EdgeInsets.only(bottom: 12),
     child: Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w700,
         color: _textPrimary,
@@ -156,7 +160,8 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
               content: Text(
                 _selections.isEmpty
                     ? 'meal_scan_result.meal_logged_singular'.tr()
-                    : 'meal_scan_result.meal_logged_plural'.tr(namedArgs: {'count': '${_selections.length}'}),
+                    : 'meal_scan_result.meal_logged_plural'.tr(
+                    namedArgs: {'count': '${_selections.length}'}),
               ),
               backgroundColor: _accent,
               behavior: SnackBarBehavior.floating,
@@ -181,13 +186,13 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
           backgroundColor: _surface,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
+            icon: Icon(Icons.arrow_back_ios_new_rounded,
                 color: _textPrimary, size: 20),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
             'meal_scan_result.title'.tr(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: _textPrimary,
@@ -210,7 +215,8 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
 
                     // Detected items
                     if (widget.scanResult.foodItems.isNotEmpty) ...[
-                      _sectionTitle('meal_scan_result.section_detected_items'.tr()),
+                      _sectionTitle(
+                          'meal_scan_result.section_detected_items'.tr()),
                       ...widget.scanResult.foodItems
                           .map((item) => _FoodItemCard(item: item)),
                       const SizedBox(height: 24),
@@ -218,11 +224,12 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
 
                     // Matched foods — multi-select
                     if (widget.scanResult.matchedFoods.isNotEmpty) ...[
-                      _sectionTitle('meal_scan_result.section_catalog_matches'.tr()),
+                      _sectionTitle(
+                          'meal_scan_result.section_catalog_matches'.tr()),
                       Text(
                         'meal_scan_result.catalog_matches_hint'.tr(),
-                        style:
-                        TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                        style: TextStyle(
+                            fontSize: 13, color: _textMuted),
                       ),
                       const SizedBox(height: 12),
                       ...widget.scanResult.matchedFoods.map(
@@ -252,7 +259,8 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
                     // Health notes
                     if (widget.scanResult.healthNotes.isNotEmpty) ...[
                       const SizedBox(height: 24),
-                      _sectionTitle('meal_scan_result.section_health_notes'.tr()),
+                      _sectionTitle(
+                          'meal_scan_result.section_health_notes'.tr()),
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
@@ -298,13 +306,17 @@ class _AiResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF1C1C2E) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(
+          color: isDark ? const Color(0xFF2E2E45) : const Color(0xFFEAEAEA),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,10 +331,10 @@ class _AiResultCard extends StatelessWidget {
                       result.mealName.isNotEmpty
                           ? result.mealName
                           : 'meal_scan_result.scanned_meal_fallback'.tr(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF1A1A2E),
+                        color: isDark ? Colors.white : const Color(0xFF1A1A2E),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -343,7 +355,10 @@ class _AiResultCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'meal_scan_result.confidence_badge'.tr(namedArgs: {'percent': (result.confidenceScore * 100).toStringAsFixed(0)}),
+                  'meal_scan_result.confidence_badge'.tr(namedArgs: {
+                    'percent':
+                    (result.confidenceScore * 100).toStringAsFixed(0)
+                  }),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -355,11 +370,13 @@ class _AiResultCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'meal_scan_result.calories_kcal'.tr(namedArgs: {'count': result.totalCalories.toStringAsFixed(0)}),
-            style: const TextStyle(
+            'meal_scan_result.calories_kcal'.tr(namedArgs: {
+              'count': result.totalCalories.toStringAsFixed(0)
+            }),
+            style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF1A1A2E),
+              color: isDark ? Colors.white : const Color(0xFF1A1A2E),
             ),
           ),
           const SizedBox(height: 6),
@@ -392,12 +409,17 @@ class _AiResultCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: isDark
+                      ? const Color(0xFF2E2E45)
+                      : const Color(0xFFF3F4F6),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(tag,
-                    style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF6B7280))),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? const Color(0xFF9CA3AF)
+                            : const Color(0xFF6B7280))),
               ))
                   .toList(),
             ),
@@ -444,13 +466,17 @@ class _FoodItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF1C1C2E) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(
+          color: isDark ? const Color(0xFF2E2E45) : const Color(0xFFEAEAEA),
+        ),
       ),
       child: Row(
         children: [
@@ -459,10 +485,12 @@ class _FoodItemCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(item.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF1A1A2E))),
+                        color: isDark
+                            ? Colors.white
+                            : const Color(0xFF1A1A2E))),
                 const SizedBox(height: 2),
                 Text(item.portionSize,
                     style: const TextStyle(
@@ -473,11 +501,16 @@ class _FoodItemCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('meal_scan_result.calories_kcal'.tr(namedArgs: {'count': item.calories.toStringAsFixed(0)}),
-                  style: const TextStyle(
+              Text(
+                  'meal_scan_result.calories_kcal'.tr(namedArgs: {
+                    'count': item.calories.toStringAsFixed(0)
+                  }),
+                  style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A1A2E))),
+                      color: isDark
+                          ? Colors.white
+                          : const Color(0xFF1A1A2E))),
               const SizedBox(height: 2),
               Text(
                 'meal_scan_result.macro_summary_line'.tr(namedArgs: {
@@ -516,15 +549,24 @@ class _MatchedFoodCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const accent = Color(0xFF3B82F6);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: isSelected ? accent.withOpacity(0.05) : Colors.white,
+        color: isSelected
+            ? accent.withOpacity(0.05)
+            : isDark
+            ? const Color(0xFF1C1C2E)
+            : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? accent : const Color(0xFFEAEAEA),
+          color: isSelected
+              ? accent
+              : isDark
+              ? const Color(0xFF2E2E45)
+              : const Color(0xFFEAEAEA),
           width: isSelected ? 2 : 1,
         ),
       ),
@@ -549,6 +591,8 @@ class _MatchedFoodCard extends StatelessWidget {
                       border: Border.all(
                         color: isSelected
                             ? accent
+                            : isDark
+                            ? const Color(0xFF4B4B6B)
                             : const Color(0xFFD1D5DB),
                         width: 2,
                       ),
@@ -573,6 +617,8 @@ class _MatchedFoodCard extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                             color: isSelected
                                 ? accent
+                                : isDark
+                                ? Colors.white
                                 : const Color(0xFF1A1A2E),
                           ),
                         ),
@@ -590,16 +636,24 @@ class _MatchedFoodCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'meal_scan_result.calories_per_100g'.tr(namedArgs: {'count': food.caloriesPer100g.toStringAsFixed(0)}),
-                        style: const TextStyle(
+                        'meal_scan_result.calories_per_100g'.tr(namedArgs: {
+                          'count':
+                          food.caloriesPer100g.toStringAsFixed(0)
+                        }),
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF1A1A2E),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'meal_scan_result.match_percent'.tr(namedArgs: {'percent': (food.similarityScore * 100).toStringAsFixed(0)}),
+                        'meal_scan_result.match_percent'.tr(namedArgs: {
+                          'percent': (food.similarityScore * 100)
+                              .toStringAsFixed(0)
+                        }),
                         style: TextStyle(
                             fontSize: 11,
                             color: _matchColor(food.similarityScore)),
@@ -646,6 +700,7 @@ class _ServingsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const accent = Color(0xFF3B82F6);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final calories =
         food.caloriesPer100g * (food.servingSizeG / 100) * servings;
 
@@ -653,7 +708,12 @@ class _ServingsRow extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
       child: Column(
         children: [
-          Container(height: 1, color: const Color(0xFFEAEAEA)),
+          Container(
+            height: 1,
+            color: isDark
+                ? const Color(0xFF2E2E45)
+                : const Color(0xFFEAEAEA),
+          ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -663,14 +723,15 @@ class _ServingsRow extends StatelessWidget {
                   'count': servings.toStringAsFixed(1),
                   'description': food.servingDescription,
                 }),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A2E),
+                  color: isDark ? Colors.white : const Color(0xFF1A1A2E),
                 ),
               ),
               Text(
-                'meal_scan_result.calories_kcal'.tr(namedArgs: {'count': calories.toStringAsFixed(0)}),
+                'meal_scan_result.calories_kcal'
+                    .tr(namedArgs: {'count': calories.toStringAsFixed(0)}),
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -720,13 +781,16 @@ class _StepButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 34,
         height: 34,
         decoration: BoxDecoration(
-          color: const Color(0xFFF3F4F6),
+          color: isDark
+              ? const Color(0xFF2E2E45)
+              : const Color(0xFFF3F4F6),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, size: 18, color: const Color(0xFF6B7280)),
@@ -751,12 +815,17 @@ class _TotalsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF3B82F6).withOpacity(0.06),
+        color: isDark
+            ? const Color(0xFF3B82F6).withOpacity(0.1)
+            : const Color(0xFF3B82F6).withOpacity(0.06),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF3B82F6).withOpacity(0.2)),
+        border:
+        Border.all(color: const Color(0xFF3B82F6).withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -766,8 +835,10 @@ class _TotalsCard extends StatelessWidget {
             children: [
               Text(
                 count == 1
-                    ? 'meal_scan_result.items_selected'.tr(namedArgs: {'count': '$count'})
-                    : 'meal_scan_result.items_selected_plural'.tr(namedArgs: {'count': '$count'}),
+                    ? 'meal_scan_result.items_selected'
+                    .tr(namedArgs: {'count': '$count'})
+                    : 'meal_scan_result.items_selected_plural'
+                    .tr(namedArgs: {'count': '$count'}),
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -775,11 +846,12 @@ class _TotalsCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'meal_scan_result.calories_total'.tr(namedArgs: {'count': calories.toStringAsFixed(0)}),
-                style: const TextStyle(
+                'meal_scan_result.calories_total'.tr(
+                    namedArgs: {'count': calories.toStringAsFixed(0)}),
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF1A1A2E),
+                  color: isDark ? Colors.white : const Color(0xFF1A1A2E),
                 ),
               ),
             ],
@@ -788,11 +860,14 @@ class _TotalsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _totalPill('meal_scan_result.macro_protein'.tr(), '${protein.toStringAsFixed(1)}g',
+              _totalPill('meal_scan_result.macro_protein'.tr(),
+                  '${protein.toStringAsFixed(1)}g',
                   const Color(0xFFEF4444)),
-              _totalPill('meal_scan_result.macro_carbs'.tr(), '${carbs.toStringAsFixed(1)}g',
+              _totalPill('meal_scan_result.macro_carbs'.tr(),
+                  '${carbs.toStringAsFixed(1)}g',
                   const Color(0xFFF59E0B)),
-              _totalPill('meal_scan_result.macro_fats'.tr(), '${fats.toStringAsFixed(1)}g',
+              _totalPill('meal_scan_result.macro_fats'.tr(),
+                  '${fats.toStringAsFixed(1)}g',
                   const Color(0xFF10B981)),
             ],
           ),
@@ -827,6 +902,8 @@ class _SaveBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const accent = Color(0xFF3B82F6);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BlocBuilder<LogBloc, LogState>(
       builder: (context, state) {
         final isLoading = state is LogLoading && state.isSaving;
@@ -834,10 +911,15 @@ class _SaveBar extends StatelessWidget {
 
         return Container(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            border:
-            Border(top: BorderSide(color: Color(0xFFEAEAEA))),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1C1C2E) : Colors.white,
+            border: Border(
+              top: BorderSide(
+                color: isDark
+                    ? const Color(0xFF2E2E45)
+                    : const Color(0xFFEAEAEA),
+              ),
+            ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -859,8 +941,9 @@ class _SaveBar extends StatelessWidget {
                   onPressed: isLoading ? null : onSave,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accent,
-                    disabledBackgroundColor:
-                    const Color(0xFFEAEAEA),
+                    disabledBackgroundColor: isDark
+                        ? const Color(0xFF2E2E45)
+                        : const Color(0xFFEAEAEA),
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -878,8 +961,14 @@ class _SaveBar extends StatelessWidget {
                       : Text(
                     hasSelections
                         ? (selections.length == 1
-                        ? 'meal_scan_result.save_food_singular'.tr(namedArgs: {'count': '${selections.length}'})
-                        : 'meal_scan_result.save_food_plural'.tr(namedArgs: {'count': '${selections.length}'}))
+                        ? 'meal_scan_result.save_food_singular'.tr(
+                        namedArgs: {
+                          'count': '${selections.length}'
+                        })
+                        : 'meal_scan_result.save_food_plural'.tr(
+                        namedArgs: {
+                          'count': '${selections.length}'
+                        }))
                         : 'meal_scan_result.save_ai_result'.tr(),
                     style: const TextStyle(
                       fontSize: 16,

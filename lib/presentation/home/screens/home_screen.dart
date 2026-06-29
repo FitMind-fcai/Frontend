@@ -74,7 +74,8 @@ class _HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const HomeAppBar(),
+              HomeAppBar( score: state is HomeLoaded ? state.score?.overallScore : null,)
+              ,
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -181,12 +182,9 @@ class _HomePage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.more_vert),
-                        ),
                       ],
                     ),
+                    const SizedBox(height: 12),
 
                     if (state is HomeLoading)
                       const _ShimmerBox(height: 240, radius: 25)

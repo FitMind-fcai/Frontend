@@ -12,12 +12,12 @@ import '../../widgets/nutrition_plan_body.dart';
 import '../../widgets/plan_type.dart';
 import '../../widgets/week_card.dart';
 import '../../widgets/workout_plan_body.dart';
+import '../plan_screen.dart';
 
 enum _PlanType { nutrition, workout }
 
 class MyPlansScreen extends StatefulWidget {
   const MyPlansScreen({super.key});
-
 
   @override
   State<MyPlansScreen> createState() => _MyPlansScreenState();
@@ -62,25 +62,25 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
                 child: _selectedType == null
                     ? _buildTypeSelection()
                     : BlocBuilder<PlanBloc, PlanState>(
-                  builder: (context, state) {
-                    if (state is MyPlansLoading ||
-                        state is PlanInitial ||
-                        state is PlanDeleting) {
-                      return const Center(
-                          child: CircularProgressIndicator());
-                    }
-                    if (state is PlanError) {
-                      return _buildError(context, state.message);
-                    }
-                    if (state is ActivePlanLoaded) {
-                      return PlanBody(plan: state.plan);
-                    }
-                    if (state is ActiveWorkoutPlanLoaded) {
-                      return WorkoutPlanBody(plan: state.plan);
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
+                        builder: (context, state) {
+                          if (state is MyPlansLoading ||
+                              state is PlanInitial ||
+                              state is PlanDeleting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          if (state is PlanError) {
+                            return _buildError(context, state.message);
+                          }
+                          if (state is ActivePlanLoaded) {
+                            return PlanBody(plan: state.plan);
+                          }
+                          if (state is ActiveWorkoutPlanLoaded) {
+                            return WorkoutPlanBody(plan: state.plan);
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
               ),
             ],
           ),
@@ -123,16 +123,22 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
+                    color: isDark
+                        ? colorScheme.surfaceContainerHighest
+                        : Colors.white,
                     borderRadius: BorderRadius.circular(13),
                     border: Border.all(
-                      color: isDark ? colorScheme.outlineVariant : const Color(0xFFEAEAEA),
+                      color: isDark
+                          ? colorScheme.outlineVariant
+                          : const Color(0xFFEAEAEA),
                     ),
                   ),
                   child: Icon(
                     Icons.arrow_back_ios_new_rounded,
                     size: 16,
-                    color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
+                    color: isDark
+                        ? colorScheme.onSurface
+                        : const Color(0xFF1A1A2E),
                   ),
                 ),
               ),
@@ -141,20 +147,35 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
                 _selectedType == null
                     ? 'my_plans.title'.tr()
                     : _selectedType == _PlanType.nutrition
-                    ? 'my_plans.nutrition_plan_title'.tr()
-                    : 'my_plans.workout_plan_title'.tr(),
+                        ? 'my_plans.nutrition_plan_title'.tr()
+                        : 'my_plans.workout_plan_title'.tr(),
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   // CHANGED: was const Color(0xFF1A1A2E) — same navy
                   // contrast issue as above.
-                  color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
+                  color:
+                      isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                   letterSpacing: -0.5,
                   fontFamily: AppConstants.fontRegular,
                 ),
               ),
             ],
           ),
+    Row(
+    children: [
+    if (!(_selectedType != null && activePlanId != null))
+    IconButton(
+    onPressed: () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (_) => const PlanSelectionScreen()),
+    );
+    },
+    icon: const Icon(Icons.add),
+    color: AppConstants.primaryColor,
+    ),
           // Deletion top right conditionally rendered button layout
           if (_selectedType != null && activePlanId != null)
             GestureDetector(
@@ -165,12 +186,16 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
                 decoration: BoxDecoration(
                   // CHANGED: was Colors.white — same elevated-card fix as
                   // the back button above.
-                  color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
+                  color: isDark
+                      ? colorScheme.surfaceContainerHighest
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(13),
                   border: Border.all(
                     // CHANGED: was const Color(0xFFFFEAEA) — same
                     // invisible-border issue as the back button above.
-                    color: isDark ? colorScheme.outlineVariant : const Color(0xFFFFEAEA),
+                    color: isDark
+                        ? colorScheme.outlineVariant
+                        : const Color(0xFFFFEAEA),
                   ),
                 ),
                 child: const Icon(Icons.delete_outline_rounded,
@@ -181,11 +206,12 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
             ),
         ],
       ),
+    ],
+      ),
     );
   }
 
   void _showDeleteConfirmation(BuildContext context, int planId) {
-
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -194,7 +220,8 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: Text('my_plans.cancel'.tr(), style: const TextStyle(color: Colors.grey)),
+            child: Text('my_plans.cancel'.tr(),
+                style: const TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
@@ -270,7 +297,8 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
               decoration: BoxDecoration(
                 // CHANGED: was Colors.white — dark mode uses the elevated
                 // surface tone, same fix as the header chips.
-                color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
+                color:
+                    isDark ? colorScheme.surfaceContainerHighest : Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Icon(Icons.error_outline_rounded,
@@ -286,7 +314,9 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
                 // CHANGED: was const Color(0xFF6B7280) — kept exactly for
                 // light mode, swapped to onSurfaceVariant for dark so this
                 // secondary text stays legible against a dark background.
-                color: isDark ? colorScheme.onSurfaceVariant : const Color(0xFF6B7280),
+                color: isDark
+                    ? colorScheme.onSurfaceVariant
+                    : const Color(0xFF6B7280),
                 fontFamily: AppConstants.fontRegular,
               ),
             ),

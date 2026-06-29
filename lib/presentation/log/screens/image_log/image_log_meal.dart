@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../data/models/meal_log/meal_scan_request.dart';
 import '../../manager/log_bloc.dart';
+import '../../widgets/text_log_shared_widgets.dart';
 import '../log_choice_screen.dart';
 import '../../widgets/log_page_shell.dart';
 import 'meal_scan_result_page.dart';
@@ -115,10 +116,10 @@ class _ImageLogPageState extends State<ImageLogPage> {
               const SizedBox(height: 24),
 
               // ── Meal type selector ─────────────────────────────────────────
-              _MealTypeSelector(
+              MealTypeSelector(
                 selected: _selectedMealType,
                 accent: accent,
-                onChanged: (val) => setState(() => _selectedMealType = val),
+                onSelect: (val) => setState(() => _selectedMealType = val),
               ),
 
               const SizedBox(height: 24),
@@ -133,10 +134,10 @@ class _ImageLogPageState extends State<ImageLogPage> {
                   decoration: BoxDecoration(
                     color: _imagePicked
                         ? accent.withOpacity(0.08)
-                        : Colors.white,
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(22),
                     border: Border.all(
-                      color: _imagePicked ? accent : const Color(0xFFEAEAEA),
+                      color: _imagePicked ? accent : Theme.of(context).dividerColor,
                       width: _imagePicked ? 2 : 1.5,
                     ),
                   ),
@@ -152,14 +153,12 @@ class _ImageLogPageState extends State<ImageLogPage> {
                           left: 0,
                           right: 0,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             color: Colors.black.withOpacity(0.4),
                             child: Text(
                               'image_log.tap_to_change'.tr(),
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 13),
+                              style: const TextStyle(color: Colors.white, fontSize: 13),
                             ),
                           ),
                         ),
@@ -171,26 +170,27 @@ class _ImageLogPageState extends State<ImageLogPage> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFF5F5F5),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.camera_alt_outlined,
-                            color: accent, size: 44),
+                        child: Icon(Icons.camera_alt_outlined, color: accent, size: 44),
                       ),
                       const SizedBox(height: 14),
                       Text(
                         'image_log.upload_prompt_title'.tr(),
-                        style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF1A1A2E)),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         'image_log.upload_prompt_subtitle'.tr(),
-                        style: const TextStyle(
-                            fontSize: 13, color: Color(0xFF9CA3AF)),
+                        style: const TextStyle(fontSize: 13, color: Color(0xFF9CA3AF)),
                       ),
                     ],
                   ),
@@ -270,96 +270,6 @@ class _ImageLogPageState extends State<ImageLogPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-// ── Meal Type Selector ────────────────────────────────────────────────────────
-
-class _MealTypeSelector extends StatelessWidget {
-  final String selected;
-  final Color accent;
-  final ValueChanged<String> onChanged;
-
-  static const _mealTypes = ['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK'];
-  static const _mealTypeLabelKeys = [
-    'image_log.meal_type_breakfast',
-    'image_log.meal_type_lunch',
-    'image_log.meal_type_dinner',
-    'image_log.meal_type_snack',
-  ];
-  static const _mealTypeIcons = [
-    Icons.wb_sunny_outlined,
-    Icons.lunch_dining_outlined,
-    Icons.dinner_dining_outlined,
-    Icons.apple_outlined,
-  ];
-
-  const _MealTypeSelector({
-    required this.selected,
-    required this.accent,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'image_log.meal_type_label'.tr(),
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1A1A2E),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: List.generate(_mealTypes.length, (i) {
-            final isSelected = selected == _mealTypes[i];
-            return Expanded(
-              child: GestureDetector(
-                onTap: () => onChanged(_mealTypes[i]),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  margin: EdgeInsets.only(right: i < 3 ? 8 : 0),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    color: isSelected ? accent.withOpacity(0.08) : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected ? accent : const Color(0xFFEAEAEA),
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _mealTypeIcons[i],
-                        size: 20,
-                        color: isSelected ? accent : const Color(0xFF9CA3AF),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _mealTypeLabelKeys[i].tr(),
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: isSelected
-                              ? accent
-                              : const Color(0xFF9CA3AF),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
-        ),
-      ],
     );
   }
 }
@@ -448,26 +358,34 @@ class _SourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 52,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark
+              ? Theme.of(context).colorScheme.surfaceContainerHighest
+              : Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFEAEAEA)),
+          border: Border.all(
+            color: isDark ? Colors.white24 : const Color(0xFFEAEAEA),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: accent, size: 20),
             const SizedBox(width: 8),
-            Text(label,
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF1A1A2E),
-                    fontFamily: AppConstants.fontRegular)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                fontFamily: AppConstants.fontRegular,
+              ),
+            ),
           ],
         ),
       ),

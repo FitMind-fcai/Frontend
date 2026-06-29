@@ -54,17 +54,6 @@ class WorkoutHighlightCard extends StatelessWidget {
                 mainAxisAlignment:
                     isArabic ? MainAxisAlignment.end : MainAxisAlignment.start,
                 children: [
-                  const Icon(Icons.access_time,
-                      color: Colors.white70, size: 16),
-                  const SizedBox(width: 4),
-                  Text(
-                    '$durationText  •  ',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontWeight: AppConstants.extraBold,
-                      fontFamily: AppConstants.fontRegular,
-                    ),
-                  ),
                   const Icon(Icons.fitness_center,
                       color: Colors.white70, size: 16),
                   const SizedBox(width: 4),

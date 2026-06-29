@@ -5,8 +5,8 @@ import 'package:easy_localization/easy_localization.dart';
 class DayMealsScreen extends StatelessWidget {
   final DayPlan day;
   final DateTime? date;
-
-  const DayMealsScreen({super.key, required this.day, this.date});
+final String Location;
+  const DayMealsScreen({super.key, required this.day, this.date,required this.Location});
 
   String _formatDate(DateTime d) {
     final months = [
@@ -46,42 +46,37 @@ class DayMealsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // CHANGED: light mode keeps every original literal color exactly as
-    // given — isDark only branches where a value would actually break
-    // against a dark background.
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      // CHANGED: was always const Color(0xFFF5F5F5).
       backgroundColor: isDark ? colorScheme.surface : const Color(0xFFF5F5F5),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Header ────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Row(
                 children: [
-                  GestureDetector(
+                  Location == "Home"
+                      ? const SizedBox.shrink()
+                      : GestureDetector(
                     onTap: () => Navigator.maybePop(context),
                     child: Container(
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        // CHANGED: was Colors.white.
                         color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
                         borderRadius: BorderRadius.circular(13),
                         border: Border.all(
-                          // CHANGED: was const Color(0xFFEAEAEA).
                           color: isDark ? colorScheme.outlineVariant : const Color(0xFFEAEAEA),
                         ),
                       ),
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         size: 16,
-                        // CHANGED: was const Color(0xFF1A1A2E).
                         color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                       ),
                     ),

@@ -754,9 +754,10 @@
     "gender_male": "ذكر",
     "gender_female": "أنثى",
 
-    "goal_lose_weight": "إنقاص الوزن",
-    "goal_maintain_weight": "الحفاظ على الوزن",
-    "goal_build_muscle": "بناء العضلات",
+    "goal_lose_weight": "خسارة الوزن",
+    "goal_ai_coach": "جرّب المدرب الذكي",
+    "goal_get_bulks": "بناء العضلات",
+    "goal_improve_endurance": "تحسين التحمل",
 
     "activity_sedentary": "قليل الحركة",
     "activity_lightly_active": "نشاط خفيف",

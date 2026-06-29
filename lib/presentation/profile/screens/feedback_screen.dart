@@ -200,7 +200,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
           borderRadius: BorderRadius.circular(15),
         ),
         child: Text(
-          'feedback.tag_$label'.tr(),
+          'feedback.tag_${label.toLowerCase()}'.tr(),
           style: TextStyle(
               color: isSelected ? Colors.white : Colors.black54,
               fontFamily: AppConstants.fontRegular,

@@ -77,8 +77,8 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                       // Image/Icon Area
                       Center(
                         child: Container(
-                          width: 280,
-                          height: 280,
+                          width: 240,
+                          height: 240,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,

@@ -239,269 +239,113 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
 
   // Page 2: Meals Per Day
   Widget _buildWorkoutsPerWeekPage(bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          textAlign: TextAlign.center,
-          'workout.days_per_week_question'.tr(),
-          style: TextStyle(
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
-            fontFamily: AppConstants.fontRegular,
-            height: 1.2,
-            color: isDark ? Colors.white : Colors.black,
-          ),
-        ),
-        Center(
-          child: Text('${_selectedDays}x',
-              style: TextStyle(
-                fontSize: 256,
-                fontFamily: AppConstants.fontRegular,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
-              )),
-        ),
-        const SizedBox(height: 30),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final buttonWidth = constraints.maxWidth / 7;
-            final index = ((int.tryParse(_selectedDays) ?? 1) - 1).clamp(0, 6);
-
-            return Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Directionality(
-                  textDirection: ui.TextDirection.ltr,
-                  child: Stack(
-                    children: [
-                      AnimatedPositioned(
-                        left: index * buttonWidth,
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        child: Container(
-                          width: buttonWidth,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: const Color(0xFFB7C9E2),
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: List.generate(7, (index) {
-                          final day = (index + 1).toString();
-                          return Expanded(
-                            child: GestureDetector(
-                              onTap: () => setState(() => _selectedDays = day),
-                              child: Center(
-                                child: Text(
-                                  day,
-                                  style: TextStyle(
-                                    color: _selectedDays == day
-                                        ? Colors.white
-                                        : (isDark
-                                        ? Colors.white60
-                                        : Colors.grey[600]),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                    ],
-                  ),
-                ));
-          },
-        ),
-        SizedBox(height: 32),
-        Center(
-          child: Text(
-            'workout.committed_days_message'
-                .tr(namedArgs: {'count': _selectedDays}),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            textAlign: TextAlign.center,
+            'workout.days_per_week_question'.tr(),
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
               fontFamily: AppConstants.fontRegular,
-              fontWeight: FontWeight.w500,
+              height: 1.2,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildComplexityOption({
-    required String title,
-    required String icon,
-    required bool isSelected,
-    required bool isDark,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppConstants.primaryColor
-              : (isDark ? const Color(0xFF2A2A2A) : Colors.grey[200]),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? Colors.white54 : Colors.transparent,
-            width: 2,
-          ),
-          boxShadow: isSelected
-              ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ]
-              : null,
-        ),
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
+          Center(
+            child: Text('${_selectedDays}x',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 256,
                   fontFamily: AppConstants.fontRegular,
-                  color: isSelected
-                      ? Colors.white
-                      : (isDark ? Colors.white : Colors.black),
-                ),
-                child: Text(title),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                opacity: isSelected ? 0.5 : 0.3,
-                child: AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  style: TextStyle(
-                    fontSize: isSelected ? 44 : 40,
-                  ),
-                  child: Text(icon),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Page 4: Cuisine Preference
-
-  Widget _buildCuisineOption({
-    required String title,
-    required String icon,
-    required bool isSelected,
-    required bool isDark,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppConstants.primaryColor
-              : (isDark ? const Color(0xFF2A2A2A) : Colors.grey[200]),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? Colors.white54 : Colors.transparent,
-            width: 2,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white : Colors.black,
+                )),
           ),
-          boxShadow: isSelected
-              ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ]
-              : null,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              style: TextStyle(
-                fontSize: isSelected ? 44 : 40,
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? Colors.white38 : Colors.grey[400]),
-              ),
-              child: Text(icon),
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: AppConstants.fontRegular,
-                    color: isSelected
-                        ? Colors.white
-                        : (isDark ? Colors.white60 : Colors.grey[600]),
+          const SizedBox(height: 30),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final buttonWidth = constraints.maxWidth / 7;
+              final index = ((int.tryParse(_selectedDays) ?? 1) - 1).clamp(0, 6);
+      
+              return Container(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: AppConstants.fontRegular,
-                      color: isSelected
-                          ? Colors.white
-                          : (isDark ? Colors.white60 : Colors.grey[600]),
+                  child: Directionality(
+                    textDirection: ui.TextDirection.ltr,
+                    child: Stack(
+                      children: [
+                        AnimatedPositioned(
+                          left: index * buttonWidth,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeInOut,
+                          child: Container(
+                            width: buttonWidth,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(0xFFB7C9E2),
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: List.generate(7, (index) {
+                            final day = (index + 1).toString();
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => _selectedDays = day),
+                                child: Center(
+                                  child: Text(
+                                    day,
+                                    style: TextStyle(
+                                      color: _selectedDays == day
+                                          ? Colors.white
+                                          : (isDark
+                                          ? Colors.white60
+                                          : Colors.grey[600]),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
+                  ));
+            },
+          ),
+          SizedBox(height: 32),
+          Center(
+            child: Text(
+              'workout.committed_days_message'
+                  .tr(namedArgs: {'count': _selectedDays}),
+              style: TextStyle(
+                fontSize: 16,
+                fontFamily: AppConstants.fontRegular,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.white : Colors.black,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-// Add this to your state class
+
+
 
   // Page 5: Exclude Ingredients
   Widget _buildFocusAreasPage(bool isDark) {
@@ -699,46 +543,51 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
         ),
         const SizedBox(height: 32),
-        _buildWorkoutOption(
-          title: 'workout.focus_strength'.tr(),
-          icon: Icons.fitness_center,
-          description: 'workout.focus_strength_desc'.tr(),
-          isSelected: _selectedWorkoutFocus == 'Strength Training',
-          isDark: isDark,
-          onTap: () =>
-              setState(() => _selectedWorkoutFocus = 'Strength Training'),
-        ),
-        _buildWorkoutOption(
-          title: 'workout.focus_cardio'.tr(),
-          icon: Icons.favorite,
-          description: 'workout.focus_cardio_desc'.tr(),
-          isSelected: _selectedWorkoutFocus == 'Cardiovascular',
-          isDark: isDark,
-          onTap: () => setState(() => _selectedWorkoutFocus = 'Cardiovascular'),
-        ),
-        _buildWorkoutOption(
-          title: 'workout.focus_flexibility'.tr(),
-          icon: Icons.self_improvement,
-          description: 'workout.focus_flexibility_desc'.tr(),
-          isSelected: _selectedWorkoutFocus == 'Flexibility',
-          isDark: isDark,
-          onTap: () => setState(() => _selectedWorkoutFocus = 'Flexibility'),
-        ),
-        _buildWorkoutOption(
-          title: 'workout.focus_hybrid'.tr(),
-          icon: Icons.stars,
-          description: 'workout.focus_hybrid_desc'.tr(),
-          isSelected: _selectedWorkoutFocus == 'Hybrid',
-          isDark: isDark,
-          onTap: () => setState(() => _selectedWorkoutFocus = 'Hybrid'),
-        ),
-        _buildWorkoutOption(
-          title: 'workout.focus_sport_specific'.tr(),
-          icon: Icons.sports_soccer,
-          description: 'workout.focus_sport_specific_desc'.tr(),
-          isSelected: _selectedWorkoutFocus == 'Sport Specific',
-          isDark: isDark,
-          onTap: () => setState(() => _selectedWorkoutFocus = 'Sport Specific'),
+        Expanded(
+          child: ListView(
+            children: [
+              _buildWorkoutOption(
+                title: 'workout.focus_strength'.tr(),
+                icon: Icons.fitness_center,
+                description: 'workout.focus_strength_desc'.tr(),
+                isSelected: _selectedWorkoutFocus == 'Strength Training',
+                isDark: isDark,
+                onTap: () => setState(() => _selectedWorkoutFocus = 'Strength Training'),
+              ),
+              _buildWorkoutOption(
+                title: 'workout.focus_cardio'.tr(),
+                icon: Icons.favorite,
+                description: 'workout.focus_cardio_desc'.tr(),
+                isSelected: _selectedWorkoutFocus == 'Cardiovascular',
+                isDark: isDark,
+                onTap: () => setState(() => _selectedWorkoutFocus = 'Cardiovascular'),
+              ),
+              _buildWorkoutOption(
+                title: 'workout.focus_flexibility'.tr(),
+                icon: Icons.self_improvement,
+                description: 'workout.focus_flexibility_desc'.tr(),
+                isSelected: _selectedWorkoutFocus == 'Flexibility',
+                isDark: isDark,
+                onTap: () => setState(() => _selectedWorkoutFocus = 'Flexibility'),
+              ),
+              _buildWorkoutOption(
+                title: 'workout.focus_hybrid'.tr(),
+                icon: Icons.stars,
+                description: 'workout.focus_hybrid_desc'.tr(),
+                isSelected: _selectedWorkoutFocus == 'Hybrid',
+                isDark: isDark,
+                onTap: () => setState(() => _selectedWorkoutFocus = 'Hybrid'),
+              ),
+              _buildWorkoutOption(
+                title: 'workout.focus_sport_specific'.tr(),
+                icon: Icons.sports_soccer,
+                description: 'workout.focus_sport_specific_desc'.tr(),
+                isSelected: _selectedWorkoutFocus == 'Sport Specific',
+                isDark: isDark,
+                onTap: () => setState(() => _selectedWorkoutFocus = 'Sport Specific'),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -1284,158 +1133,160 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   }
 
   Widget _buildDurationWeeksPage(bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'workout.duration_question'.tr(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            fontFamily: AppConstants.fontRegular,
-            height: 1.2,
-            color: isDark ? Colors.white : Colors.black,
-          ),
-        ),
-        const SizedBox(height: 32),
-        GridView.count(
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 0.85,
-          children: [
-            _buildWeekCard(4, 'workout.month_1'.tr(), isDark),
-            _buildWeekCard(8, 'workout.months_2'.tr(), isDark),
-            _buildWeekCard(12, 'workout.months_3'.tr(), isDark),
-            _buildWeekCard(16, 'workout.months_4'.tr(), isDark),
-            _buildWeekCard(24, 'workout.months_6'.tr(), isDark),
-            _buildWeekCard(52, 'workout.year_1'.tr(), isDark),
-          ],
-        ),
-        const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[100],
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[300]!,
-              width: 1,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'workout.duration_question'.tr(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              fontFamily: AppConstants.fontRegular,
+              height: 1.2,
+              color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 32),
+          GridView.count(
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.85,
             children: [
-              Row(
-                children: [
-                  const Text(
-                    '✏️',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'workout.custom_duration'.tr(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: AppConstants.fontRegular,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: _isCustomWeeks
-                              ? AppConstants.primaryColor
-                              : (isDark
-                              ? const Color(0xFF3A3A3A)
-                              : Colors.grey[300]!),
-                          width: 2,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              if (_customWeeks > 1) {
-                                setState(() {
-                                  _customWeeks--;
-                                  _durationWeeks = _customWeeks;
-                                  _isCustomWeeks = true;
-                                });
-                              }
-                            },
-                            icon: const Icon(Icons.remove_circle_outline,
-                                size: 28),
-                            color: AppConstants.primaryColor,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                          const SizedBox(width: 20),
-                          Text(
-                            '$_customWeeks',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: AppConstants.fontRegular,
-                              color: isDark ? Colors.white : Colors.black,
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          IconButton(
-                            onPressed: () {
-                              if (_customWeeks < 52) {
-                                setState(() {
-                                  _customWeeks++;
-                                  _durationWeeks = _customWeeks;
-                                  _isCustomWeeks = true;
-                                });
-                              }
-                            },
-                            icon:
-                            const Icon(Icons.add_circle_outline, size: 28),
-                            color: AppConstants.primaryColor,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Center(
-                child: Text(
-                  _customWeeks == 1 ? 'workout.week_singular'.tr() : 'workout.week_plural'.tr(),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: AppConstants.fontRegular,
-                    color: isDark ? Colors.white60 : Colors.grey[600],
-                  ),
-                ),
-              ),
+              _buildWeekCard(4, 'workout.month_1'.tr(), isDark),
+              _buildWeekCard(8, 'workout.months_2'.tr(), isDark),
+              _buildWeekCard(12, 'workout.months_3'.tr(), isDark),
+              _buildWeekCard(16, 'workout.months_4'.tr(), isDark),
+              _buildWeekCard(24, 'workout.months_6'.tr(), isDark),
+              _buildWeekCard(52, 'workout.year_1'.tr(), isDark),
             ],
           ),
-        ),
-      ],
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[100],
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[300]!,
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      '✏️',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'workout.custom_duration'.tr(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: AppConstants.fontRegular,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _isCustomWeeks
+                                ? AppConstants.primaryColor
+                                : (isDark
+                                ? const Color(0xFF3A3A3A)
+                                : Colors.grey[300]!),
+                            width: 2,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (_customWeeks > 1) {
+                                  setState(() {
+                                    _customWeeks--;
+                                    _durationWeeks = _customWeeks;
+                                    _isCustomWeeks = true;
+                                  });
+                                }
+                              },
+                              icon: const Icon(Icons.remove_circle_outline,
+                                  size: 28),
+                              color: AppConstants.primaryColor,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                            const SizedBox(width: 20),
+                            Text(
+                              '$_customWeeks',
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: AppConstants.fontRegular,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            IconButton(
+                              onPressed: () {
+                                if (_customWeeks < 52) {
+                                  setState(() {
+                                    _customWeeks++;
+                                    _durationWeeks = _customWeeks;
+                                    _isCustomWeeks = true;
+                                  });
+                                }
+                              },
+                              icon:
+                              const Icon(Icons.add_circle_outline, size: 28),
+                              color: AppConstants.primaryColor,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: Text(
+                    _customWeeks == 1 ? 'workout.week_singular'.tr() : 'workout.week_plural'.tr(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: AppConstants.fontRegular,
+                      color: isDark ? Colors.white60 : Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

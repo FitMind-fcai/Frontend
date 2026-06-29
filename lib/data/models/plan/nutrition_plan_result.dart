@@ -1,3 +1,5 @@
+import '../../../domain/entities/plan/nutrition_plan_result_entity.dart';
+
 class NutritionPlanResult {
   final int? id; // 👈 Added ID field
   final String planName;
@@ -70,6 +72,22 @@ class NutritionPlanResult {
       'days': days.map((d) => d.toJson()).toList(),
     };
   }
+  NutritionPlanResultEntity toEntity() {
+    return NutritionPlanResultEntity(
+      id: id,
+      planName: planName,
+      description: description,
+      startDate: startDate,
+      endDate: endDate,
+      dailyCalories: dailyCalories,
+      dailyProteinG: dailyProteinG,
+      dailyCarbsG: dailyCarbsG,
+      dailyFatsG: dailyFatsG,
+      days: days.map((d) => d.toEntity()).toList(), // 👈 recursive
+      generatedFromPreferences: generatedFromPreferences,
+      updatePlanId: updatePlanId,
+    );
+  }
 }
 
 class DayPlan {
@@ -99,6 +117,13 @@ class DayPlan {
       'day_name': dayName,
       'meals': meals.map((m) => m.toJson()).toList(),
     };
+  }
+  DayPlanEntity toEntity() {
+    return DayPlanEntity(
+      dayNumber: dayNumber,
+      dayName: dayName,
+      meals: meals.map((m) => m.toEntity()).toList(), // 👈 recursive
+    );
   }
 }
 
@@ -171,6 +196,21 @@ class Meal {
       'prep_time_minutes': prepTimeMinutes,
       'cook_time_minutes': cookTimeMinutes,
     };
+  }
+  MealEntity toEntity() {
+    return MealEntity(
+      mealType: mealType,
+      mealName: mealName,
+      description: description,
+      ingredients: ingredients.map((i) => i.toEntity()).toList(), // 👈 recursive
+      instructions: instructions,
+      calories: calories,
+      proteinG: proteinG,
+      carbsG: carbsG,
+      fatsG: fatsG,
+      prepTimeMinutes: prepTimeMinutes,
+      cookTimeMinutes: cookTimeMinutes,
+    );
   }
 
   static String? _parseStringOrList(dynamic value) {
@@ -258,6 +298,26 @@ class Ingredient {
       if (fatsPer100g != null) 'fats_per_100g': fatsPer100g,
       if (fiberPer100g != null) 'fiber_per_100g': fiberPer100g,
     };
+  }
+  IngredientEntity toEntity() {
+    return IngredientEntity(
+      id: id,
+      nutritionPlanMealId: nutritionPlanMealId,
+      centralFoodId: centralFoodId,
+      amountG: amountG,
+      foodName: foodName,
+      foodCategory: foodCategory,
+      calories: calories,
+      proteinG: proteinG,
+      carbsG: carbsG,
+      fatsG: fatsG,
+      fiberG: fiberG,
+      caloriesPer100g: caloriesPer100g,
+      proteinPer100g: proteinPer100g,
+      carbsPer100g: carbsPer100g,
+      fatsPer100g: fatsPer100g,
+      fiberPer100g: fiberPer100g,
+    );
   }
 }
 

@@ -92,10 +92,12 @@ class ProfileBody {
     switch (value) {
       case 'Lose Weight':
         return FitnessGoal.LoseWeight;
-      case 'Maintain Weight':
-        return FitnessGoal.MaintainWeight;
-      case 'Build Muscle':
-        return FitnessGoal.BuildMuscle;
+      case 'Try AI Coach':
+        return FitnessGoal.TryAICoach;
+      case 'Get Bulks':
+        return FitnessGoal.GetBulks;
+      case 'Improve Endurance':
+        return FitnessGoal.ImproveEndurance;
       default:
         return FitnessGoal.LoseWeight;
     }
@@ -106,8 +108,22 @@ enum Gender { Male, Female }
 
 enum FitnessGoal {
   LoseWeight,
-  MaintainWeight,
-  BuildMuscle,
+  TryAICoach,
+  GetBulks,
+  ImproveEndurance,
+}
+
+String getFitnessGoalString(FitnessGoal goal) {
+  switch (goal) {
+    case FitnessGoal.LoseWeight:
+      return 'Lose Weight';
+    case FitnessGoal.TryAICoach:
+      return 'Try AI Coach';
+    case FitnessGoal.GetBulks:
+      return 'Get Bulks';
+    case FitnessGoal.ImproveEndurance:
+      return 'Improve Endurance';
+  }
 }
 
 enum ActivityLevel {
@@ -117,13 +133,4 @@ enum ActivityLevel {
   VeryActive,
   ExtraActive,
 }
-String getFitnessGoalString(FitnessGoal goal) {
-  switch (goal) {
-    case FitnessGoal.LoseWeight:
-      return 'Lose Weight';
-    case FitnessGoal.MaintainWeight:
-      return 'Maintain Weight';
-    case FitnessGoal.BuildMuscle:
-      return 'Build Muscle';
-  }
-}
+

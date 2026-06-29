@@ -1,15 +1,22 @@
+import 'dart:ffi';
+
 import 'package:fitmind/core/constants/app_constants.dart';
+import 'package:fitmind/presentation/assessment/screens/assessment_screen.dart';
 import 'package:fitmind/presentation/plan/screens/plan_screen.dart';
+import 'package:fitmind/presentation/profile/screens/personal_information_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../data/data_sources/local/auth_local_data_source.dart';
+import '../../../data/models/home/score_response.dart';
 import '../../../data/models/user_model.dart';
 import '../../notifications/manager/notification_bloc.dart';
 import '../../notifications/screens/notifications_screen.dart';
 
 class HomeAppBar extends StatefulWidget {
-  const HomeAppBar();
+  final double? score;
+
+  const HomeAppBar({Key? key, required this.score}) : super(key: key);
 
   @override
   State<HomeAppBar> createState() => _HomeAppBarState();
@@ -38,7 +45,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    final isRtl = context.locale.languageCode == 'ar'; // Check if the current locale is Arabic (RTL)
+    final score = widget.score;
+    final isRtl = context.locale.languageCode ==
+        'ar'; // Check if the current locale is Arabic (RTL)
     final now = DateTime.now();
     final months = [
       'JAN',
@@ -211,14 +220,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (_) =>
-                                          const PlanSelectionScreen()),
+                                          const PersonalInfoPage()),
                                 );
                               },
                               child: SizedBox(
                                 width: 24,
                                 height: 24,
                                 child: Transform.flip(
-                                  flipX: isRtl, // Flip the arrow horizontally if the locale is RTL
+                                  flipX: isRtl,
+                                  // Flip the arrow horizontally if the locale is RTL
                                   child: Image.asset(
                                       "assets/images/Monotone arrow right.png"),
                                 ),
@@ -232,18 +242,14 @@ class _HomeAppBarState extends State<HomeAppBar> {
                       _BadgeChip(
                         icon: Icons.add,
                         iconColor: const Color(0xFFFF6B35),
-                        label: 'home_app_bar.healthy_score'.tr( namedArgs: { 'value': '88', }, ),                        textColor: Colors.white70,
+                        label: 'home_app_bar.healthy_score'.tr(
+                          namedArgs: {
+                            'value': score != null ? score!.toStringAsFixed(0) : '--',
+                          },
+                        ),
+                        textColor: Colors.white70,
                       ),
                       const SizedBox(width: 8),
-                      const Text('•',
-                          style:
-                              TextStyle(color: Colors.white38, fontSize: 14)),
-                      const SizedBox(width: 8),
-                      _BadgeChip(
-                        icon: Icons.star_rounded,
-                        iconColor: const Color(0xFF4A90E2),
-                        label: 'home_app_bar.pro'.tr(),                        textColor: Colors.white70,
-                      ),
                     ],
                   ),
                 ],

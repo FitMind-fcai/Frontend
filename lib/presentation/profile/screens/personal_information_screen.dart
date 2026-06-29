@@ -202,14 +202,16 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                               switch (goal) {
                                 case FitnessGoal.LoseWeight:
                                   return 'personal_info.goal_lose_weight'.tr();
-
-                                case FitnessGoal.MaintainWeight:
-                                  return 'personal_info.goal_maintain_weight'.tr();
-
-                                case FitnessGoal.BuildMuscle:
-                                  return 'personal_info.goal_build_muscle'.tr();
+                                case FitnessGoal.TryAICoach:
+                                  return 'personal_info.goal_ai_coach'.tr();
+                                case FitnessGoal.GetBulks:
+                                  return 'personal_info.goal_get_bulks'.tr();
+                                case FitnessGoal.ImproveEndurance:
+                                  return 'personal_info.goal_improve_endurance'
+                                      .tr();
                               }
-                            },                            onChanged: (v) =>
+                            },
+                            onChanged: (v) =>
                                 setState(() => _selectedFitnessGoal = v!),
                             labelStyle: labelStyle,
                             fieldFill: fieldFill,
@@ -227,19 +229,24 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                             itemLabel: (a) {
                               switch (a) {
                                 case ActivityLevel.Sedentary:
-                                  return 'personal_info.activity_sedentary'.tr();
+                                  return 'personal_info.activity_sedentary'
+                                      .tr();
 
                                 case ActivityLevel.LightlyActive:
-                                  return 'personal_info.activity_lightly_active'.tr();
+                                  return 'personal_info.activity_lightly_active'
+                                      .tr();
 
                                 case ActivityLevel.ModeratelyActive:
-                                  return 'personal_info.activity_moderately_active'.tr();
+                                  return 'personal_info.activity_moderately_active'
+                                      .tr();
 
                                 case ActivityLevel.VeryActive:
-                                  return 'personal_info.activity_very_active'.tr();
+                                  return 'personal_info.activity_very_active'
+                                      .tr();
 
                                 case ActivityLevel.ExtraActive:
-                                  return 'personal_info.activity_extra_active'.tr();
+                                  return 'personal_info.activity_extra_active'
+                                      .tr();
                               }
                             },
                             onChanged: (v) =>

@@ -251,7 +251,9 @@ class _CoachingMessagesScreenState extends State<CoachingMessagesScreen> {
 
 // ── Message tile ──
 
-class _CoachingMessageTile extends StatelessWidget {
+
+
+class _CoachingMessageTile extends StatefulWidget {
   final CoachingMessageModel message;
   final VoidCallback onTap;
   final VoidCallback onDismiss;
@@ -261,6 +263,13 @@ class _CoachingMessageTile extends StatelessWidget {
     required this.onTap,
     required this.onDismiss,
   });
+
+  @override
+  State<_CoachingMessageTile> createState() => _CoachingMessageTileState();
+}
+
+class _CoachingMessageTileState extends State<_CoachingMessageTile> {
+  bool _isExpanded = false;
 
   Color _urgencyColor(String urgency) {
     switch (urgency.toLowerCase()) {
@@ -296,12 +305,12 @@ class _CoachingMessageTile extends StatelessWidget {
     isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFEAEAEA);
     final textDark = isDark ? Colors.white : const Color(0xFF1A1A2E);
     final textMid = isDark ? Colors.white60 : const Color(0xFF6B7280);
-    final accent = _urgencyColor(message.urgency);
+    final accent = _urgencyColor(widget.message.urgency);
 
     return Dismissible(
-      key: ValueKey(message.id),
+      key: ValueKey(widget.message.id),
       direction: DismissDirection.endToStart,
-      onDismissed: (_) => onDismiss(),
+      onDismissed: (_) => widget.onDismiss(),
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -312,14 +321,19 @@ class _CoachingMessageTile extends StatelessWidget {
         child: const Icon(Icons.delete_outline_rounded, color: Colors.white),
       ),
       child: GestureDetector(
-        onTap: onTap,
-        child: Container(
+        onTap: () {
+          widget.onTap();
+          setState(() => _isExpanded = !_isExpanded);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: message.isRead ? cardColor : accent.withOpacity(0.05),
+            color: widget.message.isRead ? cardColor : accent.withOpacity(0.05),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: message.isRead ? borderColor : accent.withOpacity(0.3),
+              color: widget.message.isRead ? borderColor : accent.withOpacity(0.3),
             ),
           ),
           child: Row(
@@ -332,7 +346,7 @@ class _CoachingMessageTile extends StatelessWidget {
                   color: accent.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(11),
                 ),
-                child: Icon(_categoryIcon(message.category), color: accent, size: 19),
+                child: Icon(_categoryIcon(widget.message.category), color: accent, size: 19),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -343,40 +357,72 @@ class _CoachingMessageTile extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            message.title,
+                            widget.message.title,
                             style: TextStyle(
                               fontSize: 14,
-                              fontWeight: message.isRead ? FontWeight.w600 : FontWeight.w700,
+                              fontWeight: widget.message.isRead
+                                  ? FontWeight.w600
+                                  : FontWeight.w700,
                               color: textDark,
                               fontFamily: AppConstants.fontRegular,
                             ),
                           ),
                         ),
-                        if (!message.isRead)
+                        if (!widget.message.isRead)
                           Container(
                             width: 8,
                             height: 8,
                             margin: const EdgeInsets.only(left: 6, top: 2),
-                            decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
+                            decoration:
+                            BoxDecoration(color: accent, shape: BoxShape.circle),
                           ),
+                        const SizedBox(width: 4),
+                        AnimatedRotation(
+                          turns: _isExpanded ? 0.5 : 0,
+                          duration: const Duration(milliseconds: 250),
+                          child: Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            size: 18,
+                            color: textMid,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      message.body,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: textMid,
-                        height: 1.4,
-                        fontFamily: AppConstants.fontRegular,
+                    // Collapsed: 2-line preview. Expanded: full body.
+                    AnimatedCrossFade(
+                      duration: const Duration(milliseconds: 250),
+                      crossFadeState: _isExpanded
+                          ? CrossFadeState.showSecond
+                          : CrossFadeState.showFirst,
+                      firstChild: Text(
+                        widget.message.body,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: textMid,
+                          height: 1.4,
+                          fontFamily: AppConstants.fontRegular,
+                        ),
+                      ),
+                      secondChild: Text(
+                        widget.message.body,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: textMid,
+                          height: 1.5,
+                          fontFamily: AppConstants.fontRegular,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      DateFormat('MMM d, h:mm a').format(message.createdAt),
-                      style: TextStyle(fontSize: 11, color: textMid, fontFamily: AppConstants.fontRegular),
+                      DateFormat('MMM d, h:mm a').format(widget.message.createdAt),
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: textMid,
+                          fontFamily: AppConstants.fontRegular),
                     ),
                   ],
                 ),

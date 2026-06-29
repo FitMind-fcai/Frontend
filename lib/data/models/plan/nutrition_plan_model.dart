@@ -1,4 +1,6 @@
 
+import '../../../domain/entities/plan/nutrition_plan_entity.dart';
+
 class NutritionPreferences {
   final CaloriePreference caloriePreference;
   final int? customCalorieTarget;
@@ -39,6 +41,16 @@ class NutritionPreferences {
       excludeIngredients: json['exclude_ingredients'] != null
           ? List<String>.from(json['exclude_ingredients'])
           : null,
+    );
+  }
+  NutritionPreferencesEntity toEntity() {
+    return NutritionPreferencesEntity(
+      caloriePreference: caloriePreference,
+      customCalorieTarget: customCalorieTarget,
+      mealsPerDay: mealsPerDay,
+      mealComplexity: mealComplexity,
+      cuisinePreference: cuisinePreference,
+      excludeIngredients: excludeIngredients,
     );
   }
 }

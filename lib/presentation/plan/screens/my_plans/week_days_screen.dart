@@ -149,7 +149,7 @@ class WeekDaysScreen extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => DayMealsScreen(day: day, date: date),
+                        builder: (_) => DayMealsScreen(day: day, date: date,Location: "My plan",),
                       ),
                     ),
                   );

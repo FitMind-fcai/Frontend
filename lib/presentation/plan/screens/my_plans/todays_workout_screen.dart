@@ -117,6 +117,7 @@ class _TodayWorkoutScreenState extends State<TodayWorkoutScreen> {
           return WorkoutDayExercisesScreen(
             day: filled,
             date: DateTime(_today.year, _today.month, _today.day),
+            Location: "Home",
           );
         }
         if (state is PlanError) {

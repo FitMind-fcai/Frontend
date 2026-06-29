@@ -172,9 +172,13 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
         gender: selectedGender == 'male' ? Gender.Male : Gender.Female,
         fitnessGoal: selectedGoal == 'lose_weight'
             ? FitnessGoal.LoseWeight
-            : selectedGoal == 'get_bulks'
-                ? FitnessGoal.BuildMuscle
-                : FitnessGoal.MaintainWeight,
+            : selectedGoal == 'ai_coach'
+                ? FitnessGoal.TryAICoach
+                : selectedGoal == 'get_bulks'
+                    ? FitnessGoal.GetBulks
+                    : selectedGoal == 'gain_endurance'
+                        ? FitnessGoal.ImproveEndurance
+                        : FitnessGoal.LoseWeight,
         activityLevel: ActivityLevel.Sedentary,
         dietaryPreferences: diets,
         medicalConditions: medicalConditions,
@@ -262,13 +266,6 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 value: 'gain_endurance',
                 isGoal: true,
               ),
-              const SizedBox(height: 12),
-              _buildOptionTile(
-                icon: const AssetImage('assets/images/Solid head heart.png'),
-                label: 'assessment.goal_trying_app'.tr(),
-                value: 'trying_app',
-                isGoal: true,
-              ),
             ],
           ),
         ),
@@ -331,42 +328,42 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
 
   Widget _buildGenderPage() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'assessment.gender_question'.tr(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 32,
-            fontFamily: AppConstants.fontRegular,
-            fontWeight: FontWeight.bold,
-            height: 1.2,
-            color: _isDark ? Colors.white : Colors.black,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'assessment.gender_question'.tr(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 32,
+              fontFamily: AppConstants.fontRegular,
+              fontWeight: FontWeight.bold,
+              height: 1.2,
+              color: _isDark ? Colors.white : Colors.black,
+            ),
           ),
-        ),
-        const SizedBox(height: 32),
-        Expanded(
-          child: ListView(
-            children: [
-              _buildGenderCard(
-                gender: 'Male',
-                imagePath:
-                    'assets/images/man running with shirt that says jogger it.png',
-                value: 'male',
-              ),
-              const SizedBox(height: 16),
-              _buildGenderCard(
-                gender: 'Female',
-                imagePath:
-                    'assets/images/woman running sportswear with white background.png',
-                value: 'female',
-              ),
-              const SizedBox(height: 16),
-            ],
+          const SizedBox(height: 32),
+          Expanded(
+            child: ListView(
+              children: [
+                _buildGenderCard(
+                  gender: 'Male',
+                  imagePath:
+                      'assets/images/man running with shirt that says jogger it.png',
+                  value: 'male',
+                ),
+                const SizedBox(height: 16),
+                _buildGenderCard(
+                  gender: 'Female',
+                  imagePath:
+                      'assets/images/woman running sportswear with white background.png',
+                  value: 'female',
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
   }
 
   Widget _buildOptionTile({
@@ -529,9 +526,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                   children: [
                     Icon(
                       gender == 'Male' ? Icons.male : Icons.female,
-                      color: _isDark
-                          ? _colorScheme.surfaceContainerHighest
-                          : Colors.white,
+                      color: _isDark ? Colors.white : Colors.black,
                       size: 28,
                     ),
                     const SizedBox(width: 8),
@@ -543,9 +538,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         fontFamily: AppConstants.fontRegular,
-                        color: _isDark
-                            ? _colorScheme.surfaceContainerHighest
-                            : Colors.white,
+                        color: _isDark ? Colors.white : Colors.black,
                       ),
                     ),
                   ],
@@ -589,120 +582,12 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   }
 
   Widget _buildWeightPage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'assessment.weight_question'.tr(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 32,
-            fontFamily: AppConstants.fontRegular,
-            fontWeight: FontWeight.bold,
-            height: 1.2,
-            color: _isDark ? Colors.white : Colors.black,
-          ),
-        ),
-        const SizedBox(height: 32),
-    Container(
-    height: 50,
-    width: double.infinity,
-    decoration: BoxDecoration(
-    color: _isDark
-    ? _colorScheme.surfaceContainerHighest
-        : Colors.grey[200],
-    borderRadius: BorderRadius.circular(16),
-    ),
-    child: Directionality(
-    textDirection: ui.TextDirection.ltr,
-    child: Stack(
-    children: [
-    AnimatedAlign(
-    alignment: _selectedUnit == "kg"
-    ? Alignment.centerLeft
-        : Alignment.centerRight,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 2 - 20,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(16),
-                    border:
-                        Border.all(color: const Color(0xFFB7C9E2), width: 2),
-                  ),
-                ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedUnit = "kg"),
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          'assessment.unit_kg'.tr(),
-                          style: TextStyle(
-                            color: _selectedUnit == "kg"
-                                ? Colors.white
-                                : _isDark
-                                    ? Colors.white38
-                                    : Colors.grey[600],
-                            fontSize: 16,
-                            fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedUnit = "lbs"),
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          'assessment.unit_lbs'.tr(),
-                          style: TextStyle(
-                            fontFamily: AppConstants.fontRegular,
-                            color: _selectedUnit == "lbs"
-                                ? Colors.white
-                                : _isDark
-                                    ? Colors.white38
-                                    : Colors.grey[600],
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-    ),
-        const SizedBox(height: 48),
-        WeightPicker(
-          unit: _selectedUnit,
-          initialValue: weight,
-          onChanged: (value) => setState(() => weight = value),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHeightPage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: Text(
-            'assessment.height_question'.tr(),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'assessment.weight_question'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
@@ -712,97 +597,211 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
               color: _isDark ? Colors.white : Colors.black,
             ),
           ),
-        ),
-        const SizedBox(height: 32),
-    Container(
-    height: 50,
-    width: double.infinity,
-    decoration: BoxDecoration(
-    color: _isDark
-    ? _colorScheme.surfaceContainerHighest
-        : Colors.grey[200],
-    borderRadius: BorderRadius.circular(16),
-    ),
-    child: Directionality(
-    textDirection: ui.TextDirection.ltr,
-    child: Stack(
-    children: [
-    AnimatedAlign(
-    alignment: _selectedHeightUnit == "cm"
-    ? Alignment.centerLeft
-        : Alignment.centerRight,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 2 - 20,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(16),
-                    border:
-                        Border.all(color: const Color(0xFFB7C9E2), width: 2),
-                  ),
-                ),
-              ),
-              Row(
+          const SizedBox(height: 32),
+          Container(
+            height: 50,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: _isDark
+                  ? _colorScheme.surfaceContainerHighest
+                  : Colors.grey[200],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Directionality(
+              textDirection: ui.TextDirection.ltr,
+              child: Stack(
                 children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedHeightUnit = "cm"),
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          'assessment.unit_cm'.tr(),
-                          style: TextStyle(
-                            color: _selectedHeightUnit == "cm"
-                                ? Colors.white
-                                : _isDark
-                                    ? Colors.white38
-                                    : Colors.grey[600],
-                            fontSize: 16,
-                            fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                  AnimatedAlign(
+                    alignment: _selectedUnit == "kg"
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 2 - 20,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color: const Color(0xFFB7C9E2), width: 2),
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedHeightUnit = "ft"),
-                      child: Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          'assessment.unit_ft'.tr(),
-                          style: TextStyle(
-                            fontFamily: AppConstants.fontRegular,
-                            color: _selectedHeightUnit == "ft"
-                                ? Colors.white
-                                : _isDark
-                                    ? Colors.white38
-                                    : Colors.grey[600],
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedUnit = "kg"),
+                          child: Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              'assessment.unit_kg'.tr(),
+                              style: TextStyle(
+                                color: _selectedUnit == "kg"
+                                    ? Colors.white
+                                    : _isDark
+                                        ? Colors.white38
+                                        : Colors.grey[600],
+                                fontSize: 16,
+                                fontFamily: AppConstants.fontRegular,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedUnit = "lbs"),
+                          child: Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              'assessment.unit_lbs'.tr(),
+                              style: TextStyle(
+                                fontFamily: AppConstants.fontRegular,
+                                color: _selectedUnit == "lbs"
+                                    ? Colors.white
+                                    : _isDark
+                                        ? Colors.white38
+                                        : Colors.grey[600],
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-    ),
-        const SizedBox(height: 48),
-        HeightPicker(
-          unit: _selectedHeightUnit,
-          initialValue: height,
-          onChanged: (value) => setState(() => height = value),
-        ),
-      ],
+          const SizedBox(height: 48),
+          WeightPicker(
+            unit: _selectedUnit,
+            initialValue: weight,
+            onChanged: (value) => setState(() => weight = value),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeightPage() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              'assessment.height_question'.tr(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontFamily: AppConstants.fontRegular,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+                color: _isDark ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
+          Container(
+            height: 50,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: _isDark
+                  ? _colorScheme.surfaceContainerHighest
+                  : Colors.grey[200],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Directionality(
+              textDirection: ui.TextDirection.ltr,
+              child: Stack(
+                children: [
+                  AnimatedAlign(
+                    alignment: _selectedHeightUnit == "cm"
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 2 - 20,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color: const Color(0xFFB7C9E2), width: 2),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () =>
+                              setState(() => _selectedHeightUnit = "cm"),
+                          child: Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              'assessment.unit_cm'.tr(),
+                              style: TextStyle(
+                                color: _selectedHeightUnit == "cm"
+                                    ? Colors.white
+                                    : _isDark
+                                        ? Colors.white38
+                                        : Colors.grey[600],
+                                fontSize: 16,
+                                fontFamily: AppConstants.fontRegular,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () =>
+                              setState(() => _selectedHeightUnit = "ft"),
+                          child: Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              'assessment.unit_ft'.tr(),
+                              style: TextStyle(
+                                fontFamily: AppConstants.fontRegular,
+                                color: _selectedHeightUnit == "ft"
+                                    ? Colors.white
+                                    : _isDark
+                                        ? Colors.white38
+                                        : Colors.grey[600],
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 48),
+          HeightPicker(
+            unit: _selectedHeightUnit,
+            initialValue: height,
+            onChanged: (value) => setState(() => height = value),
+          ),
+        ],
+      ),
     );
   }
 
@@ -814,272 +813,273 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
         _ageController.jumpToItem(selectedAgeNotifier.value);
       }
     });
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 16),
-        Text(
-          'assessment.age_question'.tr(),
-          style: TextStyle(
-            fontSize: 32,
-            fontFamily: AppConstants.fontRegular,
-            fontWeight: FontWeight.bold,
-            height: 1.2,
-            color: _isDark ? Colors.white : Colors.black,
+    return  Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 16),
+          Text(
+            'assessment.age_question'.tr(),
+            style: TextStyle(
+              fontSize: 32,
+              fontFamily: AppConstants.fontRegular,
+              fontWeight: FontWeight.bold,
+              height: 1.2,
+              color: _isDark ? Colors.white : Colors.black,
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        Expanded(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              ValueListenableBuilder<int>(
-                valueListenable: selectedAgeNotifier,
-                builder: (context, selectedAge, _) {
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    width: selectedAge % 2 == 0 ? 290 : 285,
-                    height: selectedAge % 2 == 0 ? 165 : 160,
-                    decoration: BoxDecoration(
-                      color: AppConstants.primaryColor,
-                      borderRadius: BorderRadius.circular(32),
-                    ),
-                  );
-                },
-              ),
-              ListWheelScrollView.useDelegate(
-                controller: _ageController,
-                itemExtent: 160,
-                perspective: 0.005,
-                diameterRatio: 3,
-                physics: const FixedExtentScrollPhysics(),
-                onSelectedItemChanged: (index) {
-                  selectedAgeNotifier.value = index;
-                },
-                childDelegate: ListWheelChildBuilderDelegate(
-                  builder: (context, index) {
-                    return ValueListenableBuilder<int>(
-                      valueListenable: selectedAgeNotifier,
-                      builder: (context, selectedAge, _) {
-                        int distance = (index - selectedAge).abs();
-                        double fontSize;
-                        Color textColor;
-
-                        if (distance == 0) {
-                          fontSize = 140;
-                          textColor = Colors.white;
-                        } else if (distance == 1) {
-                          fontSize = 110;
-                          textColor = const Color(0xFF9EA0A5);
-                        } else if (distance == 2) {
-                          fontSize = 95;
-                          textColor = const Color(0xFFD7D8D9);
-                        } else {
-                          fontSize = 80;
-                          textColor = const Color(0xFFD1D5DB);
-                        }
-
-                        return Center(
-                          child: AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 200),
-                            style: TextStyle(
-                              fontSize: fontSize,
-                              fontWeight: FontWeight.w900,
-                              fontFamily: AppConstants.fontRegular,
-                              color: textColor,
-                              height: 1,
-                            ),
-                            child: Text('${index + 1}'),
-                          ),
-                        );
-                      },
+          const SizedBox(height: 16),
+          Expanded(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                ValueListenableBuilder<int>(
+                  valueListenable: selectedAgeNotifier,
+                  builder: (context, selectedAge, _) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      width: selectedAge % 2 == 0 ? 290 : 285,
+                      height: selectedAge % 2 == 0 ? 165 : 160,
+                      decoration: BoxDecoration(
+                        color: AppConstants.primaryColor,
+                        borderRadius: BorderRadius.circular(32),
+                      ),
                     );
                   },
-                  childCount: 100,
                 ),
-              ),
-            ],
+                ListWheelScrollView.useDelegate(
+                  controller: _ageController,
+                  itemExtent: 160,
+                  perspective: 0.005,
+                  diameterRatio: 3,
+                  physics: const FixedExtentScrollPhysics(),
+                  onSelectedItemChanged: (index) {
+                    selectedAgeNotifier.value = index;
+                  },
+                  childDelegate: ListWheelChildBuilderDelegate(
+                    builder: (context, index) {
+                      return ValueListenableBuilder<int>(
+                        valueListenable: selectedAgeNotifier,
+                        builder: (context, selectedAge, _) {
+                          int distance = (index - selectedAge).abs();
+                          double fontSize;
+                          Color textColor;
+
+                          if (distance == 0) {
+                            fontSize = 140;
+                            textColor = Colors.white;
+                          } else if (distance == 1) {
+                            fontSize = 110;
+                            textColor = const Color(0xFF9EA0A5);
+                          } else if (distance == 2) {
+                            fontSize = 95;
+                            textColor = const Color(0xFFD7D8D9);
+                          } else {
+                            fontSize = 80;
+                            textColor = const Color(0xFFD1D5DB);
+                          }
+
+                          return Center(
+                            child: AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 200),
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.w900,
+                                fontFamily: AppConstants.fontRegular,
+                                color: textColor,
+                                height: 1,
+                              ),
+                              child: Text('${index + 1}'),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    childCount: 100,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
   }
 
   Widget _physicalTagInput() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Center(
-          child: Text(
-            'assessment.physical_limitations_question'.tr(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 32,
-              fontFamily: AppConstants.fontRegular,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-              color: _isDark ? Colors.white : Colors.black,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Center(
+            child: Text(
+              'assessment.physical_limitations_question'.tr(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontFamily: AppConstants.fontRegular,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+                color: _isDark ? Colors.white : Colors.black,
+              ),
             ),
           ),
-        ),
-        Container(
-          height: 196,
-          width: double.infinity,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark
-              ? null
-              : Image.asset('assets/images/wheelchair.png',
-                  fit: BoxFit.contain),
-        ),
-        TagInputWidget(
-          initialValues: physicalLimitations,
-          onChanged: (values) => physicalLimitations = values,
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
+          Container(
+            height: 196,
+            width: double.infinity,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+            child: _isDark
+                ? null
+                : Image.asset('assets/images/wheelchair.png',
+                    fit: BoxFit.contain),
+          ),
+          TagInputWidget(
+            initialValues: physicalLimitations,
+            onChanged: (values) => physicalLimitations = values,
+          ),
+          const SizedBox(height: 16),
+        ],
+      );
   }
 
   Widget _medicalConditionInput() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Center(
-          child: Text(
-            'assessment.medical_conditions_question'.tr(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 32,
-              fontFamily: AppConstants.fontRegular,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-              color: _isDark ? Colors.white : Colors.black,
+    return  Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Center(
+            child: Text(
+              'assessment.medical_conditions_question'.tr(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontFamily: AppConstants.fontRegular,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+                color: _isDark ? Colors.white : Colors.black,
+              ),
             ),
           ),
-        ),
-        Container(
-          height: 196,
-          width: double.infinity,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark
-              ? null
-              : Image.asset('assets/images/medical.jpg', fit: BoxFit.contain),
-        ),
-        TagInputWidget(
-          initialValues: medicalConditions,
-          onChanged: (values) => medicalConditions = values,
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
+          Container(
+            height: 196,
+            width: double.infinity,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+            child: _isDark
+                ? null
+                : Image.asset('assets/images/medical.jpg', fit: BoxFit.contain),
+          ),
+          TagInputWidget(
+            initialValues: medicalConditions,
+            onChanged: (values) => medicalConditions = values,
+          ),
+          const SizedBox(height: 16),
+        ],
+      );
   }
 
   Widget _AllergiesInput() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Center(
-          child: Text(
-            'assessment.allergies_question'.tr(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 32,
-              fontFamily: AppConstants.fontRegular,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-              color: _isDark ? Colors.white : Colors.black,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Center(
+            child: Text(
+              'assessment.allergies_question'.tr(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontFamily: AppConstants.fontRegular,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+                color: _isDark ? Colors.white : Colors.black,
+              ),
             ),
           ),
-        ),
-        Container(
-          height: 196,
-          width: double.infinity,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark
-              ? null
-              : Image.asset('assets/images/allergies.jpg', fit: BoxFit.contain),
-        ),
-        TagInputWidget(
-          initialValues: allergies,
-          onChanged: (values) => allergies = values,
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
+          Container(
+            height: 196,
+            width: double.infinity,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+            child: _isDark
+                ? null
+                : Image.asset('assets/images/allergies.jpg',
+                    fit: BoxFit.contain),
+          ),
+          TagInputWidget(
+            initialValues: allergies,
+            onChanged: (values) => allergies = values,
+          ),
+          const SizedBox(height: 16),
+        ],
+      );
   }
 
   Widget _dietInput() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Center(
-          child: Text(
-            'assessment.diet_question'.tr(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 32,
-              fontFamily: AppConstants.fontRegular,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-              color: _isDark ? Colors.white : Colors.black,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Center(
+            child: Text(
+              'assessment.diet_question'.tr(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontFamily: AppConstants.fontRegular,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+                color: _isDark ? Colors.white : Colors.black,
+              ),
             ),
           ),
-        ),
-        Container(
-          height: 196,
-          width: double.infinity,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark
-              ? null
-              : Image.asset('assets/images/diet.jpg', fit: BoxFit.contain),
-        ),
-        TagInputWidget(
-          initialValues: diets,
-          onChanged: (values) => diets = values,
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
+          Container(
+            height: 196,
+            width: double.infinity,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+            child: _isDark
+                ? null
+                : Image.asset('assets/images/diet.jpg', fit: BoxFit.contain),
+          ),
+          TagInputWidget(
+            initialValues: diets,
+            onChanged: (values) => diets = values,
+          ),
+          const SizedBox(height: 16),
+        ],
+      );
   }
 
   Widget _medicationsInput() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Center(
-          child: Text(
-            'assessment.medications_question'.tr(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 32,
-              fontFamily: AppConstants.fontRegular,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-              color: _isDark ? Colors.white : Colors.black,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Center(
+            child: Text(
+              'assessment.medications_question'.tr(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontFamily: AppConstants.fontRegular,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+                color: _isDark ? Colors.white : Colors.black,
+              ),
             ),
           ),
-        ),
-        Container(
-          height: 196,
-          width: double.infinity,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: _isDark
-              ? null
-              : Image.asset('assets/images/medications.jpg',
-                  fit: BoxFit.contain),
-        ),
-        TagInputWidget(
-          initialValues: medications,
-          onChanged: (values) => medications = values,
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
+          Container(
+            height: 196,
+            width: double.infinity,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+            child: _isDark
+                ? null
+                : Image.asset('assets/images/medications.jpg',
+                    fit: BoxFit.contain),
+          ),
+          TagInputWidget(
+            initialValues: medications,
+            onChanged: (values) => medications = values,
+          ),
+          const SizedBox(height: 16),
+        ],
+      );
   }
 }

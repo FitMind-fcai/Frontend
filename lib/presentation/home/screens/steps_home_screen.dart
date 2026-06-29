@@ -53,6 +53,18 @@ class _StepsTakenPageState extends State<StepsTakenPage>
 
   Future<void> _initHealthData() async {
     await _health.configure();
+
+    final hasPermissions = await _health.hasPermissions(_types);
+
+    if (hasPermissions != true) {
+      final granted = await _health.requestAuthorization(_types);
+      if (!granted) {
+        if (!mounted) return;
+        setState(() => _isLoading = false);
+        return;
+      }
+    }
+
     await _fetchTodayData();
   }
 

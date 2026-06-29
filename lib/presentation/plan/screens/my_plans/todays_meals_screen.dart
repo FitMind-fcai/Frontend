@@ -85,6 +85,6 @@ class TodayMealsScreen extends StatelessWidget {
       );
     }
 
-    return DayMealsScreen(day: todayPlan, date: todayDateOnly);
+    return DayMealsScreen(day: todayPlan, date: todayDateOnly,Location: "Home",);
   }
 }

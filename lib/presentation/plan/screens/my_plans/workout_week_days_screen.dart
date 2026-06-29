@@ -151,6 +151,7 @@ class WorkoutWeekDaysScreen extends StatelessWidget {
                         builder: (_) => WorkoutDayExercisesScreen(
                           day: day,
                           date: date,
+                          Location: "My Plan",
                         ),
                       ),
                     ),

@@ -120,10 +120,6 @@ class _LogEntryPageState extends State<LogEntryPage>
                         ),
                       ),
                     ],
-                    if (_selectedType != null && _selectedMethod != null) ...[
-                      const SizedBox(height: 36),
-                      _buildContinueButton(),
-                    ],
                   ],
                 ),
               ),
@@ -173,20 +169,23 @@ class _LogEntryPageState extends State<LogEntryPage>
               fontFamily: AppConstants.fontRegular,
             ),
           ),
-          SizedBox(width: 190,),
+          Spacer(),
           GestureDetector(
             onTap: () async {
               await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => LogHistoryScreen()),
               );
-              },
-            child: Text('log_history.title'.tr(),style: TextStyle(
-              fontFamily: AppConstants.fontRegular,
-              fontSize: 16,
-              fontWeight: AppConstants.extraBold,
-              decoration: TextDecoration.underline,
-            ),),
+            },
+            child: Text(
+              'log_history.title'.tr(),
+              style: TextStyle(
+                fontFamily: AppConstants.fontRegular,
+                fontSize: 16,
+                fontWeight: AppConstants.extraBold,
+                decoration: TextDecoration.underline,
+              ),
+            ),
           )
         ],
       ),
@@ -232,23 +231,23 @@ class _LogEntryPageState extends State<LogEntryPage>
     final colorScheme = Theme.of(context).colorScheme;
     final methods = [
       (
-      LogMethod.voice,
-      Icons.mic_rounded,
-      'log_entry.method_voice'.tr(),
-      'log_entry.method_voice_subtitle'.tr()
+        LogMethod.voice,
+        Icons.mic_rounded,
+        'log_entry.method_voice'.tr(),
+        'log_entry.method_voice_subtitle'.tr()
       ),
       if (_selectedType != LogType.workout)
         (
-        LogMethod.image,
-        Icons.camera_alt_rounded,
-        'log_entry.method_image'.tr(),
-        'log_entry.method_image_subtitle'.tr()
+          LogMethod.image,
+          Icons.camera_alt_rounded,
+          'log_entry.method_image'.tr(),
+          'log_entry.method_image_subtitle'.tr()
         ),
       (
-      LogMethod.text,
-      Icons.edit_rounded,
-      'log_entry.method_text'.tr(),
-      'log_entry.method_text_subtitle'.tr()
+        LogMethod.text,
+        Icons.edit_rounded,
+        'log_entry.method_text'.tr(),
+        'log_entry.method_text_subtitle'.tr()
       ),
     ];
     return Column(
@@ -258,7 +257,10 @@ class _LogEntryPageState extends State<LogEntryPage>
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: GestureDetector(
-            onTap: () => setState(() => _selectedMethod = method),
+            onTap: () {
+              setState(() => _selectedMethod = method);
+              _navigate(); // navigate immediately after selecting
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
@@ -372,7 +374,9 @@ class _LogEntryPageState extends State<LogEntryPage>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('log_entry.continue_button'.tr(namedArgs: {'type': typeLabel, 'method': methodLabel}),
+            Text(
+                'log_entry.continue_button'
+                    .tr(namedArgs: {'type': typeLabel, 'method': methodLabel}),
                 style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,

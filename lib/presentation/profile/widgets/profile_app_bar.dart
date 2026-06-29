@@ -132,38 +132,6 @@ class _ProfileAppBarState extends State<ProfileAppBar> {
               ),
 
         const SizedBox(height: 6),
-
-        // ── Location · Member badge ──────────────────────────────────
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.location_on_rounded,
-                size: 13, color: Color(0xFF888888)),
-            const SizedBox(width: 3),
-            const Text(
-              'Tokyo, Japan',
-              style: TextStyle(fontSize: 13, color: Color(0xFF888888)),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              width: 4,
-              height: 4,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF888888),
-              ),
-            ),
-            const SizedBox(width: 8),
-            const Icon(Icons.person_outline_rounded,
-                size: 13, color: Color(0xFF888888)),
-            const SizedBox(width: 3),
-            const Text(
-              'Basic Member',
-              style: TextStyle(fontSize: 13, color: Color(0xFF888888)),
-            ),
-          ],
-        ),
-
         const SizedBox(height: 20),
       ],
     );
