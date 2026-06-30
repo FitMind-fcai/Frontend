@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fitmind/presentation/authentication/widgets/common_button.dart';
 import 'package:fitmind/presentation/plan/screens/workout_plan_screen.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +25,28 @@ class NutritionPlanScreen extends StatefulWidget {
 
 class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   int currentPage = 0;
+  Timer? _loadingMessageTimer;
+  int _loadingMessageIndex = 0;
 
+  final List<String> _loadingMessages = [
+    'nutrition.creating_plan'.tr(),
+    'nutrition.analyzing_goals'.tr(),
+    'nutrition.calculating_macros'.tr(),
+    'nutrition.almost_ready'.tr(),
+  ];
+
+  void _startLoadingMessageCycle() {
+    _loadingMessageTimer?.cancel();
+    _loadingMessageIndex = 0;
+    _loadingMessageTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      setState(() {
+        _loadingMessageIndex = (_loadingMessageIndex + 1) % _loadingMessages.length;
+      });
+    });
+  }
   // Nutrition plan data
   int? customCalorieTarget;
-  String _selectedUnit = "";
+  String _selectedUnit = "Kcal";
   String _selectedDays = "3";
   String _selectedComplexity = '';
   List<String> diets = [];
@@ -47,6 +67,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   void dispose() {
     calorieController.dispose();
     ingredientController.dispose();
+    _loadingMessageTimer?.cancel();
     super.dispose();
   }
 
@@ -195,13 +216,18 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      Text(
-                        'nutrition.creating_plan'.tr(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: AppConstants.fontRegular,
-                          fontWeight: FontWeight.w700,
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        child: Text(
+                          _loadingMessages[_loadingMessageIndex],
+                          key: ValueKey(_loadingMessageIndex),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontFamily: AppConstants.fontRegular,
+                            fontWeight: FontWeight.w700,
+                            decoration: TextDecoration.none, // <-- add this
+                          ),
                         ),
                       ),
                     ],
@@ -218,7 +244,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
     if (currentPage < 5) {
       setState(() => currentPage++);
     } else {
-      // Submit to BLoC
+      _startLoadingMessageCycle();
       _submitNutritionPreferences();
     }
   }
@@ -494,175 +520,177 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
 
   // Page 2: Meals Per Day
   Widget _buildMealsPerDayPage(bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          textAlign: TextAlign.center,
-          'nutrition.meals_per_day_question'.tr(),
-          style: TextStyle(
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
-            fontFamily: AppConstants.fontRegular,
-            height: 1.2,
-            color: isDark ? Colors.white : Colors.black,
-          ),
-        ),
-        Center(
-          child: Text('${_selectedDays}x',
-              style: TextStyle(
-                fontSize: 256,
-                fontFamily: AppConstants.fontRegular,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
-              )),
-        ),
-        const SizedBox(height: 30),
-        Container(
-          height: 50,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Directionality(
-            textDirection: ui.TextDirection.ltr,
-            child: Stack(
-              children: [
-                // Animated background indicator
-                AnimatedPositioned(
-                  left: _getLeftPosition(),
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                  child: Container(
-                    width: (MediaQuery.of(context).size.width - 40) / 4,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Color(0xFFB7C9E2), width: 2),
-                    ),
-                  ),
-                ),
-                // Toggle buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() => _selectedDays = "3");
-                        },
-                        child: Container(
-                          height: 50,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "3",
-                            style: TextStyle(
-                              color: _selectedDays == "3"
-                                  ? Colors.white
-                                  : (isDark
-                                      ? Colors.white60
-                                      : Colors.grey[600]),
-                              fontSize: 16,
-                              fontFamily: AppConstants.fontRegular,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() => _selectedDays = "4");
-                        },
-                        child: Container(
-                          height: 50,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "4",
-                            style: TextStyle(
-                              fontFamily: AppConstants.fontRegular,
-                              color: _selectedDays == "4"
-                                  ? Colors.white
-                                  : (isDark
-                                      ? Colors.white60
-                                      : Colors.grey[600]),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() => _selectedDays = "5");
-                        },
-                        child: Container(
-                          height: 50,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "5",
-                            style: TextStyle(
-                              color: _selectedDays == "5"
-                                  ? Colors.white
-                                  : (isDark
-                                      ? Colors.white60
-                                      : Colors.grey[600]),
-                              fontSize: 16,
-                              fontFamily: AppConstants.fontRegular,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() => _selectedDays = "6");
-                        },
-                        child: Container(
-                          height: 50,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "6",
-                            style: TextStyle(
-                              color: _selectedDays == "6"
-                                  ? Colors.white
-                                  : (isDark
-                                      ? Colors.white60
-                                      : Colors.grey[600]),
-                              fontSize: 16,
-                              fontFamily: AppConstants.fontRegular,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 32),
-        Center(
-          child: Text(
-            'nutrition.meals_daily_message'
-                .tr(namedArgs: {'count': _selectedDays}),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            textAlign: TextAlign.center,
+            'nutrition.meals_per_day_question'.tr(),
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
               fontFamily: AppConstants.fontRegular,
-              fontWeight: FontWeight.w500,
+              height: 1.2,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-        ),
-      ],
+          Center(
+            child: Text('${_selectedDays}x',
+                style: TextStyle(
+                  fontSize: 256,
+                  fontFamily: AppConstants.fontRegular,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white : Colors.black,
+                )),
+          ),
+          const SizedBox(height: 30),
+          Container(
+            height: 50,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Directionality(
+              textDirection: ui.TextDirection.ltr,
+              child: Stack(
+                children: [
+                  // Animated background indicator
+                  AnimatedPositioned(
+                    left: _getLeftPosition(),
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: Container(
+                      width: (MediaQuery.of(context).size.width - 40) / 4,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Color(0xFFB7C9E2), width: 2),
+                      ),
+                    ),
+                  ),
+                  // Toggle buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() => _selectedDays = "3");
+                          },
+                          child: Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "3",
+                              style: TextStyle(
+                                color: _selectedDays == "3"
+                                    ? Colors.white
+                                    : (isDark
+                                        ? Colors.white60
+                                        : Colors.grey[600]),
+                                fontSize: 16,
+                                fontFamily: AppConstants.fontRegular,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() => _selectedDays = "4");
+                          },
+                          child: Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "4",
+                              style: TextStyle(
+                                fontFamily: AppConstants.fontRegular,
+                                color: _selectedDays == "4"
+                                    ? Colors.white
+                                    : (isDark
+                                        ? Colors.white60
+                                        : Colors.grey[600]),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() => _selectedDays = "5");
+                          },
+                          child: Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "5",
+                              style: TextStyle(
+                                color: _selectedDays == "5"
+                                    ? Colors.white
+                                    : (isDark
+                                        ? Colors.white60
+                                        : Colors.grey[600]),
+                                fontSize: 16,
+                                fontFamily: AppConstants.fontRegular,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() => _selectedDays = "6");
+                          },
+                          child: Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "6",
+                              style: TextStyle(
+                                color: _selectedDays == "6"
+                                    ? Colors.white
+                                    : (isDark
+                                        ? Colors.white60
+                                        : Colors.grey[600]),
+                                fontSize: 16,
+                                fontFamily: AppConstants.fontRegular,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 32),
+          Center(
+            child: Text(
+              'nutrition.meals_daily_message'
+                  .tr(namedArgs: {'count': _selectedDays}),
+              style: TextStyle(
+                fontSize: 16,
+                fontFamily: AppConstants.fontRegular,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1033,158 +1061,160 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   }
 
   Widget _buildDurationWeeksPage(bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'nutrition.duration_question'.tr(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            fontFamily: AppConstants.fontRegular,
-            height: 1.2,
-            color: isDark ? Colors.white : Colors.black,
-          ),
-        ),
-        const SizedBox(height: 32),
-        GridView.count(
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 0.85,
-          children: [
-            _buildWeekCard(4, 'nutrition.month_1'.tr(), isDark),
-            _buildWeekCard(8, 'nutrition.months_2'.tr(), isDark),
-            _buildWeekCard(12, 'nutrition.months_3'.tr(), isDark),
-            _buildWeekCard(16, 'nutrition.months_4'.tr(), isDark),
-            _buildWeekCard(24, 'nutrition.months_6'.tr(), isDark),
-            _buildWeekCard(52, 'nutrition.year_1'.tr(), isDark),
-          ],
-        ),
-        const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[100],
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[300]!,
-              width: 1,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'nutrition.duration_question'.tr(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              fontFamily: AppConstants.fontRegular,
+              height: 1.2,
+              color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 32),
+          GridView.count(
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.85,
             children: [
-              Row(
-                children: [
-                  const Text(
-                    '✏️',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'nutrition.custom_duration'.tr(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: AppConstants.fontRegular,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: _isCustomWeeks
-                              ? AppConstants.primaryColor
-                              : (isDark
-                                  ? const Color(0xFF3A3A3A)
-                                  : Colors.grey[300]!),
-                          width: 2,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              if (_customWeeks > 1) {
-                                setState(() {
-                                  _customWeeks--;
-                                  _durationWeeks = _customWeeks;
-                                  _isCustomWeeks = true;
-                                });
-                              }
-                            },
-                            icon: const Icon(Icons.remove_circle_outline,
-                                size: 28),
-                            color: AppConstants.primaryColor,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                          const SizedBox(width: 20),
-                          Text(
-                            '$_customWeeks',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: AppConstants.fontRegular,
-                              color: isDark ? Colors.white : Colors.black,
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          IconButton(
-                            onPressed: () {
-                              if (_customWeeks < 52) {
-                                setState(() {
-                                  _customWeeks++;
-                                  _durationWeeks = _customWeeks;
-                                  _isCustomWeeks = true;
-                                });
-                              }
-                            },
-                            icon:
-                                const Icon(Icons.add_circle_outline, size: 28),
-                            color: AppConstants.primaryColor,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Center(
-                child: Text(
-                  _customWeeks == 1 ? 'nutrition.week_singular'.tr() : 'nutrition.week_plural'.tr(),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: AppConstants.fontRegular,
-                    color: isDark ? Colors.white60 : Colors.grey[600],
-                  ),
-                ),
-              ),
+              _buildWeekCard(4, 'nutrition.month_1'.tr(), isDark),
+              _buildWeekCard(8, 'nutrition.months_2'.tr(), isDark),
+              _buildWeekCard(12, 'nutrition.months_3'.tr(), isDark),
+              _buildWeekCard(16, 'nutrition.months_4'.tr(), isDark),
+              _buildWeekCard(24, 'nutrition.months_6'.tr(), isDark),
+              _buildWeekCard(52, 'nutrition.year_1'.tr(), isDark),
             ],
           ),
-        ),
-      ],
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[100],
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[300]!,
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      '✏️',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'nutrition.custom_duration'.tr(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: AppConstants.fontRegular,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _isCustomWeeks
+                                ? AppConstants.primaryColor
+                                : (isDark
+                                    ? const Color(0xFF3A3A3A)
+                                    : Colors.grey[300]!),
+                            width: 2,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (_customWeeks > 1) {
+                                  setState(() {
+                                    _customWeeks--;
+                                    _durationWeeks = _customWeeks;
+                                    _isCustomWeeks = true;
+                                  });
+                                }
+                              },
+                              icon: const Icon(Icons.remove_circle_outline,
+                                  size: 28),
+                              color: AppConstants.primaryColor,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                            const SizedBox(width: 20),
+                            Text(
+                              '$_customWeeks',
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: AppConstants.fontRegular,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            IconButton(
+                              onPressed: () {
+                                if (_customWeeks < 52) {
+                                  setState(() {
+                                    _customWeeks++;
+                                    _durationWeeks = _customWeeks;
+                                    _isCustomWeeks = true;
+                                  });
+                                }
+                              },
+                              icon:
+                                  const Icon(Icons.add_circle_outline, size: 28),
+                              color: AppConstants.primaryColor,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: Text(
+                    _customWeeks == 1 ? 'nutrition.week_singular'.tr() : 'nutrition.week_plural'.tr(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: AppConstants.fontRegular,
+                      color: isDark ? Colors.white60 : Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

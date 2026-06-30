@@ -135,7 +135,10 @@
     "year_1": "سنة واحدة",
     "custom_duration": "مدة مخصصة",
     "week_singular": "أسبوع",
-    "week_plural": "أسابيع"
+    "week_plural": "أسابيع",
+    "analyzing_goals": "جاري تحليل أهدافك...",
+    "calculating_macros": "جاري حساب احتياجاتك الغذائية...",
+    "almost_ready": "على وشك الانتهاء..."
   },
   "workout": {
     "title": "خطة التمرين",
@@ -186,7 +189,10 @@
     "year_1": "سنة واحدة",
     "custom_duration": "مدة مخصصة",
     "week_singular": "أسبوع",
-    "week_plural": "أسابيع"
+    "week_plural": "أسابيع",
+    "analyzing_goals": "جاري تحليل أهدافك...",
+    "selecting_exercises": "جاري اختيار التمارين...",
+    "almost_ready": "على وشك الانتهاء..."
   },
   "nutrition_result": {
     "title": "ملخص خطة التغذية",

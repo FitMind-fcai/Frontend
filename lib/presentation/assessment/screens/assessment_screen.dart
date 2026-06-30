@@ -25,6 +25,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   int currentPage = 0;
   String? selectedGoal;
   String? selectedGender;
+  String? selectedActivityLevel;
   String _selectedUnit = 'kg';
   double? weight;
   FixedExtentScrollController _ageController = FixedExtentScrollController();
@@ -243,28 +244,28 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 icon: const AssetImage('assets/images/coldair.png'),
                 label: 'assessment.goal_lose_weight'.tr(),
                 value: 'lose_weight',
-                isGoal: true,
+                selectionGroup: 'goal',
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/robothead.png'),
                 label: 'assessment.goal_ai_coach'.tr(),
                 value: 'ai_coach',
-                isGoal: true,
+                selectionGroup: 'goal',
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/dumbbell.png'),
                 label: 'assessment.goal_bulk'.tr(),
                 value: 'get_bulks',
-                isGoal: true,
+                selectionGroup: 'goal',
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/heartbeats.png'),
                 label: 'assessment.goal_endurance'.tr(),
                 value: 'gain_endurance',
-                isGoal: true,
+                selectionGroup: 'goal',
               ),
             ],
           ),
@@ -296,28 +297,28 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 icon: const AssetImage('assets/images/coldair.png'),
                 label: 'assessment.activity_sedentary'.tr(),
                 value: 'lose_weight',
-                isGoal: true,
+                selectionGroup: 'activity',
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/robothead.png'),
                 label: 'assessment.activity_light'.tr(),
                 value: 'ai_coach',
-                isGoal: true,
+                selectionGroup: 'activity',
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/dumbbell.png'),
                 label: 'assessment.activity_moderate'.tr(),
                 value: 'get_bulks',
-                isGoal: true,
+                selectionGroup: 'activity',
               ),
               const SizedBox(height: 12),
               _buildOptionTile(
                 icon: const AssetImage('assets/images/heartbeats.png'),
                 label: 'assessment.activity_very'.tr(),
                 value: 'Extra Active',
-                isGoal: true,
+                selectionGroup: 'activity',
               ),
             ],
           ),
@@ -370,20 +371,28 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     required ImageProvider icon,
     required String label,
     required String value,
-    required bool isGoal,
+    required String selectionGroup,
   }) {
-    final isSelected = isGoal ? selectedGoal == value : selectedGender == value;
+    final isSelected = switch (selectionGroup) {
+      'goal' => selectedGoal == value,
+      'gender' => selectedGender == value,
+      'activity' => selectedActivityLevel == value,
+      _ => false,
+    };
 
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          if (isGoal) {
-            selectedGoal = value;
-          } else {
-            selectedGender = value;
-          }
-        });
-      },
+        onTap: () {
+          setState(() {
+            switch (selectionGroup) {
+              case 'goal':
+                selectedGoal = value;
+              case 'gender':
+                selectedGender = value;
+              case 'activity':
+                selectedActivityLevel = value;
+            }
+          });
+        },
       child: AnimatedScale(
         duration: const Duration(milliseconds: 150),
         scale: isSelected ? 1.03 : 1.0,

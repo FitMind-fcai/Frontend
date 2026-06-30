@@ -72,53 +72,14 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
-
-                      // Image/Icon Area
-                      Center(
-                        child: Container(
-                          width: 240,
-                          height: 240,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: isDark
-                                  ? [
-                                Colors.blue.shade900.withOpacity(0.3),
-                                Colors.purple.shade900.withOpacity(0.3),
-                              ]
-                                  : [
-                                Colors.blue.shade50,
-                                Colors.purple.shade50,
-                              ],
-                            ),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.fitness_center,
-                                size: 80,
-                                color: isDark
-                                    ? Colors.blue.shade300
-                                    : Colors.blue.shade600,
-                              ),
-                              const SizedBox(width: 40),
-                              Icon(
-                                Icons.restaurant,
-                                size: 80,
-                                color: isDark
-                                    ? Colors.green.shade300
-                                    : Colors.green.shade600,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 40),
+                      AppConstants.verticalSpaceXXL,
+                      AppConstants.verticalSpaceXXL,
+                      AppConstants.verticalSpaceXXL,
+                      AppConstants.verticalSpaceXXL,
+                      AppConstants.verticalSpaceXXL,
+                      AppConstants.verticalSpaceXXL,
+                      AppConstants.verticalSpaceXXL,
+                      AppConstants.verticalSpaceXXL,
 
                       // Option Tiles
                       _buildOptionTile(

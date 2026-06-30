@@ -36,10 +36,7 @@ class MyPlanCard extends StatelessWidget {
                     'my_plans.title'.tr(),
                     style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold,fontFamily: AppConstants.fontRegular),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: GestureDetector(
+                  GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
@@ -60,7 +57,6 @@ class MyPlanCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 8),

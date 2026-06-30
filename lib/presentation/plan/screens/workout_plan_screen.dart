@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fitmind/presentation/plan/screens/workout_plan_result_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +20,25 @@ class WorkoutPlanScreen extends StatefulWidget {
 
 class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   int currentPage = 0;
+  Timer? _loadingMessageTimer;
+  int _loadingMessageIndex = 0;
 
+  final List<String> _loadingMessages = [
+    'workout.creating_plan'.tr(),
+    'workout.analyzing_goals'.tr(),
+    'workout.selecting_exercises'.tr(),
+    'workout.almost_ready'.tr(),
+  ];
+
+  void _startLoadingMessageCycle() {
+    _loadingMessageTimer?.cancel();
+    _loadingMessageIndex = 0;
+    _loadingMessageTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      setState(() {
+        _loadingMessageIndex = (_loadingMessageIndex + 1) % _loadingMessages.length;
+      });
+    });
+  }
   // Nutrition plan data
   String _selectedDays = "1";
   String _selectedWorkoutFocus = "";
@@ -45,6 +65,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
     return BlocConsumer<PlanBloc, PlanState>(
       listener: (context, state) {
         if (state is WorkoutPreferencesSuccess) {
+          _loadingMessageTimer?.cancel();
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -162,13 +183,18 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      Text(
-                        'workout.creating_plan'.tr(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: AppConstants.fontRegular,
-                          fontWeight: FontWeight.w700,
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        child: Text(
+                          _loadingMessages[_loadingMessageIndex],
+                          key: ValueKey(_loadingMessageIndex),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontFamily: AppConstants.fontRegular,
+                            fontWeight: FontWeight.w700,
+                            decoration: TextDecoration.none, // <-- add this
+                          ),
                         ),
                       ),
                     ],
@@ -207,6 +233,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
     if (currentPage < 7) {
       setState(() => currentPage++);
     } else {
+      _startLoadingMessageCycle();
       _submitWorkoutPreferences();
     }
   }
@@ -372,7 +399,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Image.asset(
+          child: isDark?null:Image.asset(
             'assets/images/gym workout emblem.png',
             fit: BoxFit.contain,
           ),

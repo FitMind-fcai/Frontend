@@ -135,7 +135,10 @@
     "year_1": "1 Year",
     "custom_duration": "Custom Duration",
     "week_singular": "week",
-    "week_plural": "weeks"
+    "week_plural": "weeks",
+    "analyzing_goals": "Analyzing your goals...",
+    "calculating_macros": "Calculating your macros...",
+    "almost_ready": "Almost ready..."
   },
   "workout": {
     "title": "Workout Plan",
@@ -186,7 +189,10 @@
     "year_1": "1 Year",
     "custom_duration": "Custom Duration",
     "week_singular": "week",
-    "week_plural": "weeks"
+    "week_plural": "weeks",
+    "analyzing_goals": "Analyzing your goals...",
+    "selecting_exercises": "Selecting your exercises...",
+    "almost_ready": "Almost ready..."
   },
   "nutrition_result": {
     "title": "Your Nutrition Plan Summary",

@@ -189,9 +189,21 @@ class _HomePage extends StatelessWidget {
                     if (state is HomeLoading)
                       const _ShimmerBox(height: 240, radius: 25)
                     else if (state is HomeLoaded)
-                      WorkoutHighlightCard(workout: state.workout)
+                      (state.workout?.hasPlan ?? false)
+                          ? WorkoutHighlightCard(workout: state.workout)
+                          : Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Text(
+                          state.workout?.message.isNotEmpty == true
+                              ? state.workout!.message
+                              : 'workout_card.generate_plan'.tr(),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      )
                     else if (state is HomeError)
-                      _ErrorTile(message: state.message),
+                        _ErrorTile(message: state.message),
 
                     const SizedBox(height: 25),
 

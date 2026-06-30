@@ -207,20 +207,20 @@ class _HomeAppBarState extends State<HomeAppBar> {
                               ),
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 24,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w800,
                                 fontFamily: AppConstants.fontRegular,
                               ),
                             ),
                             AppConstants.horizontalSpaceXXL,
-                            AppConstants.horizontalSpaceXL,
+                            AppConstants.horizontalSpaceL,
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (_) =>
-                                          const PersonalInfoPage()),
+                                          const AssessmentScreen()),
                                 );
                               },
                               child: SizedBox(
