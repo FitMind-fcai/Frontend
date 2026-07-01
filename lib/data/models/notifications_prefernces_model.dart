@@ -25,16 +25,16 @@ class NotificationPreferencesModel {
 
   factory NotificationPreferencesModel.fromJson(Map<String, dynamic> json) {
     return NotificationPreferencesModel(
-      mealRemindersEnabled: json['meal_reminders_enabled'],
-      workoutRemindersEnabled: json['workout_reminders_enabled'],
-      hydrationRemindersEnabled: json['hydration_reminders_enabled'],
-      sleepRemindersEnabled: json['sleep_reminders_enabled'],
-      coachingRemindersEnabled: json['coaching_reminders_enabled'],
-      hydrationIntervalHours: json['hydration_interval_hours'],
-      mealReminderMinutesBefore: json['meal_reminder_minutes_before'],
-      workoutReminderHour: json['workout_reminder_hour'],
-      sleepReminderHour: json['sleep_reminder_hour'],
-      coachingDailyHour: json['coaching_daily_hour'],
+      mealRemindersEnabled: (json['meal_reminders_enabled'] as bool?) ?? false,
+      workoutRemindersEnabled: (json['workout_reminders_enabled'] as bool?) ?? false,
+      hydrationRemindersEnabled: (json['hydration_reminders_enabled'] as bool?) ?? false,
+      sleepRemindersEnabled: (json['sleep_reminders_enabled'] as bool?) ?? false,
+      coachingRemindersEnabled: (json['coaching_reminders_enabled'] as bool?) ?? false,
+      hydrationIntervalHours: (json['hydration_interval_hours'] as int?) ?? 2,
+      mealReminderMinutesBefore: (json['meal_reminder_minutes_before'] as int?) ?? 30,
+      workoutReminderHour: (json['workout_reminder_hour'] as int?) ?? 8,
+      sleepReminderHour: (json['sleep_reminder_hour'] as int?) ?? 22,
+      coachingDailyHour: (json['coaching_daily_hour'] as int?) ?? 9,
     );
   }
 

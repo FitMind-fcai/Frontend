@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class _SettingsAppBar extends StatelessWidget {
   final VoidCallback onBack;
@@ -48,9 +49,9 @@ class _SettingsAppBar extends StatelessWidget {
               ),
               const SizedBox(width: 14),
               // ── Title ───────────────────────────────────────────
-              const Text(
-                'Account Settings',
-                style: TextStyle(
+              Text(
+                'account_settings_title'.tr(),
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                   fontFamily: AppConstants.fontRegular,

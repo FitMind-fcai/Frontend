@@ -708,7 +708,9 @@
     "help_center": "Help Center",
     "submit_feedback": "Submit Feedback",
     "sign_out": "Sign Out",
-    "close_account": "Close Account"
+    "close_account": "Close Account",
+    "language": "Language",
+    "choose_language": "Choose Language"
   },
   "notification_settings": {
     "title": "Notification Settings",

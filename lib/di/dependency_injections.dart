@@ -12,6 +12,7 @@ import 'package:fitmind/presentation/plan/manager/plan_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import '../core/services/fcm_service.dart';
+import '../core/services/theme_cubit.dart';
 import '../data/data_sources/local/auth_local_data_source.dart';
 import '../data/data_sources/local/profile_local_data_source.dart';
 import '../data/data_sources/remote/auth_remote_data_source.dart';
@@ -46,6 +47,7 @@ final sl = GetIt.instance;
 Future<void> init() async {
   // Dio
   sl.registerLazySingleton<Dio>(() => Dio());
+  sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit());
 
   // Retrofit API Service
   sl.registerLazySingleton<AuthApiService>(() => AuthApiService(sl()));

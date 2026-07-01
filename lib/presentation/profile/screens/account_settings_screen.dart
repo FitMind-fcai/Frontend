@@ -9,7 +9,10 @@ import 'package:fitmind/presentation/profile/screens/privacy_policy_screen.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 
+import '../../../core/services/theme_cubit.dart';
 import '../../authentication/manager/auth_bloc.dart';
 import '../../onboarding/screens/welcome_screen.dart';
 
@@ -60,11 +63,23 @@ class AccountSettingsPage extends StatelessWidget {
                           MaterialPageRoute(builder: (_) => PersonalInfoPage()),
                         ),
                       ),
+                      BlocBuilder<ThemeCubit, ThemeMode>(
+                        builder: (context, themeMode) {
+                          return _SettingsTile(
+                            icon: Icons.dark_mode_outlined,
+                            label: 'account_settings.dark_mode'.tr(),
+                            onTap: () {},
+                            trailing: _AppToggle(
+                              value: themeMode == ThemeMode.dark,
+                              onChanged: (v) => context.read<ThemeCubit>().toggleTheme(v),
+                            ),
+                          );
+                        },
+                      ),
                       _SettingsTile(
-                        icon: Icons.dark_mode_outlined,
-                        label: 'account_settings.dark_mode'.tr(),
-                        onTap: () {},
-                        trailing: _AppToggle(value: false, onChanged: (_) {}),
+                        icon: Icons.language_rounded,
+                        label: 'account_settings.language'.tr(),
+                        onTap: () => _showLanguagePicker(context),
                       ),
                     ],
                   ),
@@ -201,7 +216,7 @@ class _SettingsAppBar extends StatelessWidget {
               ),
               const SizedBox(width: 14),
               Text(
-                'Account Settings',
+                'account_settings.title'.tr(),
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
@@ -490,4 +505,58 @@ class _DangerButton extends StatelessWidget {
       ),
     );
   }
+}
+void _showLanguagePicker(BuildContext context) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: isDark ? const Color(0xFF1C1C2E) : Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (_) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'account_settings.choose_language'.tr(),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                title: const Text('English'),
+                trailing: context.locale.languageCode == 'en'
+                    ? const Icon(Icons.check_rounded, color: Color(0xFF3A7BFF))
+                    : null,
+                onTap: () async {
+                  Navigator.pop(context);
+                  await context.setLocale(const Locale('en'));
+                  Get.updateLocale(const Locale('en'));   // <-- force GetMaterialApp to rebuild
+                },
+              ),
+              ListTile(
+                title: const Text('العربية'),
+                trailing: context.locale.languageCode == 'ar'
+                    ? const Icon(Icons.check_rounded, color: Color(0xFF3A7BFF))
+                    : null,
+                onTap: () async {
+                  Navigator.pop(context);
+                  await context.setLocale(const Locale('ar'));
+                  Get.updateLocale(const Locale('ar'));   // <-- force GetMaterialApp to rebuild
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

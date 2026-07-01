@@ -139,6 +139,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthSignUpSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('auth.verification_email_sent'.tr())),
+          );
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => SignInScreen()),

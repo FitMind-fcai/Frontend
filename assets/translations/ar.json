@@ -709,7 +709,9 @@
     "help_center": "مركز المساعدة",
     "submit_feedback": "إرسال ملاحظات",
     "sign_out": "تسجيل الخروج",
-    "close_account": "إغلاق الحساب"
+    "close_account": "إغلاق الحساب",
+    "language": "اللغة",
+    "choose_language": "اختر اللغة"
   },
   "notification_settings": {
     "title": "إعدادات الإشعارات",
