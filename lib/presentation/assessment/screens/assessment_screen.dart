@@ -492,9 +492,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           curve: Curves.easeOut,
           height: 180,
           decoration: BoxDecoration(
-            color: _isDark
-                ? _colorScheme.surfaceContainerHighest
-                : const Color(0xFFF5F5F5),
+            color: _colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected ? const Color(0xFFFF6B35) : Colors.transparent,
@@ -535,7 +533,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                   children: [
                     Icon(
                       gender == 'Male' ? Icons.male : Icons.female,
-                      color: _isDark ? Colors.white : Colors.black,
+                      color:  Colors.black,
                       size: 28,
                     ),
                     const SizedBox(width: 8),
@@ -547,7 +545,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         fontFamily: AppConstants.fontRegular,
-                        color: _isDark ? Colors.white : Colors.black,
+                        color:  Colors.black,
                       ),
                     ),
                   ],
@@ -942,6 +940,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     fit: BoxFit.contain),
           ),
           TagInputWidget(
+            key: const ValueKey('physical'),
             initialValues: physicalLimitations,
             onChanged: (values) => physicalLimitations = values,
           ),
@@ -977,6 +976,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 : Image.asset('assets/images/medical.jpg', fit: BoxFit.contain),
           ),
           TagInputWidget(
+            key: const ValueKey('medical'),
             initialValues: medicalConditions,
             onChanged: (values) => medicalConditions = values,
           ),
@@ -1013,6 +1013,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     fit: BoxFit.contain),
           ),
           TagInputWidget(
+            key: const ValueKey('allergies'),
             initialValues: allergies,
             onChanged: (values) => allergies = values,
           ),
@@ -1048,6 +1049,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 : Image.asset('assets/images/diet.jpg', fit: BoxFit.contain),
           ),
           TagInputWidget(
+            key: const ValueKey('diet'),
             initialValues: diets,
             onChanged: (values) => diets = values,
           ),
@@ -1084,6 +1086,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     fit: BoxFit.contain),
           ),
           TagInputWidget(
+            key: const ValueKey('medications'),
             initialValues: medications,
             onChanged: (values) => medications = values,
           ),

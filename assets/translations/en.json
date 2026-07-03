@@ -249,7 +249,7 @@
     "try_again": "Try Again"
   },
   "week_days": {
-    "week_label": "Week {number}",
+    "week_label": "Detailed Week",
     "days_count": "{count} days",
     "day_label": "Day {number}",
     "day_short": "D{number}",
@@ -710,7 +710,12 @@
     "sign_out": "Sign Out",
     "close_account": "Close Account",
     "language": "Language",
-    "choose_language": "Choose Language"
+    "choose_language": "Choose Language",
+    "delete_account_title": "Delete Account",
+    "delete_account_warning": "This action is permanent and cannot be undone. Enter your password to confirm.",
+    "password_hint": "Password",
+    "cancel": "Cancel",
+    "delete_confirm": "Delete"
   },
   "notification_settings": {
     "title": "Notification Settings",
@@ -781,11 +786,11 @@
     "generate_plan": "Generate a workout plan to get started"
   },
   "week_card": {
-    "week": "Week",
+    "week": "Model Week",
     "days": "days"
   },
   "plan": {
-    "weeks": "Weeks",
+    "weeks": "Model Week",
     "week": "Week",
     "days": "days",
     "active_plan": "ACTIVE PLAN",

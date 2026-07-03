@@ -162,51 +162,49 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
               ),
             ],
           ),
-    Row(
-    children: [
-    if (!(_selectedType != null && activePlanId != null))
-    IconButton(
-    onPressed: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (_) => const PlanSelectionScreen()),
-    );
-    },
-    icon: const Icon(Icons.add),
-    color: AppConstants.primaryColor,
-    ),
-          // Deletion top right conditionally rendered button layout
-          if (_selectedType != null && activePlanId != null)
-            GestureDetector(
-              onTap: () => _showDeleteConfirmation(context, activePlanId!),
-              child: Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  // CHANGED: was Colors.white — same elevated-card fix as
-                  // the back button above.
-                  color: isDark
-                      ? colorScheme.surfaceContainerHighest
-                      : Colors.white,
-                  borderRadius: BorderRadius.circular(13),
-                  border: Border.all(
-                    // CHANGED: was const Color(0xFFFFEAEA) — same
-                    // invisible-border issue as the back button above.
-                    color: isDark
-                        ? colorScheme.outlineVariant
-                        : const Color(0xFFFFEAEA),
+          Row(
+            children: [
+              if (!(_selectedType != null && activePlanId != null))
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const PlanSelectionScreen()),
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  color: AppConstants.primaryColor,
+                ),
+              // Deletion top right conditionally rendered button layout
+              if (_selectedType != null && activePlanId != null)
+                GestureDetector(
+                  onTap: () => _showDeleteConfirmation(context, activePlanId!),
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      // CHANGED: was Colors.white — same elevated-card fix as
+                      // the back button above.
+                      color: isDark
+                          ? colorScheme.surfaceContainerHighest
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(
+                        // CHANGED: was const Color(0xFFFFEAEA) — same
+                        // invisible-border issue as the back button above.
+                        color: isDark
+                            ? colorScheme.outlineVariant
+                            : const Color(0xFFFFEAEA),
+                      ),
+                    ),
+                    child: const Icon(Icons.delete_outline_rounded,
+                        size: 20, color: Color(0xFFEF4444)),
                   ),
                 ),
-                child: const Icon(Icons.delete_outline_rounded,
-                    size: 20, color: Color(0xFFEF4444)),
-                // NOTE: the red icon itself is untouched — it's a vivid
-                // accent that reads fine against either card color.
-              ),
-            ),
+            ],
+          ),
         ],
-      ),
-    ],
       ),
     );
   }
@@ -255,8 +253,6 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              // CHANGED: was const Color(0xFF1A1A2E) — same navy contrast
-              // issue fixed throughout this file.
               color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
               fontFamily: AppConstants.fontRegular,
             ),
@@ -295,15 +291,12 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                // CHANGED: was Colors.white — dark mode uses the elevated
-                // surface tone, same fix as the header chips.
                 color:
                     isDark ? colorScheme.surfaceContainerHighest : Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Icon(Icons.error_outline_rounded,
                   size: 48, color: Color(0xFFEF4444)),
-              // NOTE: red icon untouched — vivid accent, fine in both themes.
             ),
             const SizedBox(height: 16),
             Text(
@@ -311,9 +304,6 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                // CHANGED: was const Color(0xFF6B7280) — kept exactly for
-                // light mode, swapped to onSurfaceVariant for dark so this
-                // secondary text stays legible against a dark background.
                 color: isDark
                     ? colorScheme.onSurfaceVariant
                     : const Color(0xFF6B7280),
@@ -335,9 +325,6 @@ class _MyPlansScreenState extends State<MyPlansScreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  // NOTE: backgroundColor/foregroundColor untouched — the
-                  // button is always orange with white text/icon on top
-                  // of it, regardless of theme.
                   backgroundColor: AppConstants.primaryColor,
                   foregroundColor: Colors.white,
                   elevation: 0,

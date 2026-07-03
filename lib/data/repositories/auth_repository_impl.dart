@@ -74,4 +74,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Map<String, dynamic>> getOtpStatus(String email) {
     return remote.getOtpStatus(email);
   }
+  @override
+  Future<void> deleteUserPerm(String password) async {
+    await remote.deleteAccount(password);
+    await local.deleteCachedData();
+  }
 }

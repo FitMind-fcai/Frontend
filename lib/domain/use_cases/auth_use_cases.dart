@@ -83,4 +83,10 @@ class GetOtpStatusUseCase {
   Future<Map<String, dynamic>> call(String email) {
     return repository.getOtpStatus(email);
   }
+
+}
+class DeleteUserPermUseCase {
+  final AuthRepository repository;
+  DeleteUserPermUseCase(this.repository);
+  Future<void> call(String password) => repository.deleteUserPerm(password);
 }

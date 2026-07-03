@@ -48,3 +48,9 @@ class CheckOtpStatusEvent extends AuthEvent {
 
   CheckOtpStatusEvent(this.email);
 }
+class DeleteUserPermEvent extends AuthEvent {
+  final String password;
+  DeleteUserPermEvent(this.password);
+  @override
+  List<Object?> get props => [password];
+}

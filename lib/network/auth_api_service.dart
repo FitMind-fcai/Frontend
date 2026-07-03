@@ -42,4 +42,6 @@ abstract class AuthApiService {
   Future<Map<String, dynamic>> getOtpStatus(
       @Path("email") String email,
       );
+  @DELETE("/v1/auth/me")
+  Future<void> deleteAccount(@Body() Map<String, dynamic> body);
 }

@@ -60,14 +60,11 @@ class WeekDaysScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // CHANGED: light mode keeps every original literal color exactly as
-    // given — isDark only branches where a value would actually break
-    // against a dark background.
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      // CHANGED: was always const Color(0xFFF5F5F5).
       backgroundColor: isDark ? colorScheme.surface : const Color(0xFFF5F5F5),
       body: SafeArea(
         child: Column(
@@ -96,8 +93,6 @@ class WeekDaysScreen extends StatelessWidget {
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         size: 16,
-                        // CHANGED: was const Color(0xFF1A1A2E), same
-                        // navy-on-dark contrast issue seen throughout.
                         color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                       ),
                     ),
@@ -107,7 +102,7 @@ class WeekDaysScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'week_days.week_label'.tr(namedArgs: {'number': '$weekNumber'}),
+                        'week_days.week_label'.tr(),
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
@@ -201,9 +196,6 @@ class _DayCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Day number bubble
-            // NOTE: low-opacity brand-color tint — untouched, still reads
-            // as a warm accent patch on a dark card.
             Container(
               width: 50,
               height: 50,
@@ -243,15 +235,7 @@ class _DayCard extends StatelessWidget {
                   const SizedBox(height: 3),
                   // NOTE: same mid-tone gray as "days" caption above —
                   // already fine on both light and dark, untouched.
-                  if (dateLabel != null)
-                    Text(
-                      dateLabel!,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF9CA3AF),
-                        fontFamily: AppConstants.fontRegular,
-                      ),
-                    ),
+
                 ],
               ),
             ),
@@ -259,10 +243,6 @@ class _DayCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                // CHANGED: was const Color(0xFFF3F4F6) — near-white chip
-                // that would look like a stray pale tile on a dark card.
-                // A faint white overlay keeps it one step lighter than the
-                // card without a hardcoded dark hex.
                 color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(10),
               ),

@@ -25,7 +25,7 @@ class WeekCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark?Colors.black45:Colors.white,
+          color: isDark ? Colors.black45 : Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -62,36 +62,15 @@ class WeekCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${'week_card.week'.tr()} $weekNumber',
-                  style:  TextStyle(
+                  'week_card.week'.tr() ,
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color:isDark?Colors.white: Color(0xFF1A1A2E),
+                    color: isDark ? Colors.white : Color(0xFF1A1A2E),
                     fontFamily: AppConstants.fontRegular,
                   ),
                 ),
                 const SizedBox(height: 3),
-                Text(
-                  '$dayCount ${'week_card.days'.tr()}',
-                  style:  TextStyle(
-                    fontSize: 12,
-                    color:isDark?Colors.white: Color(0xFF9CA3AF),
-                    fontFamily: AppConstants.fontRegular,
-                  ),
-                ),
-                if (dateRange.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    dateRange,
-                    style:  TextStyle(
-                      fontSize: 10,
-                      color:isDark?Colors.white: Color(0xFFB0B7C3),
-                      fontFamily: AppConstants.fontRegular,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
               ],
             ),
           ],

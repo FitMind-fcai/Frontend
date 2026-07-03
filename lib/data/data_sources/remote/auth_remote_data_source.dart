@@ -12,6 +12,8 @@ abstract class AuthRemoteDataSource {
   Future<void> verifyOtp(String email, String otp);
   Future<void> resetPassword(String email, String otp, String newPassword);
   Future<Map<String, dynamic>> getOtpStatus(String email);
+  Future<void> deleteAccount(String password);
+
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -159,5 +161,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw _extractError(e);
     }
   }
-
+  @override
+  Future<void> deleteAccount(String password) async {
+    try {
+      await api.deleteAccount({"password": password});
+    } on DioException catch (e) {
+      throw _extractError(e);
+    }
+  }
 }

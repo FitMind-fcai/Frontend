@@ -31,8 +31,8 @@ class MealCard extends StatelessWidget {
     final isArabic = context.locale.languageCode == 'ar';
 
     return Container(
-      width: 280,
-      height: 220,
+      width: double.infinity,
+      height: 240,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,

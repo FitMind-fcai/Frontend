@@ -97,15 +97,6 @@ class WorkoutDayExercisesScreen extends StatelessWidget {
                             fontFamily: AppConstants.fontRegular,
                           ),
                         ),
-                        if (date != null)
-                          Text(
-                            _formatDate(date!),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF9CA3AF),
-                              fontFamily: AppConstants.fontRegular,
-                            ),
-                          ),
                       ],
                     ),
                   ),

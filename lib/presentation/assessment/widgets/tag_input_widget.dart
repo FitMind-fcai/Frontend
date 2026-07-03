@@ -19,16 +19,23 @@ class TagInputWidget extends StatefulWidget {
 class _TagInputWidgetState extends State<TagInputWidget> {
   late List<String> _tags;
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final int _maxTags = 10;
 
   @override
   void initState() {
     super.initState();
-    // Initialize with provided values or empty list
     _tags = widget.initialValues != null
         ? List.from(widget.initialValues!)
         : [];
+
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        _controller.clear();
+      }
+    });
   }
+
 
   @override
   void didUpdateWidget(TagInputWidget oldWidget) {
@@ -55,7 +62,9 @@ class _TagInputWidgetState extends State<TagInputWidget> {
   }
 
   void _addTag(String tag) {
-    if (tag.trim().isNotEmpty && _tags.length < _maxTags) {
+    if (tag
+        .trim()
+        .isNotEmpty && _tags.length < _maxTags) {
       setState(() {
         _tags.add(tag.trim());
         _controller.clear();
@@ -66,12 +75,16 @@ class _TagInputWidgetState extends State<TagInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+    final colorScheme = Theme
+        .of(context)
+        .colorScheme;
     return Container(
       constraints: const BoxConstraints(maxWidth: 500),
       decoration: BoxDecoration(
-        color: isDark?colorScheme.surface:Colors.white,
+        color: isDark ? colorScheme.surface : Colors.white,
         border: Border.all(color: Colors.orange[400]!, width: 2),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
@@ -91,7 +104,10 @@ class _TagInputWidgetState extends State<TagInputWidget> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              ..._tags.asMap().entries.map((entry) {
+              ..._tags
+                  .asMap()
+                  .entries
+                  .map((entry) {
                 return TagChip(
                   label: entry.value,
                   onDeleted: () => _removeTag(entry.key),
@@ -102,6 +118,7 @@ class _TagInputWidgetState extends State<TagInputWidget> {
                   constraints: const BoxConstraints(minWidth: 120),
                   child: TextField(
                     controller: _controller,
+                    focusNode: _focusNode,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: _tags.isEmpty ? 'Type and press Enter...' : '',
@@ -146,6 +163,7 @@ class _TagInputWidgetState extends State<TagInputWidget> {
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 }

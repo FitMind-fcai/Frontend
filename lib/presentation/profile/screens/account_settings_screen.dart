@@ -140,7 +140,7 @@ class AccountSettingsPage extends StatelessWidget {
                     trailingIcon: Icons.warning_amber_rounded,
                     trailingIconColor: const Color(0xFFFF3B30),
                   ),
-                  _DangerButton(onTap: () {}),
+                  _DangerButton(onTap: () => _showDeleteAccountDialog(context)),
                   const SizedBox(height: 24),
                   _SectionHeader(
                       title: 'account_settings.section_log_out'.tr()),
@@ -556,6 +556,72 @@ void _showLanguagePicker(BuildContext context) {
             ],
           ),
         ),
+      );
+    },
+  );
+}
+void _showDeleteAccountDialog(BuildContext context) {
+  final passwordController = TextEditingController();
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  bool obscure = true;
+
+  showDialog(
+    context: context,
+    builder: (dialogContext) {
+      return StatefulBuilder(
+        builder: (dialogContext, setDialogState) {
+          return AlertDialog(
+            backgroundColor: isDark ? const Color(0xFF1C1C2E) : Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Text(
+              'account_settings.delete_account_title'.tr(),
+              style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'account_settings.delete_account_warning'.tr(),
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.black87,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: passwordController,
+                  obscureText: obscure,
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                  decoration: InputDecoration(
+                    hintText: 'account_settings.password_hint'.tr(),
+                    suffixIcon: IconButton(
+                      icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () => setDialogState(() => obscure = !obscure),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: Text('account_settings.cancel'.tr()),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (passwordController.text.isEmpty) return;
+                  Navigator.pop(dialogContext);
+                  context.read<AuthBloc>().add(DeleteUserPermEvent(passwordController.text));
+                },
+                child: Text(
+                  'account_settings.delete_confirm'.tr(),
+                  style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          );
+        },
       );
     },
   );

@@ -38,10 +38,14 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
   void _startLoadingMessageCycle() {
     _loadingMessageTimer?.cancel();
     _loadingMessageIndex = 0;
-    _loadingMessageTimer = Timer.periodic(const Duration(seconds: 2), (_) {
-      setState(() {
-        _loadingMessageIndex = (_loadingMessageIndex + 1) % _loadingMessages.length;
-      });
+    _loadingMessageTimer = Timer.periodic(const Duration(seconds: 20), (timer) {
+      if (_loadingMessageIndex < _loadingMessages.length - 1) {
+        setState(() {
+          _loadingMessageIndex++;
+        });
+      } else {
+        timer.cancel();
+      }
     });
   }
   // Nutrition plan data
@@ -118,6 +122,9 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
         }
       },
       builder: (context, state) {
+        if (state is PlanLoading) {
+          return _buildLoadingScreen();
+        }
         return Stack(
           children: [
             Scaffold(
@@ -197,43 +204,7 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
             ),
 
             // Loading overlay
-            if (state is PlanLoading)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      RotatedBox(
-                        quarterTurns: -1,
-                        child: SizedBox(
-                          width: 120,
-                          child: LinearProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                AppConstants.primaryColor),
-                            backgroundColor: Colors.white24,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 400),
-                        child: Text(
-                          _loadingMessages[_loadingMessageIndex],
-                          key: ValueKey(_loadingMessageIndex),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.w700,
-                            decoration: TextDecoration.none, // <-- add this
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+
           ],
         );
       },
@@ -1299,6 +1270,44 @@ class _NutritionPlanScreenState extends State<NutritionPlanScreen> {
                 color: isSelected ? Colors.white : AppConstants.primaryColor,
               ),
               child: Text(label),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget _buildLoadingScreen() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      backgroundColor: isDark?Colors.black:Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RotatedBox(
+              quarterTurns: -1,
+              child: SizedBox(
+                width: 120,
+                child: LinearProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(AppConstants.primaryColor),
+                  backgroundColor: Colors.white24,
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              child: Text(
+                _loadingMessages[_loadingMessageIndex],
+                key: ValueKey(_loadingMessageIndex),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontFamily: AppConstants.fontRegular,
+                  fontWeight: FontWeight.w700,
+                  decoration: TextDecoration.none,
+                ),
+              ),
             ),
           ],
         ),

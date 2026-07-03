@@ -28,6 +28,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterDeviceTokenUseCase registerDeviceTokenUseCase;
   final DeleteDeviceTokenUseCase deleteDeviceTokenUseCase;
   final FcmService fcmService;
+  final DeleteUserPermUseCase deleteUserPermanentlyUseCase;
+
 
 // ✅ add local storage
 
@@ -47,6 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.registerDeviceTokenUseCase,
     required this.deleteDeviceTokenUseCase,
     required this.fcmService,
+    required this.deleteUserPermanentlyUseCase,
   }) : super(AuthInitial()) {
     on<SignInEvent>(_onSignIn);
     on<SignUpEvent>(_onSignUp);
@@ -57,6 +60,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ResetPasswordEvent>(_onResetPassword);
     on<DeleteUserEvent>(_onDeleteUser);
     on<CheckOtpStatusEvent>(_onCheckOtpStatus);
+    on<DeleteUserPermEvent>(_onDeleteUserPermanently);
+
   }
 
   Future<void> _onSignIn(SignInEvent event, Emitter<AuthState> emit) async {
@@ -203,6 +208,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       print('❌ CheckOtpStatus error: $e');
       emit(AuthFailure("Unable to check OTP status"));
+    }
+  }
+  Future<void> _onDeleteUserPermanently(
+      DeleteUserPermEvent event,
+      Emitter<AuthState> emit,
+      ) async {
+    emit(AuthLoading());
+    try {
+      final fcmToken = await fcmService.getToken();
+      if (fcmToken != null) {
+        await deleteDeviceTokenUseCase(fcmToken);
+      }
+      await deleteUserPermanentlyUseCase(event.password);
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
     }
   }
 }

@@ -425,21 +425,14 @@ class _MealCardRow extends StatelessWidget {
 
     final totalTime = meal.prepTimeMinutes + meal.cookTimeMinutes;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      clipBehavior: Clip.none,
-      child: Row(
-        children: [
-          MealCard(
+    return MealCard(
             title: meal.mealName,
             kcal: '${meal.calories.toInt()} ${'meal_card.kcal'.tr()}',
             time: '$totalTime ${'meal_card.min'.tr()}',
             proteinG: meal.proteinG,
             fatsG: meal.fatsG,
-          ),
-        ],
-      ),
-    );
+          );
+
   }
 }
 

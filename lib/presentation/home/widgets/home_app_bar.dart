@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:fitmind/core/constants/app_constants.dart';
 import 'package:fitmind/presentation/assessment/screens/assessment_screen.dart';
 import 'package:fitmind/presentation/plan/screens/plan_screen.dart';
+import 'package:fitmind/presentation/profile/screens/account_settings_screen.dart';
 import 'package:fitmind/presentation/profile/screens/personal_information_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -197,45 +198,51 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           child: _ShimmerBox(),
                         )
                       : Row(
-                          children: [
-                            Text(
-                              'home_app_bar.greeting'.tr(
-                                namedArgs: {
-                                  'name': _userName ??
-                                      'home_app_bar.fallback_name'.tr(),
-                                },
-                              ),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                fontFamily: AppConstants.fontRegular,
-                              ),
-                            ),
-                            AppConstants.horizontalSpaceXXL,
-                            AppConstants.horizontalSpaceL,
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) =>
-                                          const AssessmentScreen()),
-                                );
-                              },
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: Transform.flip(
-                                  flipX: isRtl,
-                                  // Flip the arrow horizontally if the locale is RTL
-                                  child: Image.asset(
-                                      "assets/images/Monotone arrow right.png"),
+                        children: [
+                          Row(
+                              children: [
+                                Text(
+                                  'home_app_bar.greeting'.tr(
+                                    namedArgs: {
+                                      'name': _userName ??
+                                          'home_app_bar.fallback_name'.tr(),
+                                    },
+                                  ),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                    fontFamily: AppConstants.fontRegular,
+                                  ),
                                 ),
-                              ),
+                                AppConstants.horizontalSpaceXXL,
+                                AppConstants.horizontalSpaceL,
+                                AppConstants.horizontalSpaceL,
+                                AppConstants.horizontalSpaceL,
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) =>
+                                              const AccountSettingsPage()),
+                                    );
+                                  },
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: Transform.flip(
+                                      flipX: isRtl,
+                                      // Flip the arrow horizontally if the locale is RTL
+                                      child: Image.asset(
+                                          "assets/images/Monotone arrow right.png"),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                        ],
+                      ),
                   const SizedBox(height: 6),
                   Row(
                     children: [

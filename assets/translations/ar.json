@@ -711,7 +711,12 @@
     "sign_out": "تسجيل الخروج",
     "close_account": "إغلاق الحساب",
     "language": "اللغة",
-    "choose_language": "اختر اللغة"
+    "choose_language": "اختر اللغة",
+    "delete_account_title": "حذف الحساب",
+    "delete_account_warning": "هذا الإجراء نهائي ولا يمكن التراجع عنه. أدخل كلمة المرور للتأكيد.",
+    "password_hint": "كلمة المرور",
+    "cancel": "إلغاء",
+    "delete_confirm": "حذف"
   },
   "notification_settings": {
     "title": "إعدادات الإشعارات",

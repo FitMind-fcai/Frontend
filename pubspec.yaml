@@ -79,7 +79,7 @@ dev_dependencies:
 
 flutter_native_splash:
     color: "#F97316"
-    image: assets/images/MainLogo.png
+    image: assets/images/WhiteFitMindLogo.png
     android: true
     ios: true
 
@@ -162,6 +162,7 @@ flutter:
     - assets/images/fooddark.jpg
     - assets/images/ingredientsdark.png
     - assets/images/medicationsdark.jpg
+    - assets/images/WhiteFitMindLogo.png
     - assets/translations/
 
 

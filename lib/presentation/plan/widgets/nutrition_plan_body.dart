@@ -68,15 +68,6 @@ class PlanBody extends StatelessWidget {
         children: [
           _PlanHeaderCard(plan: plan),
           const SizedBox(height: 28),
-          Text(
-            'plan.weeks'.tr(),
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : Color(0xFF1A1A2E),
-              fontFamily: AppConstants.fontRegular,
-            ),
-          ),
           const SizedBox(height: 14),
           GridView.builder(
             shrinkWrap: true,

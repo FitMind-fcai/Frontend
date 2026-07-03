@@ -41,7 +41,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.arrow_back_ios, size: 20),
-                            onPressed: () {},
+                            onPressed: () =>Navigator.of(context).maybePop(),
                             color: isDark ? Colors.white60 : Colors.grey,
                           ),
                           Text(
@@ -75,11 +75,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                       AppConstants.verticalSpaceXXL,
                       AppConstants.verticalSpaceXXL,
                       AppConstants.verticalSpaceXXL,
-                      AppConstants.verticalSpaceXXL,
-                      AppConstants.verticalSpaceXXL,
-                      AppConstants.verticalSpaceXXL,
-                      AppConstants.verticalSpaceXXL,
-                      AppConstants.verticalSpaceXXL,
+
 
                       // Option Tiles
                       _buildOptionTile(

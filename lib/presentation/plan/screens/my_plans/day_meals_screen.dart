@@ -99,17 +99,6 @@ final String Location;
                             fontFamily: AppConstants.fontRegular,
                           ),
                         ),
-                        // NOTE: mid-tone gray, already reads fine on both
-                        // light and dark — left untouched.
-                        if (date != null)
-                          Text(
-                            _formatDate(date!),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF9CA3AF),
-                              fontFamily: AppConstants.fontRegular,
-                            ),
-                          ),
                       ],
                     ),
                   ),
@@ -117,14 +106,6 @@ final String Location;
               ),
             ),
             const SizedBox(height: 20),
-            // ── Daily summary strip ───────────────────────────────────
-            // NOTE: this entire card is intentionally a fixed dark-navy
-            // surface regardless of app theme — its color (0xFF1A1A2E) is
-            // close enough in tone to the elevated dark surface used
-            // elsewhere (0xFF1E1E26) that it still reads as a raised card
-            // against a dark page too. white54 labels and the accent
-            // value colors are designed for this fixed dark background, so
-            // none of this section needs to change.
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(

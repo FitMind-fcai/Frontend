@@ -60,14 +60,11 @@ class WorkoutWeekDaysScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // CHANGED: light mode keeps every original literal color exactly as
-    // given — isDark only branches where a value would actually break
-    // against a dark background.
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      // CHANGED: was always const Color(0xFFF5F5F5).
       backgroundColor: isDark ? colorScheme.surface : const Color(0xFFF5F5F5),
       body: SafeArea(
         child: Column(
@@ -83,21 +80,16 @@ class WorkoutWeekDaysScreen extends StatelessWidget {
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        // CHANGED: was Colors.white.
                         color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
                         borderRadius: BorderRadius.circular(13),
                         border: Border.all(
-                          // CHANGED: was const Color(0xFFEAEAEA), invisible
-                          // against a dark card.
                           color: isDark ? colorScheme.outlineVariant : const Color(0xFFEAEAEA),
                         ),
                       ),
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         size: 16,
-                        // CHANGED: was const Color(0xFF1A1A2E), the same
-                        // navy-on-dark contrast issue seen on every other
-                        // screen so far.
+
                         color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                       ),
                     ),
@@ -107,7 +99,7 @@ class WorkoutWeekDaysScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'week_days.week_label'.tr(namedArgs: {'number': '$weekNumber'}),
+                        'week_days.week_label'.tr(),
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
@@ -117,9 +109,6 @@ class WorkoutWeekDaysScreen extends StatelessWidget {
                           fontFamily: AppConstants.fontRegular,
                         ),
                       ),
-                      // NOTE: 0xFF9CA3AF is a mid-tone gray that already
-                      // has reasonable contrast against both a light and a
-                      // dark background, so this caption is left untouched.
                       Text(
                         'week_days.days_count'.tr(namedArgs: {'count': '${days.length}'}),
                         style: const TextStyle(
@@ -187,14 +176,10 @@ class _WorkoutDayCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          // CHANGED: was Colors.white.
           color: isDark ? colorScheme.surfaceContainerHighest : Colors.white,
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              // CHANGED: a black shadow at 5% opacity just smudges on a
-              // dark card, same fix as the misc-log card and nav bar — drop
-              // it entirely in dark mode.
               color: isDark ? Colors.transparent : Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 3),
@@ -207,8 +192,7 @@ class _WorkoutDayCard extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                // NOTE: a low-opacity brand-color tint — left untouched,
-                // it still reads as a warm accent patch on a dark card.
+
                 color: AppConstants.primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(14),
               ),
@@ -218,7 +202,6 @@ class _WorkoutDayCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
-                    // NOTE: brand accent — untouched.
                     color: AppConstants.primaryColor,
                     fontFamily: AppConstants.fontRegular,
                   ),
@@ -235,13 +218,11 @@ class _WorkoutDayCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      // CHANGED: was const Color(0xFF1A1A2E).
                       color: isDark ? colorScheme.onSurface : const Color(0xFF1A1A2E),
                       fontFamily: AppConstants.fontRegular,
                     ),
                   ),
                   const SizedBox(height: 3),
-                  // NOTE: brand accent tint — untouched.
                   if (day.focus != null && day.focus!.isNotEmpty)
                     Text(
                       day.focus!,
@@ -252,27 +233,13 @@ class _WorkoutDayCard extends StatelessWidget {
                         fontFamily: AppConstants.fontRegular,
                       ),
                     ),
-                  // NOTE: same mid-tone gray as the "days" caption above —
-                  // already reads fine on both light and dark, untouched.
-                  if (dateLabel != null)
-                    Text(
-                      dateLabel!,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF9CA3AF),
-                        fontFamily: AppConstants.fontRegular,
-                      ),
-                    ),
+
                 ],
               ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                // CHANGED: was const Color(0xFFF3F4F6) — a near-white chip
-                // that would look like a stray white tile on a dark card.
-                // A faint white overlay keeps it one step lighter than the
-                // card itself without introducing a hardcoded dark hex.
                 color: isDark ? Colors.white.withOpacity(0.06) : const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(10),
               ),

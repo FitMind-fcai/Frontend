@@ -70,6 +70,8 @@ class NutritionPlanResultScreen extends StatelessWidget {
           },
           child: BlocBuilder<PlanBloc, PlanState>(
             builder: (context, state) {
+              final isLoading = state is PlanLoading;
+              final isSaving = state is PlanLoading && state.isSaving;
               return Stack(
                 children: [
                   // Main content
@@ -291,19 +293,39 @@ class NutritionPlanResultScreen extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 12),
-                          CommonButton(
-                            title: 'nutrition_result.generate_another'.tr(),
-                            onPressed: () {
-                              if (request != null) {
-                                // Regenerate with the same request
-                                context
-                                    .read<PlanBloc>()
-                                    .add(SubmitNutritionPreferencesEvent(request!));
-                              } else {
-                                // Fallback: go back to edit preferences
-                                Navigator.pop(context);
-                              }
-                            },
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: OutlinedButton.icon(
+                              onPressed: isLoading
+                                  ? null
+                                  : () {
+                                if (request != null) {
+                                  context.read<PlanBloc>().add(
+                                      SubmitNutritionPreferencesEvent(
+                                          request!));
+                                } else {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: Text(
+                                'workout_result.generate_again'.tr(),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppConstants.fontRegular,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppConstants.primaryColor,
+                                side: BorderSide(
+                                    color: AppConstants.primaryColor, width: 2),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -330,7 +352,9 @@ class NutritionPlanResultScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 30),
                             Text(
-                              'nutrition_result.creating_plan'.tr(),
+                              isSaving
+                                  ? 'workout_result.saving_plan'.tr()
+                                  : 'workout_result.creating_plan'.tr(),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,

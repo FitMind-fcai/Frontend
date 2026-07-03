@@ -25,5 +25,7 @@ abstract class AuthRepository {
   Future<void> verifyOtp(String email, String otp);
   Future<void> resetPassword(String email, String otp, String newPassword);
   Future<Map<String, dynamic>> getOtpStatus(String email);
+  Future<void> deleteUserPerm(String password);
+
 
 }

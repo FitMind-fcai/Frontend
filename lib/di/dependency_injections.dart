@@ -115,7 +115,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteNutritionPlanUseCase(sl()));
   sl.registerLazySingleton(() => DeleteWorkoutPlanUseCase(sl()));
   sl.registerLazySingleton(() => GetWorkoutDayExercisesUseCase(sl()));
-
+  sl.registerLazySingleton(() => DeleteUserPermUseCase(sl()));
   sl.registerLazySingleton(() => ScanMealUseCase(sl()));
 
   sl.registerLazySingleton(() => ScanMealVoiceUseCase(sl()));
@@ -163,6 +163,7 @@ Future<void> init() async {
       deleteDeviceTokenUseCase: sl(),
       fcmService: sl(),
       registerDeviceTokenUseCase: sl(),
+      deleteUserPermanentlyUseCase: sl(),
     ),
   );
   sl.registerFactory<ProfileBloc>(

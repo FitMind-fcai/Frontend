@@ -33,12 +33,17 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   void _startLoadingMessageCycle() {
     _loadingMessageTimer?.cancel();
     _loadingMessageIndex = 0;
-    _loadingMessageTimer = Timer.periodic(const Duration(seconds: 2), (_) {
-      setState(() {
-        _loadingMessageIndex = (_loadingMessageIndex + 1) % _loadingMessages.length;
-      });
+    _loadingMessageTimer = Timer.periodic(const Duration(seconds: 20), (timer) {
+      if (_loadingMessageIndex < _loadingMessages.length - 1) {
+        setState(() {
+          _loadingMessageIndex++;
+        });
+      } else {
+        timer.cancel();
+      }
     });
   }
+
   // Nutrition plan data
   String _selectedDays = "1";
   String _selectedWorkoutFocus = "";
@@ -55,12 +60,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme
-        .of(context)
-        .brightness == Brightness.dark;
-    final colorScheme = Theme
-        .of(context)
-        .colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return BlocConsumer<PlanBloc, PlanState>(
       listener: (context, state) {
@@ -69,9 +70,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  WorkoutPlanResultScreen(
-                      plan: state.plan, request: _lastRequest),
+              builder: (_) => WorkoutPlanResultScreen(
+                  plan: state.plan, request: _lastRequest),
             ),
           );
         } else if (state is PlanError) {
@@ -81,7 +81,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         }
       },
       builder: (context, state) {
-        // 👈 now state is in scope
+        if (state is PlanLoading) {
+          return _buildLoadingScreen();
+        }
         return Stack(
           children: [
             Scaffold(
@@ -164,43 +166,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             ),
 
             // 👇 now state is accessible here
-            if (state is PlanLoading)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      RotatedBox(
-                        quarterTurns: -1,
-                        child: SizedBox(
-                          width: 120,
-                          child: LinearProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                AppConstants.primaryColor),
-                            backgroundColor: Colors.white24,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 400),
-                        child: Text(
-                          _loadingMessages[_loadingMessageIndex],
-                          key: ValueKey(_loadingMessageIndex),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontFamily: AppConstants.fontRegular,
-                            fontWeight: FontWeight.w700,
-                            decoration: TextDecoration.none, // <-- add this
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
           ],
         );
       },
@@ -217,10 +182,10 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         workoutDaysPerWeek: int.parse(_selectedDays),
         workoutLocation: WorkoutLocation.fromString(_selectedWorkoutLocation),
         equipmentAvailability:
-        EquipmentAvailability.fromString(_selectedEquipment ?? ''),
+            EquipmentAvailability.fromString(_selectedEquipment ?? ''),
         workoutFocus: WorkoutFocus.fromString(_selectedWorkoutFocus),
         workoutDifficulty:
-        WorkoutDifficulty.fromString(_selectedDifficulty ?? ''),
+            WorkoutDifficulty.fromString(_selectedDifficulty ?? ''),
         sessionDurationMinutes: _sessionDuration,
         focusAreas: focusAreas.isEmpty ? null : focusAreas,
       ),
@@ -294,8 +259,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           LayoutBuilder(
             builder: (context, constraints) {
               final buttonWidth = constraints.maxWidth / 7;
-              final index = ((int.tryParse(_selectedDays) ?? 1) - 1).clamp(0, 6);
-      
+              final index =
+                  ((int.tryParse(_selectedDays) ?? 1) - 1).clamp(0, 6);
+
               return Container(
                   height: 50,
                   width: double.infinity,
@@ -329,7 +295,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                             final day = (index + 1).toString();
                             return Expanded(
                               child: GestureDetector(
-                                onTap: () => setState(() => _selectedDays = day),
+                                onTap: () =>
+                                    setState(() => _selectedDays = day),
                                 child: Center(
                                   child: Text(
                                     day,
@@ -337,8 +304,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                                       color: _selectedDays == day
                                           ? Colors.white
                                           : (isDark
-                                          ? Colors.white60
-                                          : Colors.grey[600]),
+                                              ? Colors.white60
+                                              : Colors.grey[600]),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -371,9 +338,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
     );
   }
 
-
-
-
   // Page 5: Exclude Ingredients
   Widget _buildFocusAreasPage(bool isDark) {
     return Column(
@@ -382,7 +346,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       children: [
         Center(
           child: Text(
-            'workout.focus_areas_question'.tr(), textAlign: TextAlign.center,
+            'workout.focus_areas_question'.tr(),
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 32,
               fontFamily: AppConstants.fontRegular,
@@ -399,10 +364,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
           ),
-          child: isDark?null:Image.asset(
-            'assets/images/gym workout emblem.png',
-            fit: BoxFit.contain,
-          ),
+          child: isDark
+              ? null
+              : Image.asset(
+                  'assets/images/gym workout emblem.png',
+                  fit: BoxFit.contain,
+                ),
         ),
         TagInputWidget(
           initialValues: focusAreas, // Add this line
@@ -492,12 +459,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ]
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ]
               : null,
         ),
         child: Row(
@@ -579,7 +546,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 description: 'workout.focus_strength_desc'.tr(),
                 isSelected: _selectedWorkoutFocus == 'Strength Training',
                 isDark: isDark,
-                onTap: () => setState(() => _selectedWorkoutFocus = 'Strength Training'),
+                onTap: () =>
+                    setState(() => _selectedWorkoutFocus = 'Strength Training'),
               ),
               _buildWorkoutOption(
                 title: 'workout.focus_cardio'.tr(),
@@ -587,7 +555,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 description: 'workout.focus_cardio_desc'.tr(),
                 isSelected: _selectedWorkoutFocus == 'Cardiovascular',
                 isDark: isDark,
-                onTap: () => setState(() => _selectedWorkoutFocus = 'Cardiovascular'),
+                onTap: () =>
+                    setState(() => _selectedWorkoutFocus = 'Cardiovascular'),
               ),
               _buildWorkoutOption(
                 title: 'workout.focus_flexibility'.tr(),
@@ -595,7 +564,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 description: 'workout.focus_flexibility_desc'.tr(),
                 isSelected: _selectedWorkoutFocus == 'Flexibility',
                 isDark: isDark,
-                onTap: () => setState(() => _selectedWorkoutFocus = 'Flexibility'),
+                onTap: () =>
+                    setState(() => _selectedWorkoutFocus = 'Flexibility'),
               ),
               _buildWorkoutOption(
                 title: 'workout.focus_hybrid'.tr(),
@@ -611,7 +581,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 description: 'workout.focus_sport_specific_desc'.tr(),
                 isSelected: _selectedWorkoutFocus == 'Sport Specific',
                 isDark: isDark,
-                onTap: () => setState(() => _selectedWorkoutFocus = 'Sport Specific'),
+                onTap: () =>
+                    setState(() => _selectedWorkoutFocus = 'Sport Specific'),
               ),
             ],
           ),
@@ -781,12 +752,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ]
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ]
               : null,
         ),
         child: Stack(
@@ -905,12 +876,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ]
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ]
               : null,
         ),
         child: Row(
@@ -973,7 +944,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'workout.session_duration_question'.tr(), textAlign: TextAlign.center,
+          'workout.session_duration_question'.tr(),
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -990,7 +962,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 padding:
-                const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
                 decoration: BoxDecoration(
                   color: AppConstants.primaryColor,
                   borderRadius: BorderRadius.circular(24),
@@ -1042,10 +1014,10 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                       data: SliderThemeData(
                         activeTrackColor: AppConstants.primaryColor,
                         inactiveTrackColor:
-                        isDark ? const Color(0xFF3A3A3A) : Colors.grey[300],
+                            isDark ? const Color(0xFF3A3A3A) : Colors.grey[300],
                         thumbColor: AppConstants.primaryColor,
                         overlayColor:
-                        AppConstants.primaryColor.withOpacity(0.2),
+                            AppConstants.primaryColor.withOpacity(0.2),
                         thumbShape: const RoundSliderThumbShape(
                           enabledThumbRadius: 14,
                         ),
@@ -1133,27 +1105,26 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            )
-          ]
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  )
+                ]
               : null,
         ),
         child: AnimatedDefaultTextStyle(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: AppConstants.fontRegular,
-              color: isSelected
-                  ? Colors.white
-                  : (isDark ? Colors.white : Colors.black),
-            ),
-            child: Text(
-                'workout.min_short'.tr(namedArgs: {'count': '$minutes'})),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            fontFamily: AppConstants.fontRegular,
+            color: isSelected
+                ? Colors.white
+                : (isDark ? Colors.white : Colors.black),
+          ),
+          child: Text('workout.min_short'.tr(namedArgs: {'count': '$minutes'})),
         ),
       ),
     );
@@ -1234,14 +1205,15 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                          color:
+                              isDark ? const Color(0xFF1E1E1E) : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _isCustomWeeks
                                 ? AppConstants.primaryColor
                                 : (isDark
-                                ? const Color(0xFF3A3A3A)
-                                : Colors.grey[300]!),
+                                    ? const Color(0xFF3A3A3A)
+                                    : Colors.grey[300]!),
                             width: 2,
                           ),
                         ),
@@ -1285,8 +1257,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                                   });
                                 }
                               },
-                              icon:
-                              const Icon(Icons.add_circle_outline, size: 28),
+                              icon: const Icon(Icons.add_circle_outline,
+                                  size: 28),
                               color: AppConstants.primaryColor,
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
@@ -1300,7 +1272,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 const SizedBox(height: 8),
                 Center(
                   child: Text(
-                    _customWeeks == 1 ? 'workout.week_singular'.tr() : 'workout.week_plural'.tr(),
+                    _customWeeks == 1
+                        ? 'workout.week_singular'.tr()
+                        : 'workout.week_plural'.tr(),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -1344,19 +1318,19 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ]
+                  BoxShadow(
+                    color: Colors.orange.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ]
               : [
-            BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            )
-          ],
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1386,7 +1360,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     ? Colors.white70
                     : (isDark ? Colors.white60 : Colors.grey[600]),
               ),
-              child: Text(weeks == 1 ? 'workout.week_singular'.tr() : 'workout.week_plural'.tr()),
+              child: Text(weeks == 1
+                  ? 'workout.week_singular'.tr()
+                  : 'workout.week_plural'.tr()),
             ),
             const SizedBox(height: 8),
             AnimatedDefaultTextStyle(
@@ -1399,6 +1375,46 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 color: isSelected ? Colors.white : AppConstants.primaryColor,
               ),
               child: Text(label),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingScreen() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      backgroundColor:isDark? Colors.black:Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RotatedBox(
+              quarterTurns: -1,
+              child: SizedBox(
+                width: 120,
+                child: LinearProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppConstants.primaryColor),
+                  backgroundColor: Colors.white24,
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              child: Text(
+                _loadingMessages[_loadingMessageIndex],
+                key: ValueKey(_loadingMessageIndex),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontFamily: AppConstants.fontRegular,
+                  fontWeight: FontWeight.w700,
+                  decoration: TextDecoration.none,
+                ),
+              ),
             ),
           ],
         ),
