@@ -41,14 +41,14 @@ class ScanWorkoutVoiceUseCase {
 class SearchFoodsUseCase {
   final LogRepository repository;
   SearchFoodsUseCase(this.repository);
-  Future<List<FoodSearchResult>> call(String query, {int limit = 5}) =>
+  Future<List<FoodSearchResult>> call(String query, {int limit = 10}) =>
       repository.searchFoods(query, limit: limit);
 }
 
 class SearchExercisesUseCase {
   final LogRepository repository;
   SearchExercisesUseCase(this.repository);
-  Future<List<ExerciseSearchResult>> call(String query, {int limit = 5}) =>
+  Future<List<ExerciseSearchResult>> call(String query, {int limit = 10}) =>
       repository.searchExercises(query, limit: limit);
 }
 

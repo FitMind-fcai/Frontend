@@ -85,7 +85,7 @@ class LogRemoteDataSourceImpl implements LogRemoteDataSource {
 
   @override
   Future<List<FoodSearchResult>> searchFoods(String query,
-      {int limit = 5}) async {
+      {int limit = 10}) async {
     try {
       return await apiService.searchFoods(query, limit: limit);
     } on DioException catch (e) {
@@ -97,7 +97,7 @@ class LogRemoteDataSourceImpl implements LogRemoteDataSource {
 
   @override
   Future<List<ExerciseSearchResult>> searchExercises(String query,
-      {int limit = 5}) async {
+      {int limit = 10}) async {
     try {
       return await apiService.searchExercises(query, limit: limit);
     } on DioException catch (e) {

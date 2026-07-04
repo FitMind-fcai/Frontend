@@ -63,13 +63,13 @@ abstract class LogApiService {
   @GET("/v1/tracking/meals/search")
   Future<List<FoodSearchResult>> searchFoods(
     @Query("q") String query, {
-    @Query("limit") int limit = 5,
+    @Query("limit") int limit = 10,
   });
 
   @GET("/v1/tracking/workouts/search")
   Future<List<ExerciseSearchResult>> searchExercises(
     @Query("q") String query, {
-    @Query("limit") int limit = 5,
+    @Query("limit") int limit = 10,
   });
 
   @POST("/v1/tracking/logs")

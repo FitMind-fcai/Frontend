@@ -39,12 +39,12 @@ class LogRepositoryImpl implements LogRepository {
       remote.scanWorkoutVoice(filePath, audioFormat,language);
 
   @override
-  Future<List<FoodSearchResult>> searchFoods(String query, {int limit = 5}) =>
+  Future<List<FoodSearchResult>> searchFoods(String query, {int limit = 10}) =>
       remote.searchFoods(query, limit: limit);
 
   @override
   Future<List<ExerciseSearchResult>> searchExercises(String query,
-      {int limit = 5}) =>
+      {int limit = 10}) =>
       remote.searchExercises(query, limit: limit);
 
   @override

@@ -23,7 +23,7 @@ class _LogApiService implements LogApiService {
   @override
   Future<List<FoodSearchResult>> searchFoods(
     String query, {
-    int limit = 5,
+    int limit = 10,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -59,7 +59,7 @@ class _LogApiService implements LogApiService {
   @override
   Future<List<ExerciseSearchResult>> searchExercises(
     String query, {
-    int limit = 5,
+    int limit = 10,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
