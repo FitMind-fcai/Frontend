@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitmind/core/constants/app_constants.dart';
 import 'package:fitmind/presentation/profile/screens/about_us_screen.dart';
 import 'package:fitmind/presentation/profile/screens/feedback_screen.dart';
@@ -157,6 +158,13 @@ class AccountSettingsPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final token = await FirebaseMessaging.instance.getToken();
+                      debugPrint(token);
+                    },
+                    child: const Text('Show FCM Token'),
+                  )
                 ],
               ),
             ),

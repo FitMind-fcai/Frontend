@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../manager_log_history/log_history_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+String _formatLogTimestamp(DateTime dt) {
+  return DateFormat('MMM d, yyyy • h:mm a').format(dt.toLocal());
+}
 
 class LogDetailScreen extends StatefulWidget {
   final String category;
@@ -359,13 +363,13 @@ class _ChipWidget extends StatelessWidget {
 // ── Per-category tiles ────────────────────────────────────────────────────────
 
 class _MealTile extends StatelessWidget {
-  final dynamic entry; // MealLogEntry
+  final dynamic entry; // MealLogHistory
   final VoidCallback onDelete;
   const _MealTile({required this.entry, required this.onDelete});
 
   @override
   Widget build(BuildContext context) => _LogTile(
-    date: entry.logDate,
+    date: _formatLogTimestamp(entry.createdAt),
     accentColor: const Color(0xFFFF6B00),
     icon: Icons.restaurant_outlined,
     title: entry.mealName,
@@ -381,7 +385,7 @@ class _MealTile extends StatelessWidget {
 }
 
 class _WorkoutTile extends StatelessWidget {
-  final dynamic entry; // WorkoutLogEntry
+  final dynamic entry; // WorkoutLogHistory
   final VoidCallback onDelete;
   const _WorkoutTile({required this.entry, required this.onDelete});
 
@@ -398,11 +402,14 @@ class _WorkoutTile extends StatelessWidget {
       final mins = (entry.durationSeconds ~/ 60);
       chips.add(_Chip('log_detail.chip_time'.tr(), 'log_detail.time_chip_value'.tr(namedArgs: {'value': '$mins'})));
     }
+    final title = (entry.exerciseName != null && entry.exerciseName.isNotEmpty)
+        ? entry.exerciseName as String
+        : 'log_detail.title_workout'.tr();
     return _LogTile(
-      date: entry.logDate,
+      date: _formatLogTimestamp(entry.createdAt),
       accentColor: const Color(0xFF3B82F6),
       icon: Icons.fitness_center_outlined,
-      title: 'log_detail.title_workout'.tr(),
+      title: title,
       chips: chips,
       note: entry.notes,
       onDelete: onDelete,
@@ -411,13 +418,13 @@ class _WorkoutTile extends StatelessWidget {
 }
 
 class _WeightTile extends StatelessWidget {
-  final dynamic entry; // WeightLogEntry
+  final dynamic entry; // WeightLogHistory
   final VoidCallback onDelete;
   const _WeightTile({required this.entry, required this.onDelete});
 
   @override
   Widget build(BuildContext context) => _LogTile(
-    date: entry.logDate,
+    date: _formatLogTimestamp(entry.createdAt),
     accentColor: const Color(0xFF26A69A),
     icon: Icons.monitor_weight_outlined,
     title: 'log_detail.weight_value'.tr(namedArgs: {'value': '${entry.weight}'}),
@@ -428,7 +435,7 @@ class _WeightTile extends StatelessWidget {
 }
 
 class _SleepTile extends StatelessWidget {
-  final dynamic entry; // SleepLogEntry
+  final dynamic entry; // SleepLogHistory
   final VoidCallback onDelete;
   const _SleepTile({required this.entry, required this.onDelete});
 
@@ -441,7 +448,7 @@ class _SleepTile extends StatelessWidget {
       chips.add(_Chip('log_detail.chip_quality'.tr(), 'log_detail.quality_chip_value'.tr(namedArgs: {'value': '${entry.sleepQuality}'})));
     }
     return _LogTile(
-      date: entry.logDate,
+      date: _formatLogTimestamp(entry.createdAt),
       accentColor: const Color(0xFF7E57C2),
       icon: Icons.bedtime_outlined,
       title: 'log_detail.title_sleep'.tr(),
@@ -453,13 +460,13 @@ class _SleepTile extends StatelessWidget {
 }
 
 class _HydrationTile extends StatelessWidget {
-  final dynamic entry; // HydrationLogEntry
+  final dynamic entry; // HydrationLogHistory
   final VoidCallback onDelete;
   const _HydrationTile({required this.entry, required this.onDelete});
 
   @override
   Widget build(BuildContext context) => _LogTile(
-    date: entry.logDate,
+    date: _formatLogTimestamp(entry.createdAt),
     accentColor: const Color(0xFF29B6F6),
     icon: Icons.water_drop_outlined,
     title: 'log_detail.water_value'.tr(namedArgs: {'value': '${entry.waterMl}'}),

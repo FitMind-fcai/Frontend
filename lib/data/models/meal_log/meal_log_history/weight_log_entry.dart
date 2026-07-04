@@ -3,12 +3,14 @@ class WeightLogHistory {
   final String logDate;
   final double weight;
   final String? notes;
+  final DateTime createdAt;
 
   const WeightLogHistory({
     required this.id,
     required this.logDate,
     required this.weight,
     this.notes,
+    required this.createdAt,
   });
 
   factory WeightLogHistory.fromJson(Map<String, dynamic> json) => WeightLogHistory(
@@ -16,5 +18,6 @@ class WeightLogHistory {
     logDate: json['log_date'] as String,
     weight: (json['weight'] as num).toDouble(),
     notes: json['notes'] as String?,
+    createdAt: DateTime.parse(json['created_at'] as String),
   );
 }

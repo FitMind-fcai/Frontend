@@ -9,6 +9,7 @@ class MealLogHistory {
   final double carbsG;
   final double fatsG;
   final String? imageUrl;
+  final DateTime createdAt;
 
   const MealLogHistory({
     required this.id,
@@ -21,6 +22,7 @@ class MealLogHistory {
     required this.carbsG,
     required this.fatsG,
     this.imageUrl,
+    required this.createdAt,
   });
 
   factory MealLogHistory.fromJson(Map<String, dynamic> json) => MealLogHistory(
@@ -34,5 +36,6 @@ class MealLogHistory {
     carbsG: (json['carbs_g'] as num? ?? 0).toDouble(),
     fatsG: (json['fats_g'] as num? ?? 0).toDouble(),
     imageUrl: json['image_url'] as String?,
+    createdAt: DateTime.parse(json['created_at'] as String),
   );
 }
