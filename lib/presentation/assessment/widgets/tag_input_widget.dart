@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fitmind/presentation/assessment/widgets/tag_chip.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class _TagInputWidgetState extends State<TagInputWidget> {
 
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
-        _controller.clear();
+        _addTag(_controller.text);
       }
     });
   }
@@ -121,7 +122,9 @@ class _TagInputWidgetState extends State<TagInputWidget> {
                     focusNode: _focusNode,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: _tags.isEmpty ? 'Type and press Enter...' : '',
+                      hintText: _tags.isEmpty
+                          ? 'assessment.tag_input_hint'.tr()
+                          : '',
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,

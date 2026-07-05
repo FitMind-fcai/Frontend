@@ -98,7 +98,8 @@
     "medical_conditions_question": "هل لديك أي حالات طبية؟",
     "allergies_question": "هل لديك أي حساسية؟",
     "diet_question": "هل لديك أي تفضيلات غذائية؟",
-    "medications_question": "هل تتناول أي أدوية حاليًا؟"
+    "medications_question": "هل تتناول أي أدوية حاليًا؟",
+    "tag_input_hint": "اكتب واضغط إدخال..."
   },
   "nutrition": {
     "title": "خطة التغذية",
@@ -698,6 +699,7 @@
     "section_security_privacy": "الأمان والخصوصية",
     "section_help_support": "المساعدة والدعم",
     "section_danger_zone": "منطقة الخطر",
+    "close_account": "إغلاق الحساب",
     "section_log_out": "تسجيل الخروج",
     "badge_beta": "تجريبي",
     "badge_warning": "تحذير",

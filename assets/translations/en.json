@@ -98,7 +98,8 @@
     "medical_conditions_question": "Do you have any medical conditions?",
     "allergies_question": "Do you have any Allergies?",
     "diet_question": "Do you have any Dietary Preferences?",
-    "medications_question": "Are you currently on any medications?"
+    "medications_question": "Are you currently on any medications?",
+    "tag_input_hint": "Type and press Enter..."
   },
   "nutrition": {
     "title": "Nutrition Plan",
@@ -697,6 +698,7 @@
     "section_security_privacy": "Security & Privacy",
     "section_help_support": "Help & Support",
     "section_danger_zone": "Danger Zone",
+    "close_account": "Close Account",
     "section_log_out": "Log Out",
     "badge_beta": "Beta",
     "badge_warning": "Warning",

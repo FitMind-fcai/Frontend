@@ -515,8 +515,8 @@ class _DangerButton extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            const Text(
-              'Close Account',
+            Text(
+              'account_settings.close_account'.tr(),
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,

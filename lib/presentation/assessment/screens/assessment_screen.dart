@@ -151,6 +151,9 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   }
 
   void _onContinuePressed() async {
+    // Commit any tag text the user typed but didn't press Enter on.
+    FocusManager.instance.primaryFocus?.unfocus();
+
     if (currentPage < 10) {
       setState(() => currentPage++);
     } else {
