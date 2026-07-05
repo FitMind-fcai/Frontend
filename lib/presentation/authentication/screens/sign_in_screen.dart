@@ -34,15 +34,17 @@ class _SignInScreenState extends State<SignInScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthSuccess) {
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (_) => HomeScreen()),
+            (route) => false,
           );
         }
         if (state is AuthSuccessNoProfile) {
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (_) => AssessmentScreen()),
+            (route) => false,
           );
         }
         if (state is AuthFailure) {
