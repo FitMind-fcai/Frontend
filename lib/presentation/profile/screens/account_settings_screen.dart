@@ -8,6 +8,7 @@ import 'package:fitmind/presentation/profile/screens/personal_information_screen
     hide AppConstants;
 import 'package:fitmind/presentation/profile/screens/privacy_policy_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -161,7 +162,31 @@ class AccountSettingsPage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () async {
                       final token = await FirebaseMessaging.instance.getToken();
-                      debugPrint(token);
+                      if (!context.mounted) return;
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text('FCM Token'),
+                          content: SelectableText(token ?? 'No token available'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                if (token != null) {
+                                  Clipboard.setData(ClipboardData(text: token));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Copied to clipboard')),
+                                  );
+                                }
+                              },
+                              child: const Text('Copy'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(dialogContext).pop(),
+                              child: const Text('Close'),
+                            ),
+                          ],
+                        ),
+                      );
                     },
                     child: const Text('Show FCM Token'),
                   )
