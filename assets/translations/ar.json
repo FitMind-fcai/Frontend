@@ -462,6 +462,8 @@
     "section_catalog_matches": "تطابقات الكتالوج",
     "catalog_matches_hint": "اختر طعامًا واحدًا أو أكثر لتسجيله بقيم غذائية دقيقة.",
     "section_health_notes": "ملاحظات صحية",
+    "section_allergen_warnings": "تحذيرات الحساسية",
+    "allergen_warning_line": "{allergen} — موجود في {food_item}",
     "scanned_meal_fallback": "وجبة ممسوحة",
     "calories_kcal": "{count} سعرة حرارية",
     "ai_estimate_note": "تقدير الذكاء الاصطناعي — اختر تطابقات الكتالوج أدناه لبيانات أدق",

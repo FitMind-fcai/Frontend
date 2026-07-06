@@ -462,6 +462,8 @@
     "section_catalog_matches": "Catalog Matches",
     "catalog_matches_hint": "Select one or more foods to log with precise nutrition data.",
     "section_health_notes": "Health Notes",
+    "section_allergen_warnings": "Allergen Warnings",
+    "allergen_warning_line": "{allergen} — found in {food_item}",
     "scanned_meal_fallback": "Scanned Meal",
     "calories_kcal": "{count} kcal",
     "ai_estimate_note": "AI estimate — select catalog matches below for accurate data",

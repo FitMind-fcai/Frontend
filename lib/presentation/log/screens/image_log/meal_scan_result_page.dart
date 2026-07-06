@@ -211,6 +211,14 @@ class _MealScanResultPageState extends State<MealScanResultPage> {
                     // AI summary card
                     _AiResultCard(result: widget.scanResult),
 
+                    // Allergen warnings
+                    if (widget.scanResult.allergenWarnings.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      _AllergenWarningsCard(
+                        warnings: widget.scanResult.allergenWarnings,
+                      ),
+                    ],
+
                     const SizedBox(height: 24),
 
                     // Detected items
@@ -455,6 +463,62 @@ class _AiResultCard extends StatelessWidget {
     if (score >= 0.75) return const Color(0xFF10B981);
     if (score >= 0.5) return const Color(0xFFF59E0B);
     return const Color(0xFFEF4444);
+  }
+}
+
+// ── Allergen Warnings Card ─────────────────────────────────────────────────────
+
+class _AllergenWarningsCard extends StatelessWidget {
+  final List<Map<String, dynamic>> warnings;
+  const _AllergenWarningsCard({required this.warnings});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const color = Color(0xFFEF4444);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(isDark ? 0.12 : 0.06),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: color, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'meal_scan_result.section_allergen_warnings'.tr(),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ...warnings.map((w) => Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Text(
+                  'meal_scan_result.allergen_warning_line'.tr(namedArgs: {
+                    'allergen': (w['allergen'] ?? '').toString(),
+                    'food_item': (w['food_item'] ?? '').toString(),
+                  }),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.white : const Color(0xFF7F1D1D),
+                  ),
+                ),
+              )),
+        ],
+      ),
+    );
   }
 }
 
