@@ -56,7 +56,13 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: HomeBottomNavBar(
         selectedIndex: _selectedIndex,
-        onItemSelected: (index) => setState(() => _selectedIndex = index),
+        onItemSelected: (index) {
+          if (index == 0 && _selectedIndex != 0) {
+            context.read<HomeBloc>().add(const GetScoreEvent());
+            context.read<HomeBloc>().add(const RefreshLiveMetricsEvent());
+          }
+          setState(() => _selectedIndex = index);
+        },
       ),
     );
   }
@@ -130,11 +136,16 @@ class _HomePage extends StatelessWidget {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const StepsTakenPage()),
-                            ),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const StepsTakenPage()),
+                              );
+                              if (context.mounted) {
+                                context.read<HomeBloc>().add(const RefreshLiveMetricsEvent());
+                              }
+                            },
                             child: MetricCard(
                               title: 'home.metric_steps'.tr(),
                               value: state is HomeLoaded && state.steps != null
@@ -146,11 +157,16 @@ class _HomePage extends StatelessWidget {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const CalorieStatsPage()),
-                            ),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const CalorieStatsPage()),
+                              );
+                              if (context.mounted) {
+                                context.read<HomeBloc>().add(const RefreshLiveMetricsEvent());
+                              }
+                            },
                             child: MetricCard(
                               title: 'home.metric_calories'.tr(),
                               value: state is HomeLoaded && state.calories != null
